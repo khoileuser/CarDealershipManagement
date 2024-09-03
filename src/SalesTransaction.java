@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
-public class SaleTransaction {
+public class SalesTransaction {
     private final String transactionID;
     private final Date transactionDate;
     private String clientID;
@@ -12,7 +12,7 @@ public class SaleTransaction {
     private double total;
     private String notes;
 
-    public SaleTransaction(String clientID, String salespersonID, ArrayList<Item> items, Discount discount, double total, String notes) {
+    public SalesTransaction(String clientID, String salespersonID, ArrayList<Item> items, Discount discount, double total, String notes) {
         this.transactionID = setTransactionID();
         this.transactionDate = setTransactionDate();
         this.clientID = clientID;
