@@ -1,6 +1,6 @@
 public class AutoPart {
     // Attributes
-    private String partID;
+    private final String partID;
     private String partName;
     private String manufacturer;
     private String partNumber;
@@ -24,7 +24,7 @@ public class AutoPart {
     // Generate a unique part ID (p-number format)
     private String generatePartID() {
         int number = (int) (Math.random() * 10000);
-        return "P-" + number;
+        return "p-" + number;
     }
 
     // Getters and Setters
