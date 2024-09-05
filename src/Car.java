@@ -3,7 +3,7 @@ import java.util.Date;
 
 public class Car extends Item {
     // Attributes
-    private final String carID;
+    private String carID;
     private String make;
     private String model;
     private int year;
@@ -14,9 +14,9 @@ public class Car extends Item {
     private ArrayList<Service> historyServices;
     private String notes;
 
-    public Car (String make, String model, int year, int mileage, String color,
+    public Car (String carID, String make, String model, int year, int mileage, String color,
                 Boolean status, int price, String notes) {
-        this.carID = generateCarID();
+        this.carID = carID;
         this.make = make;
         this.model = model;
         this.year = year;
@@ -27,16 +27,14 @@ public class Car extends Item {
         this.notes = notes;
     }
 
-    // Generate a unique car ID (c-number format)
-    private String generateCarID() {
-        int number = (int) (Math.random() * 10000);
-        return "C-" + number;
-    }
-
     //Getters and Setters'
 
     public String getCarID() {
         return carID;
+    }
+
+    public void getCarID(String carID) {
+        this.carID = carID;
     }
 
     public String getMake() {

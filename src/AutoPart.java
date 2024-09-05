@@ -1,6 +1,6 @@
 public class AutoPart extends Item {
     // Attributes
-    private final String partID;
+    private String partID;
     private String partName;
     private String manufacturer;
     private String partNumber;
@@ -10,8 +10,8 @@ public class AutoPart extends Item {
     private String notes;
 
     // Constructor
-    public AutoPart(String partName, String manufacturer, String partNumber, String condition, String warranty, double cost, String notes) {
-        this.partID = generatePartID();
+    public AutoPart(String partID, String partName, String manufacturer, String partNumber, String condition, String warranty, double cost, String notes) {
+        this.partID = partID;
         this.partName = partName;
         this.manufacturer = manufacturer;
         this.partNumber = partNumber;
@@ -21,16 +21,12 @@ public class AutoPart extends Item {
         this.notes = notes;
     }
 
-    // Generate a unique part ID (p-number format)
-    private String generatePartID() {
-        int number = (int) (Math.random() * 10000);
-        return "p-" + number;
-    }
-
     // Getters and Setters
     public String getPartID() {
         return partID;
     }
+
+    public void setPartID(String partID) { this.partID = partID; }
 
     public String getPartName() {
         return partName;

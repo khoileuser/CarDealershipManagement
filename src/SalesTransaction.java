@@ -3,7 +3,7 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 
 public class SalesTransaction {
-    private final String transactionID;
+    private String transactionID;
     private final Date transactionDate;
     private String clientID;
     private String salespersonID;
@@ -12,8 +12,8 @@ public class SalesTransaction {
     private double total;
     private String notes;
 
-    public SalesTransaction(String clientID, String salespersonID, ArrayList<Item> items, Discount discount, double total, String notes) {
-        this.transactionID = setTransactionID();
+    public SalesTransaction(String transactionID, String clientID, String salespersonID, ArrayList<Item> items, Discount discount, double total, String notes) {
+        this.transactionID = transactionID;
         this.transactionDate = setTransactionDate();
         this.clientID = clientID;
         this.salespersonID = salespersonID;
@@ -27,9 +27,8 @@ public class SalesTransaction {
         return transactionID;
     }
 
-    private String setTransactionID() {
-        int number = (int) (Math.random() * 10000);
-        return "t-" + number;
+    public void setTransactionID(String transactionID) {
+        this.transactionID = transactionID;
     }
 
     public Date getTransactionDate() {

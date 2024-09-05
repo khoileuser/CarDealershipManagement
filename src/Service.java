@@ -3,18 +3,18 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Service {
-    //Atribute
-    private final String serviceID;
-    private Date serviceDate;
-    private int clientID;
-    private int mechanicID;
+    // Attribute
+    private String serviceID;
+    private final Date serviceDate;
+    private String clientID;
+    private String mechanicID;
     private String serviceType;
     private ArrayList<AutoPart> replacedParts;
     private double serviceCost;
     private String notes;
 
-    public Service(int clientID, int mechanicID, String serviceType, ArrayList<AutoPart> replacedParts, double serviceCost, String notes) {
-        this.serviceID = setServiceID();
+    public Service(String serviceID, String clientID, String mechanicID, String serviceType, ArrayList<AutoPart> replacedParts, double serviceCost, String notes) {
+        this.serviceID = serviceID;
         this.serviceDate = setServiceDate();
         this.clientID = clientID;
         this.mechanicID = mechanicID;
@@ -24,14 +24,11 @@ public class Service {
         this.notes = notes;
     }
 
-    private String setServiceID() {
-        int number = (int) (Math.random() * 10000);
-        return "s-" + number;
-    }
-
     public String getServiceID() {
         return serviceID;
     }
+
+    public void setServiceID(String serviceID) { this.serviceID = serviceID; }
 
     public Date getServiceDate() {
         return serviceDate;
@@ -42,23 +39,23 @@ public class Service {
         return df.format(serviceDate);
     }
 
-    public Date setServiceDate() {
+    private Date setServiceDate() {
         return new Date();
     }
 
-    public int getClientID() {
+    public String getClientID() {
         return clientID;
     }
 
-    public void setClientID(int clientID) {
+    public void setClientID(String clientID) {
         this.clientID = clientID;
     }
 
-    public int getMechanicID() {
+    public String getMechanicID() {
         return mechanicID;
     }
 
-    public void setMechanicID(int mechanicID) {
+    public void setMechanicID(String mechanicID) {
         this.mechanicID = mechanicID;
     }
 
