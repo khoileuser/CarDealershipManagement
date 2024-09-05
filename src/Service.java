@@ -1,113 +1,110 @@
-import java.util.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class Service {
     //Atribute
-    private int service_ID;
-    private Date service_date;
-    private int client_ID;
-    private int mechanic_ID;
-    private String service_type;
-    private AutoPart[] replaced_parts;
-    private long service_cost;
-    private String additional_note;
+    private final String serviceID;
+    private Date serviceDate;
+    private int clientID;
+    private int mechanicID;
+    private String serviceType;
+    private ArrayList<AutoPart> replacedParts;
+    private double serviceCost;
+    private String notes;
 
-    public Service(){
-        this.service_ID = 0;
-        this.service_date = null;
-        this.client_ID = 0;
-        this.mechanic_ID = 0;
-        this.service_type = "Default";
-        this.replaced_parts = null;
-        this.service_cost = 0;
-        this.additional_note = "Default";
+    public Service(int clientID, int mechanicID, String serviceType, ArrayList<AutoPart> replacedParts, double serviceCost, String notes) {
+        this.serviceID = setServiceID();
+        this.serviceDate = setServiceDate();
+        this.clientID = clientID;
+        this.mechanicID = mechanicID;
+        this.serviceType = serviceType;
+        this.replacedParts = replacedParts;
+        this.serviceCost = serviceCost;
+        this.notes = notes;
     }
 
-    public Service(int service_ID, Date service_date, int client_ID, int mechanic_ID, String service_type, AutoPart[] replaced_parts, long service_cost, String additional_note) {
-        this.service_ID = service_ID;
-        this.service_date = service_date;
-        this.client_ID = client_ID;
-        this.mechanic_ID = mechanic_ID;
-        this.service_type = service_type;
-        this.replaced_parts = replaced_parts;
-        this.service_cost = service_cost;
-        this.additional_note = additional_note;
+    private String setServiceID() {
+        int number = (int) (Math.random() * 10000);
+        return "s-" + number;
     }
 
-    public Date getService_date() {
-        return service_date;
+    public String getServiceID() {
+        return serviceID;
     }
 
-    public void setService_date(Date service_date) {
-        this.service_date = service_date;
+    public Date getServiceDate() {
+        return serviceDate;
     }
 
-    public int getService_ID() {
-        return service_ID;
+    public String getStringServiceDate() {
+        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        return df.format(serviceDate);
     }
 
-    public void setService_ID(int service_ID) {
-        this.service_ID = service_ID;
+    public Date setServiceDate() {
+        return new Date();
     }
 
-    public int getClient_ID() {
-        return client_ID;
+    public int getClientID() {
+        return clientID;
     }
 
-    public void setClient_ID(int client_ID) {
-        this.client_ID = client_ID;
+    public void setClientID(int clientID) {
+        this.clientID = clientID;
     }
 
-    public int getMechanic_ID() {
-        return mechanic_ID;
+    public int getMechanicID() {
+        return mechanicID;
     }
 
-    public void setMechanic_ID(int mechanic_ID) {
-        this.mechanic_ID = mechanic_ID;
+    public void setMechanicID(int mechanicID) {
+        this.mechanicID = mechanicID;
     }
 
-    public String getService_type() {
-        return service_type;
+    public String getServiceType() {
+        return serviceType;
     }
 
-    public void setService_type(String service_type) {
-        this.service_type = service_type;
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
     }
 
-    public AutoPart[] getReplaced_parts() {
-        return replaced_parts;
+    public ArrayList<AutoPart> getReplacedParts() {
+        return replacedParts;
     }
 
-    public void setReplaced_parts(AutoPart[] replaced_parts) {
-        this.replaced_parts = replaced_parts;
+    public void setReplacedParts(ArrayList<AutoPart> replacedParts) {
+        this.replacedParts = replacedParts;
     }
 
-    public long getService_cost() {
-        return service_cost;
+    public double getServiceCost() {
+        return serviceCost;
     }
 
-    public void setService_cost(long service_cost) {
-        this.service_cost = service_cost;
+    public void setServiceCost(double serviceCost) {
+        this.serviceCost = serviceCost;
     }
 
-    public String getAdditional_note() {
-        return additional_note;
+    public String getNotes() {
+        return notes;
     }
 
-    public void setAdditional_note(String additional_note) {
-        this.additional_note = additional_note;
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     @Override
     public String toString() {
         return "Service{" +
-                "service_ID=" + service_ID +
-                ", service_date=" + service_date +
-                ", client_ID=" + client_ID +
-                ", mechanic_ID=" + mechanic_ID +
-                ", service_type='" + service_type + '\'' +
-                ", replaced_parts=" + Arrays.toString(replaced_parts) +
-                ", service_cost=" + service_cost +
-                ", additional_note='" + additional_note + '\'' +
+                "serviceID='" + serviceID + '\'' +
+                ", serviceDate=" + serviceDate +
+                ", clientID=" + clientID +
+                ", mechanicID=" + mechanicID +
+                ", serviceType='" + serviceType + '\'' +
+                ", replacedParts=" + replacedParts +
+                ", serviceCost=" + serviceCost +
+                ", notes='" + notes + '\'' +
                 '}';
     }
 }

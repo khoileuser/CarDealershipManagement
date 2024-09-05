@@ -1,41 +1,30 @@
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Date;
 
 public class Car {
     //Atriibute
-    private String Car_ID;
-    private String Make;
-    private String Model;
-    private Date Year;
-    private int Mileage;
-    private String Color;
-    private Boolean Status;
-    private int Price;
-    private String Additional_notes;
+    private String carID;
+    private String make;
+    private String model;
+    private int year;
+    private double mileage;
+    private String color;
+    private Boolean status;
+    private double price;
+    private ArrayList<Service> historyServices;
+    private String notes;
 
-    public Car(){
-        this.Car_ID = null;
-        this.Make = null;
-        this.Model = null;
-        this.Year = null;
-        this.Mileage = 0;
-        this.Color = null;
-        this.Status = true;
-        this.Price = 0;
-        this.Additional_notes = null;
-    }
-
-    public Car (String Make, String Model, Date Year, int Mileage, String Color,
-                Boolean Status, int Price, String Additional_notes) {
-        this.Car_ID = generateCarID();
-        this.Make = Make;
-        this.Model = Model;
-        this.Year = Year;
-        this.Mileage = Mileage;
-        this.Color = Color;
-        this.Status = Status;
-        this.Price = Price;
-        this.Additional_notes = Additional_notes;
+    public Car (String make, String model, int year, int mileage, String color,
+                Boolean status, int price, String notes) {
+        this.carID = generateCarID();
+        this.make = make;
+        this.model = model;
+        this.year = year;
+        this.mileage = mileage;
+        this.color = color;
+        this.status = status;
+        this.price = price;
+        this.notes = notes;
     }
 
     // Generate a unique car ID (c-number format)
@@ -46,91 +35,97 @@ public class Car {
 
     //Getters and Setters'
 
-    public String getCar_ID() {
-        return Car_ID;
+    public String getCarID() {
+        return carID;
     }
 
     public String getMake() {
-        return Make;
+        return make;
     }
 
     public void setMake(String make) {
-        Make = make;
+        this.make = make;
     }
 
     public String getModel() {
-        return Model;
+        return model;
     }
 
     public void setModel(String model) {
-        Model = model;
+        this.model = model;
     }
 
-    public Date getYear() {
-        return Year;
+    public int getYear() {
+        return year;
     }
 
-    public void setYear(Date year) {
-        Year = year;
+    public void setYear(int year) {
+        this.year = year;
     }
 
-
-    public int getMileage() {
-        return Mileage;
+    public double getMileage() {
+        return mileage;
     }
 
-    public void setMileage(int mileage) {
-        Mileage = mileage;
+    public void setMileage(double mileage) {
+        this.mileage = mileage;
     }
 
     public String getColor() {
-        return Color;
+        return color;
     }
 
     public void setColor(String color) {
-        Color = color;
+        this.color = color;
     }
 
     public Boolean getStatus() {
-        return Status;
+        return status;
     }
 
     public void setStatus(Boolean status) {
-        Status = status;
+        this.status = status;
     }
 
-    public int getPrice() {
-        return Price;
+    public double getPrice() {
+        return price;
     }
 
-    public void setPrice(int price) {
-        Price = price;
+    public void setPrice(double price) {
+        this.price = price;
     }
 
-    public String getAdditional_notes() {
-        return Additional_notes;
+    public ArrayList<Service> getHistoryServices() {
+        return historyServices;
     }
 
-    public void setAdditional_notes(String additional_notes) {
-        Additional_notes = additional_notes;
+    public void setHistoryServices(ArrayList<Service> historyServices) {
+        this.historyServices = historyServices;
     }
 
-    // toString method to display part information
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     @Override
     public String toString() {
         return "Car{" +
-                "Car_ID='" + Car_ID + '\'' +
-                ", Make='" + Make + '\'' +
-                ", Model='" + Model + '\'' +
-                ", Year='" + Year + '\'' +
-                ", Mileage='" + Mileage + '\'' +
-                ", Color='" + Color + '\'' +
-                ", Status=" + Status +
-                ", Price=" + Price +
-                ", Additional_notes='" + Additional_notes + '\'' +
+                "carID='" + carID + '\'' +
+                ", make='" + make + '\'' +
+                ", model='" + model + '\'' +
+                ", year=" + year +
+                ", mileage=" + mileage +
+                ", color='" + color + '\'' +
+                ", status=" + status +
+                ", price=" + price +
+                ", historyServices=" + historyServices +
+                ", notes='" + notes + '\'' +
                 '}';
     }
-
 }
 
 
