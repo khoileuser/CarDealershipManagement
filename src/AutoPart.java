@@ -1,4 +1,4 @@
-public class AutoPart {
+public class AutoPart extends Item {
     // Attributes
     private final String partID;
     private String partName;

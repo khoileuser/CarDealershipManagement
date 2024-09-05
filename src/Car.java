@@ -1,9 +1,9 @@
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Car {
-    //Atriibute
-    private String carID;
+public class Car extends Item {
+    // Attributes
+    private final String carID;
     private String make;
     private String model;
     private int year;
