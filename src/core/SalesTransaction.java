@@ -1,6 +1,10 @@
+package core;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+
+import utils.Discount;
 
 public class SalesTransaction {
     private String transactionID;
@@ -9,17 +13,17 @@ public class SalesTransaction {
     private String salespersonID;
     private ArrayList<Item> items;
     private Discount discount;
-    private double total;
+    private double totalAmount;
     private String notes;
 
-    public SalesTransaction(String transactionID, String clientID, String salespersonID, ArrayList<Item> items, Discount discount, double total, String notes) {
+    public SalesTransaction(String transactionID, String clientID, String salespersonID, ArrayList<Item> items, Discount discount, double totalAmount, String notes) {
         this.transactionID = transactionID;
         this.transactionDate = setTransactionDate();
         this.clientID = clientID;
         this.salespersonID = salespersonID;
         this.items = items;
         this.discount = discount;
-        this.total = total;
+        this.totalAmount = totalAmount;
         this.notes = notes;
     }
 
@@ -76,12 +80,12 @@ public class SalesTransaction {
         this.discount = discount;
     }
 
-    public double getTotal() {
-        return total;
+    public double getTotalAmount() {
+        return totalAmount;
     }
 
-    public void setTotal(double total) {
-        this.total = total;
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public String getNotes() {
@@ -103,7 +107,7 @@ public class SalesTransaction {
                 ", salespersonID='" + salespersonID + '\'' +
                 ", items=" + items +
                 ", discount=" + discount +
-                ", total=" + total +
+                ", totalAmount=" + totalAmount +
                 ", notes='" + notes + '\'' +
                 '}';
     }

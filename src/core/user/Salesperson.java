@@ -1,4 +1,4 @@
-package user;
+package core.user;
 
 public class Salesperson extends Employee {
 

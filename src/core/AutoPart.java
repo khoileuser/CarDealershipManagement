@@ -1,3 +1,5 @@
+package core;
+
 public class AutoPart extends Item {
     // Attributes
     private String partID;

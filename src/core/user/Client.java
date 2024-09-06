@@ -1,7 +1,8 @@
-package user;
+package core.user;
+import utils.Membership;
 
 public class Client extends User {
-    private Membership membershipType;
+    private final Membership membershipType;
     private double totalSpending;
 
     public Client(String userID, String fullName, String dateOfBirth, String address, String phoneNumber, String email, String password, Membership membershipType, double totalSpending) throws Exception {

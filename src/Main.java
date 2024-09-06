@@ -12,26 +12,15 @@ public class Main {
 
     }
 
-    public static void login() {
-
-    }
-
-    public static void loadData() throws IOException, ClassNotFoundException {
-        File saveFile = new File("save.data");
-
-
-    }
-
     public static void welcomeScreen() {
-        System.out.println(
-                "COSC2081 GROUP ASSIGNMENT" +
-                        "AUTO168 CAR DEALERSHIP MANAGEMENT SYSTEM" +
-                        "Instructor: Mr. Minh Vu & Mr. Dung Nguyen" +
-                        "Group: Confuse Group" +
-                        "s3975162 Le Nguyen Khoi" +
-                        "s39 Tran Tuan Anh" +
-                        "s39 Nguyen Vu Duy" +
-                        "s39 Le Minh Tri"
+        System.out.println("COSC2081 GROUP ASSIGNMENT\n" +
+                        "AUTO168 CAR DEALERSHIP MANAGEMENT SYSTEM\n" +
+                        "Instructor: Mr. Minh Vu & Mr. Dung Nguyen\n" +
+                        "Group: Confuse Group\n" +
+                        "s3975162 Le Nguyen Khoi\n" +
+                        "s39 Tran Tuan Anh\n" +
+                        "s39 Nguyen Vu Duy\n" +
+                        "s39 Le Minh Tri\n"
         );
     }
 }

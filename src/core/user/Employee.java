@@ -1,4 +1,4 @@
-package user;
+package core.user;
 
 public abstract class Employee extends User {
     protected String jobPosition;

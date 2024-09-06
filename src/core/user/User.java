@@ -1,4 +1,4 @@
-package user;
+package core.user;
 
 import java.text.ParseException;
 import java.util.ArrayList;
