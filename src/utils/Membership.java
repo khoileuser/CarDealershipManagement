@@ -1,5 +1,7 @@
 package utils;
 
+import java.math.BigDecimal;
+
 public enum Membership {
     NONE(0),
     SILVER(5),
@@ -16,12 +18,12 @@ public enum Membership {
         return discountPercentage;
     }
 
-    public static Membership determineMembership(double totalSpending) {
-        if (totalSpending >= 250_000_000) {
+    public static Membership determineMembership(BigDecimal totalSpending) {
+        if (totalSpending.compareTo(new BigDecimal(250000000)) >= 0) {
             return PLATINUM;
-        } else if (totalSpending >= 100_000_000) {
+        } else if (totalSpending.compareTo(new BigDecimal(100000000)) >= 0) {
             return GOLD;
-        } else if (totalSpending >= 30_000_000) {
+        } else if (totalSpending.compareTo(new BigDecimal(30000000)) >= 0) {
             return SILVER;
         } else {
             return NONE;

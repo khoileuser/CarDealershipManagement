@@ -1,10 +1,18 @@
 package core;
 
+import core.items.AutoPart;
+
+import java.io.Serial;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.io.Serializable;
 
-public class Service {
+public class Service implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 11L;
+
     // Attribute
     private String serviceID;
     private final Date serviceDate;
@@ -12,18 +20,18 @@ public class Service {
     private String mechanicID;
     private String serviceType;
     private ArrayList<AutoPart> replacedParts;
-    private double serviceCost;
+    private BigDecimal serviceCost;
     private String notes;
 
-    public Service(String serviceID, String clientID, String mechanicID, String serviceType, ArrayList<AutoPart> replacedParts, double serviceCost, String notes) {
-        this.serviceID = serviceID;
+    public Service(String clientID, String mechanicID, String serviceType, BigDecimal serviceCost, String notes) {
         this.serviceDate = setServiceDate();
         this.clientID = clientID;
         this.mechanicID = mechanicID;
         this.serviceType = serviceType;
-        this.replacedParts = replacedParts;
         this.serviceCost = serviceCost;
         this.notes = notes;
+
+        this.replacedParts = new ArrayList<>();
     }
 
     public String getServiceID() {
@@ -77,11 +85,15 @@ public class Service {
         this.replacedParts = replacedParts;
     }
 
-    public double getServiceCost() {
+    public void addReplacedPart(AutoPart autoPart) {
+        this.replacedParts.add(autoPart);
+    }
+
+    public BigDecimal getServiceCost() {
         return serviceCost;
     }
 
-    public void setServiceCost(double serviceCost) {
+    public void setServiceCost(BigDecimal serviceCost) {
         this.serviceCost = serviceCost;
     }
 

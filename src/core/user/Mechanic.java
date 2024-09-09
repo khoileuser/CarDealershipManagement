@@ -1,13 +1,12 @@
 package core.user;
 
+import java.io.Serial;
+
 public class Mechanic extends Employee {
+    @Serial
+    private static final long serialVersionUID = 8L;
 
-    public Mechanic(String userID, String fullName, String dateOfBirth, String address, String phoneNumber, String email, String password) throws Exception {
-        super(userID, fullName, dateOfBirth, address, phoneNumber, email, password, "Mechanic", UserType.MECHANIC);
-    }
-
-    @Override
-    public void performWork() {
-        System.out.println("Handling vehicle services...");
+    public Mechanic(String fullName, String dateOfBirth, String address, String phoneNumber, String email, String username, String password) throws Exception {
+        super(fullName, dateOfBirth, address, phoneNumber, email, UserType.MECHANIC, username, password);
     }
 }

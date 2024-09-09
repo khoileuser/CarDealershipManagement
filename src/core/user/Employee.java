@@ -1,17 +1,30 @@
 package core.user;
 
-public abstract class Employee extends User {
-    protected String jobPosition;
+import java.io.Serial;
 
-    public Employee(String userID, String fullName, String dateOfBirth, String address, String phoneNumber, String email, String password, String jobPosition, UserType userType) throws Exception {
-        super(userID, fullName, dateOfBirth, address, phoneNumber, email, password, userType);
-        this.jobPosition = jobPosition;
+public abstract class Employee extends User {
+    @Serial
+    private static final long serialVersionUID = 6L;
+
+    protected String username;
+    protected String password;
+
+    public Employee(String fullName, String dateOfBirth, String address, String phoneNumber, String email, UserType userType, String username, String password) throws Exception {
+        super(fullName, dateOfBirth, address, phoneNumber, email, userType);
+        this.username = username;
+        this.password = password;
     }
 
     @Override
     public void viewProfile() {
-        System.out.println("Employee Profile: " + fullName + " - Position: " + jobPosition);
+        System.out.println("Employee Profile: " + fullName + " - Position: " + userType);
     }
 
-    public abstract void performWork();
+    @Override
+    public boolean authenticate(String username, String password) {
+        if (username.equals(this.username)) {
+            return password.equals(this.password);
+        }
+        return false;
+    }
 }

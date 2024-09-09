@@ -1,23 +1,27 @@
 package core.user;
 
+import java.io.Serial;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.io.Serializable;
 
-public abstract class User {
+public abstract class User implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 4L;
+
     protected String userID;
     protected String fullName;
     protected final Date dateOfBirth;
     protected String address;
     protected String phoneNumber;
     protected String email;
-    protected String password;
     protected UserType userType;
     protected boolean status;
     protected ArrayList<String> activityLog;
 
-    public User(String userID, String fullName, String dateOfBirth, String address, String phoneNumber, String email, String password, UserType userType) throws Exception {
+    public User(String fullName, String dateOfBirth, String address, String phoneNumber, String email, UserType userType) throws Exception {
         Date dob = null;
         try {
             dob = setDateOfBirth(dateOfBirth);
@@ -25,13 +29,11 @@ public abstract class User {
             throw new Exception(e.getMessage());
         }
 
-        this.userID = userID;
         this.fullName = fullName;
         this.dateOfBirth = dob;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.email = email;
-        this.password = password;
         this.userType = userType;
         this.status = true;
     }
@@ -96,11 +98,6 @@ public abstract class User {
         this.email = email;
     }
 
-//    only has set password for security
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public UserType getUserType() {
         return userType;
     }
@@ -114,7 +111,9 @@ public abstract class User {
     public void deactivateUser() { this.status = false; }
     public void reactivateUser() { this.status = true; }
 
-    public void viewProfile() {};
+    public abstract void viewProfile();
+
+    public abstract boolean authenticate(String username, String password);
 
     @Override
     public String toString() {

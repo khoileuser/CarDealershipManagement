@@ -1,8 +1,15 @@
-package core;
+package core.items;
 
+import core.Service;
+
+import java.io.Serial;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class Car extends Item {
+    @Serial
+    private static final long serialVersionUID = 3L;
+
     // Attributes
     private String carID;
     private String make;
@@ -11,13 +18,12 @@ public class Car extends Item {
     private double mileage;
     private String color;
     private String status;
-    private double price;
-    private ArrayList<Service> historyServices;
+    private BigDecimal price;
+    private ArrayList<Service> servicesHistory;
     private String notes;
 
-    public Car (String carID, String make, String model, int year, int mileage, String color,
-                String status, int price, String notes) {
-        this.carID = carID;
+    public Car(String make, String model, int year, double mileage, String color,
+                String status, BigDecimal price, String notes) {
         this.make = make;
         this.model = model;
         this.year = year;
@@ -26,15 +32,15 @@ public class Car extends Item {
         this.status = status;
         this.price = price;
         this.notes = notes;
+        this.servicesHistory = new ArrayList<>();
     }
 
     //Getters and Setters'
-
     public String getCarID() {
         return carID;
     }
 
-    public void getCarID(String carID) {
+    public void setCarID(String carID) {
         this.carID = carID;
     }
 
@@ -86,20 +92,25 @@ public class Car extends Item {
         this.status = status;
     }
 
-    public double getPrice() {
+    @Override
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public ArrayList<Service> getHistoryServices() {
-        return historyServices;
+    public ArrayList<Service> getServicesHistory() {
+        return servicesHistory;
     }
 
-    public void setHistoryServices(ArrayList<Service> historyServices) {
-        this.historyServices = historyServices;
+    public void setServicesHistory(ArrayList<Service> historyServices) {
+        this.servicesHistory = historyServices;
+    }
+
+    public void addService(Service service) {
+        this.servicesHistory.add(service);
     }
 
     public String getNotes() {
@@ -121,7 +132,7 @@ public class Car extends Item {
                 ", color='" + color + '\'' +
                 ", status=" + status +
                 ", price=" + price +
-                ", historyServices=" + historyServices +
+                ", servicesHistory=" + servicesHistory +
                 ", notes='" + notes + '\'' +
                 '}';
     }

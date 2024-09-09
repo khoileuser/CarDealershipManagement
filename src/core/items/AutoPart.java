@@ -1,6 +1,12 @@
-package core;
+package core.items;
+
+import java.io.Serial;
+import java.math.BigDecimal;
 
 public class AutoPart extends Item {
+    @Serial
+    private static final long serialVersionUID = 2L;
+
     // Attributes
     private String partID;
     private String partName;
@@ -8,12 +14,11 @@ public class AutoPart extends Item {
     private String partNumber;
     private String condition; // new, used, refurbished
     private String warranty;
-    private double cost;
+    private BigDecimal cost;
     private String notes;
 
     // Constructor
-    public AutoPart(String partID, String partName, String manufacturer, String partNumber, String condition, String warranty, double cost, String notes) {
-        this.partID = partID;
+    public AutoPart(String partName, String manufacturer, String partNumber, String condition, String warranty, BigDecimal cost, String notes) {
         this.partName = partName;
         this.manufacturer = manufacturer;
         this.partNumber = partNumber;
@@ -70,11 +75,14 @@ public class AutoPart extends Item {
         this.warranty = warranty;
     }
 
-    public double getCost() {
+    public BigDecimal getCost() {
         return cost;
     }
 
-    public void setCost(double cost) {
+    @Override
+    public BigDecimal getPrice() {return cost;}
+
+    public void setCost(BigDecimal cost) {
         this.cost = cost;
     }
 

@@ -1,14 +1,20 @@
 package core.user;
 import utils.Membership;
 
-public class Client extends User {
-    private final Membership membershipType;
-    private double totalSpending;
+import java.io.Serial;
+import java.math.BigDecimal;
 
-    public Client(String userID, String fullName, String dateOfBirth, String address, String phoneNumber, String email, String password, Membership membershipType, double totalSpending) throws Exception {
-        super(userID, fullName, dateOfBirth, address, phoneNumber, email, password, UserType.CLIENT);
-        this.membershipType = membershipType;
-        this.totalSpending = totalSpending;
+public class Client extends User {
+    @Serial
+    private static final long serialVersionUID = 5L;
+
+    private final Membership membershipType;
+    private final BigDecimal totalSpending;
+
+    public Client(String fullName, String dateOfBirth, String address, String phoneNumber, String email) throws Exception {
+        super(fullName, dateOfBirth, address, phoneNumber, email, UserType.CLIENT);
+        this.membershipType = Membership.NONE;
+        this.totalSpending = BigDecimal.valueOf(0);
     }
 
     @Override
@@ -16,6 +22,24 @@ public class Client extends User {
         System.out.println("Client Profile: " + fullName + " - Membership: " + membershipType);
     }
 
+    @Override
+    public boolean authenticate(String username, String password) {
+        return false;
+    }
+
     public void updateMembership() {
+//        this.membershipType = Membership.determineMembership(this.totalSpending);
+    }
+
+    public void addTotalSpending() {
+
+    }
+
+    public void editTotalSpending() {
+
+    }
+
+    public BigDecimal getTotalSpending() {
+        return totalSpending;
     }
 }
