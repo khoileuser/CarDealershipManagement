@@ -262,16 +262,20 @@ public class Dealership {
         }
 
         System.out.print("Enter make: ");
-        String make = scanner.nextLine();
+        String make = getNextLine();
+
         System.out.print("Enter model: ");
-        String model = scanner.nextLine();
+        String model = getNextLine();
+
         System.out.print("Enter year: ");
         int year = getNextInt();
+
         System.out.print("Enter mileage: ");
         double mileage = getNextDouble();
-        scanner.nextLine();
+
         System.out.print("Enter color: ");
-        String color = scanner.nextLine();
+        String color = getNextLine();
+
         System.out.print("Enter price: ");
         BigDecimal price = getNextBigDecimal();
 
@@ -391,78 +395,27 @@ public class Dealership {
 
         System.out.println("\nCurrent make: " + car.getMake());
         System.out.print("Enter new make (enter to leave the same): ");
-        String make = scanner.nextLine();
-        if (make.isEmpty()) {
-            make = car.getMake();
-        }
+        String make = getNextLineEmpty(car.getMake());
 
         System.out.println("\nCurrent model: " + car.getModel());
         System.out.print("Enter new model (enter to leave the same): ");
-        String model = scanner.nextLine();
-        if (model.isEmpty()) {
-            model = car.getModel();
-        }
+        String model = getNextLineEmpty(car.getModel());
 
-        int year;
-        while (true) {
-            System.out.println("\nCurrent year: " + car.getYear());
-            System.out.print("Enter new year (enter to leave the same): ");
-            String yearInput = scanner.nextLine();
-            if (yearInput.isEmpty()) {
-                year = car.getYear();
-                break;
-            } else {
-                try {
-                    year = Integer.parseInt(yearInput);
-                    break;
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a valid year or leave it empty.");
-                }
-            }
-        }
+        System.out.println("\nCurrent year: " + car.getYear());
+        System.out.print("Enter new year (enter to leave the same): ");
+        int year = getNextIntEmpty(car.getYear());
 
-        double mileage;
-        while (true) {
-            System.out.println("\nCurrent mileage: " + car.getMileage());
-            System.out.print("Enter new mileage (enter to leave the same): ");
-            String mileageInput = scanner.nextLine();
-            if (mileageInput.isEmpty()) {
-                mileage = car.getMileage();
-                break;
-            } else {
-                try {
-                    mileage = Double.parseDouble(mileageInput);
-                    break;
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a valid mileage or leave it empty.");
-                }
-            }
-        }
+        System.out.println("\nCurrent mileage: " + car.getMileage());
+        System.out.print("Enter new mileage (enter to leave the same): ");
+        double mileage = getNextDoubleEmpty(car.getMileage());
 
         System.out.println("\nCurrent color: " + car.getColor());
         System.out.print("Enter new color (enter to leave the same): ");
-        String color = scanner.nextLine();
-        if (color.isEmpty()) {
-            color = car.getColor();
-        }
+        String color = getNextLineEmpty(car.getColor());
 
-        BigDecimal price;
-        while (true) {
-            System.out.println("\nCurrent price: " + car.getPrice());
-            System.out.print("Enter new price (enter to leave the same): ");
-            String priceInput = scanner.nextLine();
-            if (priceInput.isEmpty()) {
-                price = car.getPrice();
-                break;
-            } else {
-                try {
-                    price = BigDecimal.valueOf(Double.parseDouble(priceInput));
-                    break;
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a valid price or leave it empty.");
-                }
-            }
-        }
+        System.out.println("\nCurrent price: " + car.getPrice());
+        System.out.print("Enter new price (enter to leave the same): ");
+        BigDecimal price = getNextBigDecimalEmpty(car.getPrice());
 
         System.out.println("\nCurrent status: " + car.getStatus());
         System.out.println("1. Available");
@@ -484,13 +437,7 @@ public class Dealership {
 
         System.out.println("\nCurrent notes: " + car.getNotes());
         System.out.print("Enter new notes (enter to leave the same): ");
-        String notes = "";
-        if (scanner.hasNextLine()) {
-            notes = scanner.nextLine();
-        }
-        if (notes.isEmpty()) {
-            notes = car.getNotes();
-        }
+        String notes = getNextLineEmpty(car.getNotes());
 
         if (!car.getServicesHistory().isEmpty()) {
             System.out.println("\nCurrent services history: ");
@@ -626,7 +573,7 @@ public class Dealership {
 
             switch (choice) {
                 case 1:
-                    System.out.println("add auto part");
+                    addPart();
                     break;
                 case 2:
                     System.out.println("List all auto part then select auto part");
@@ -650,14 +597,48 @@ public class Dealership {
     }
 
     private void addPart() {
-        System.out.print("Enter Part ID: ");
-        String partId = scanner.nextLine();
-        System.out.print("Enter Part Name: ");
+        if (scanner.hasNextLine()) {
+            scanner.nextLine(); // consume any leftover newline character
+        }
+
+        System.out.print("Enter part name: ");
         String partName = scanner.nextLine();
-        // Gather other part details
-//        AutoPart part = new AutoPart(partId, partName, /* other details */);
-//        autoPartInterface.addPart(part);
-        System.out.println("Part added successfully.");
+
+        System.out.print("Enter manufacturer: ");
+        String manufacturer = scanner.nextLine();
+
+        System.out.print("Enter part: ");
+        int year = getNextInt();
+
+        System.out.print("Enter mileage: ");
+        double mileage = getNextDouble();
+
+        System.out.print("Enter color: ");
+        String color = scanner.nextLine();
+
+        System.out.print("Enter price: ");
+        BigDecimal price = getNextBigDecimal();
+
+        System.out.println("1. Available");
+        System.out.println("2. Sold");
+        System.out.print("Choose status: ");
+        String status; int choice;
+        choice = getNextInt();
+        scanner.nextLine();
+        status = switch (choice) {
+            case 1 -> "available";
+            case 2 -> "sold";
+            default -> {
+                System.out.println("Invalid, set default to available");
+                yield "available";
+            }
+        };
+
+        System.out.print("Enter notes: ");
+        String notes = scanner.nextLine();
+
+//        AutoPart autoPart = new AutoPart(make, model, year, mileage, color, status, price, notes);
+//        autoPartInterface.addAutoPart(autoPart);
     }
 
     private void showServiceMenu() {
@@ -867,12 +848,27 @@ public class Dealership {
         // Implement statistics methods like revenue calculation, etc.
     }
 
+    private String getNextLine() {
+        while (true) {
+            String input = scanner.nextLine();
+            if (input.isEmpty()) {
+                System.out.print("Field cannot be empty. Please try again: ");
+                continue;
+            }
+            return input;
+        }
+    }
+
     private int getNextInt() {
         while (true) {
+            String stringInput = scanner.nextLine();
+            if (stringInput.isEmpty()) {
+                System.out.print("Field cannot be empty. Please try again: ");
+                continue;
+            }
             try {
-                return scanner.nextInt();
-            } catch (InputMismatchException e) {
-                scanner.next(); // consume the invalid token
+                return Integer.parseInt(stringInput);
+            } catch (NumberFormatException e) {
                 System.out.print("Invalid input. Please enter an integer: ");
             }
         }
@@ -880,10 +876,14 @@ public class Dealership {
 
     private double getNextDouble() {
         while (true) {
+            String stringInput = scanner.nextLine();
+            if (stringInput.isEmpty()) {
+                System.out.print("Field cannot be empty. Please try again: ");
+                continue;
+            }
             try {
-                return scanner.nextDouble();
-            } catch (InputMismatchException e) {
-                scanner.next(); // consume the invalid token
+                return Double.parseDouble(stringInput);
+            } catch (NumberFormatException e) {
                 System.out.print("Invalid input. Please enter a double: ");
             }
         }
@@ -891,11 +891,68 @@ public class Dealership {
 
     private BigDecimal getNextBigDecimal() {
         while (true) {
+            String stringInput = scanner.nextLine();
+            if (stringInput.isEmpty()) {
+                System.out.print("Field cannot be empty. Please try again: ");
+                continue;
+            }
             try {
-                return scanner.nextBigDecimal();
-            } catch (InputMismatchException e) {
-                scanner.next(); // consume the invalid token
-                System.out.print("Invalid input. Please enter a BigDecimal: ");
+                return BigDecimal.valueOf(Double.parseDouble(stringInput));
+            } catch (NumberFormatException e) {
+                System.out.print("Invalid input. Please enter a decimal: ");
+            }
+        }
+    }
+
+    private String getNextLineEmpty(String defaultValue) {
+        String input = scanner.nextLine();
+        if (input.isEmpty()) {
+            return defaultValue;
+        }
+        return input;
+    }
+
+    private int getNextIntEmpty(int defaultValue) {
+        while (true) {
+            String stringInput = scanner.nextLine();
+            if (stringInput.isEmpty()) {
+                return defaultValue;
+            } else {
+                try {
+                    return Integer.parseInt(stringInput);
+                } catch (NumberFormatException e) {
+                    System.out.print("Invalid input. Please enter a valid integer or leave it empty: ");
+                }
+            }
+        }
+    }
+
+    private double getNextDoubleEmpty(double defaultValue) {
+        while (true) {
+            String stringInput = scanner.nextLine();
+            if (stringInput.isEmpty()) {
+                return defaultValue;
+            } else {
+                try {
+                    return Double.parseDouble(stringInput);
+                } catch (NumberFormatException e) {
+                    System.out.print("Invalid input. Please enter a valid double or leave it empty: ");
+                }
+            }
+        }
+    }
+
+    private BigDecimal getNextBigDecimalEmpty(BigDecimal defaultValue) {
+        while (true) {
+            String stringInput = scanner.nextLine();
+            if (stringInput.isEmpty()) {
+                return defaultValue;
+            } else {
+                try {
+                    return BigDecimal.valueOf(Double.parseDouble(stringInput));
+                } catch (NumberFormatException e) {
+                    System.out.print("Invalid input. Please enter a valid decimal or leave it empty: ");
+                }
             }
         }
     }
