@@ -1,28 +1,54 @@
 package utils;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
+import core.items.AutoPart;
 import core.items.Car;
 import core.Transaction;
 import core.Service;
 
+import core.items.Item;
 import core.user.Mechanic;
 import core.user.Salesperson;
 
 public class Statistics {
-    public static int countCars(ArrayList<Car> cars, ArrayList<Transaction> transactions, String date, SimpleDateFormat df) throws ParseException {
+
+    public static SimpleDateFormat determineRange(String date) throws ParseException {
+        SimpleDateFormat dayFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MM/yyyy");
+        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
+
+        try {
+            dayFormat.parse(date);
+            return dayFormat;
+        } catch (ParseException e) {
+            try {
+                monthFormat.parse(date);
+                return monthFormat;
+            } catch (ParseException d) {
+                try {
+                    yearFormat.parse(date);
+                    return yearFormat;
+                } catch (ParseException f) {
+                    throw new ParseException("Invalid date.", 0);
+                }
+            }
+        }
+    }
+
+    public static int countSoldCarsInPeriod(ArrayList<Transaction> transactions, Date dt) {
         int soldCars = 0;
-        Date dt = df.parse(date);
-        for (Car car : cars) {
-            if ("sold".equalsIgnoreCase(car.getStatus())) {
-                for (Transaction transaction : transactions) {
-                    if (transaction.getItems().contains(car)) {
-                        if (transaction.getTransactionDate().compareTo(dt) == 0) {
-                            soldCars++;
-                        }
+        for (Transaction transaction : transactions) {
+            if (transaction.getTransactionDate().compareTo(dt) == 0) {
+                for (Item i : transaction.getItems()) {
+                    if (i instanceof Car) {
+                        soldCars++;
                     }
                 }
             }
@@ -30,61 +56,42 @@ public class Statistics {
         return soldCars;
     }
 
-    public static int countSoldCars(ArrayList<Car> cars, ArrayList<Transaction> transactions, String range, String date) throws ParseException {
-        if (range.equals("day")) {
-            SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-            return countCars(cars, transactions, date, df);
+    public static BigDecimal totalRevenueInPeriod(ArrayList<Service> services, ArrayList<Transaction> transactions, Date dt) throws ParseException {
+        BigDecimal revenue = BigDecimal.valueOf(0);
+        for (Transaction transaction : transactions) {
+            if (transaction.getTransactionDate().compareTo(dt) == 0) {
+                revenue = revenue.add(transaction.getTotalAmount());
+            }
         }
-        else if (range.equals("month")) {
-            SimpleDateFormat df = new SimpleDateFormat("MM/yyyy");
-            return countCars(cars, transactions, date, df);
+        for (Service service : services) {
+            if (service.getServiceDate().compareTo(dt) == 0) {
+                revenue = revenue.add(service.getServiceCost());
+            }
         }
-        else if (range.equals("year")) {
-            SimpleDateFormat df = new SimpleDateFormat("yyyy");
-            return countCars(cars, transactions, date, df);
-        }
-        return 0;
+        return revenue;
     }
 
-    public static int countSoldCars(ArrayList<Car> cars, ArrayList<Transaction> transactions, Salesperson salesperson) throws ParseException {
-        int soldCars = 0;
-        for (Car car : cars) {
-            if ("sold".equalsIgnoreCase(car.getStatus())) {
-                for (Transaction transaction : transactions) {
-                    if (transaction.getItems().contains(car)) {
-                        if (transaction.getSalespersonID().equals(salesperson.getUserID())) {
-                            soldCars++;
-                        }
+    public static BigDecimal revenueServiceByMechanic(ArrayList<Service> services, Mechanic mechanic) {
+        BigDecimal serviceRevenue = BigDecimal.valueOf(0);
+        for (Service service : services) {
+            if (service.getMechanicID().equals(mechanic.getUserID())) {
+                serviceRevenue = serviceRevenue.add(service.getServiceCost());
+            }
+        }
+        return serviceRevenue;
+    }
+
+    public static BigDecimal revenueCarsBySalesperson(ArrayList<Transaction> transactions, Salesperson salesperson) {
+        BigDecimal carRevenue = BigDecimal.valueOf(0);
+        for (Transaction transaction : transactions) {
+            if (transaction.getSalespersonID().equals(salesperson.getUserID())) {
+                for (Item i : transaction.getItems()) {
+                    if (i instanceof Car) {
+                        carRevenue = carRevenue.add(i.getPrice());
                     }
                 }
             }
         }
-        return soldCars;
+        return carRevenue;
     }
-
-//    public static double calculateRevenue(ArrayList<Transaction> transactions, ArrayList<Service> services) {
-//        double totalRevenue = 0;
-//        for (Transaction transaction : transactions) {
-//            totalRevenue += transaction.getTotalAmount();
-//        }
-//        return totalRevenue;
-//    }
-//
-//    public static double calculateServiceRevenue(ArrayList<Service> services, Mechanic mechanic) {
-//        double serviceRevenue = 0;
-//        for (Service service : services) {
-//            if (service.getMechanicID().equals(mechanic.getUserID())) {
-//                serviceRevenue += service.getServiceCost();
-//            }
-//        }
-//        return serviceRevenue;
-//    }
-//
-//    public static double calculateServiceRevenue(ArrayList<Service> services) {
-//        double serviceRevenue = 0;
-//        for (Service service : services) {
-//            serviceRevenue += service.getServiceCost();
-//        }
-//        return serviceRevenue;
-//    }
 }

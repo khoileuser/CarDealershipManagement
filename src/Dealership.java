@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.function.Function;
@@ -13,6 +14,7 @@ import operations.*;
 
 import utils.FileHandler;
 import utils.Authentication;
+import utils.Statistics;
 
 public class Dealership {
     private final String name;
@@ -43,9 +45,6 @@ public class Dealership {
 
     // Main method to start the system
     public void start() throws Exception {
-
-//        saveData();
-
         System.out.println(userInterface.getAllUsers());
         System.out.println(carInterface.getAllCars());
         System.out.println(autoPartInterface.getAllAutoParts());
@@ -102,6 +101,7 @@ public class Dealership {
             System.out.print("Enter choice: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -148,6 +148,7 @@ public class Dealership {
             System.out.print("Enter choice: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -182,6 +183,7 @@ public class Dealership {
             System.out.print("Enter choice: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -219,6 +221,7 @@ public class Dealership {
             System.out.print("Enter choice: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -254,10 +257,6 @@ public class Dealership {
     }
 
     private void addCar() {
-        if (scanner.hasNextLine()) {
-            scanner.nextLine(); // consume any leftover newline character
-        }
-
         System.out.print("Enter make: ");
         String make = getNextLine();
 
@@ -334,6 +333,7 @@ public class Dealership {
             System.out.print("Enter choice: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -377,10 +377,6 @@ public class Dealership {
     }
 
     private Car updateCarMenu(Car car) {
-        if (scanner.hasNextLine()) {
-            scanner.nextLine(); // consume any leftover newline character
-        }
-
         String make = car.getMake();
         System.out.println("\nCurrent make: " + make);
         System.out.print("Enter new make (enter to leave the same): ");
@@ -467,6 +463,7 @@ public class Dealership {
             System.out.print("Enter choice: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -502,10 +499,6 @@ public class Dealership {
     }
 
     private void addPart() {
-        if (scanner.hasNextLine()) {
-            scanner.nextLine(); // consume any leftover newline character
-        }
-
         System.out.print("Enter part name: ");
         String partName = getNextLine();
 
@@ -552,6 +545,7 @@ public class Dealership {
             System.out.print("Enter choice: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -587,10 +581,6 @@ public class Dealership {
     }
 
     private AutoPart updatePartMenu(AutoPart part) {
-        if (scanner.hasNextLine()) {
-            scanner.nextLine(); // consume any leftover newline character
-        }
-
         String partName = part.getPartName();
         System.out.println("\nCurrent part name: " + partName);
         System.out.print("Enter new part name (enter to leave the same): ");
@@ -646,6 +636,7 @@ public class Dealership {
             System.out.print("Enter choice: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine();
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -681,10 +672,6 @@ public class Dealership {
     }
 
     private void addService() {
-        if (scanner.hasNextLine()) {
-            scanner.nextLine(); // consume any leftover newline character
-        }
-
         ArrayList<Mechanic> mechanics = userInterface.getAllMechanics();
         Mechanic mechanic = (Mechanic) selectChoiceOrSearchString(mechanics, "Mechanic");
 
@@ -726,6 +713,7 @@ public class Dealership {
             System.out.print("Enter choice: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -762,10 +750,6 @@ public class Dealership {
     }
 
     private Service updateServiceMenu(Service service) {
-        if (scanner.hasNextLine()) {
-            scanner.nextLine(); // consume any leftover newline character
-        }
-
         String serviceType = service.getServiceType();
         System.out.println("\nCurrent service type: " + serviceType);
         System.out.print("Enter new service type (enter to leave the same): ");
@@ -803,6 +787,7 @@ public class Dealership {
             System.out.print("Enter choice: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -838,10 +823,6 @@ public class Dealership {
     }
 
     private void addTransaction() {
-        if (scanner.hasNextLine()) {
-            scanner.nextLine(); // consume any leftover newline character
-        }
-
         ArrayList<Salesperson> salespersons = userInterface.getAllSalespersons();
         Salesperson salesperson = (Salesperson) selectChoiceOrSearchString(salespersons, "Salesperson");
 
@@ -877,6 +858,7 @@ public class Dealership {
             System.out.print("Enter choice: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -912,10 +894,6 @@ public class Dealership {
     }
 
     private Transaction updateTransactionMenu(Transaction transaction) {
-        if (scanner.hasNextLine()) {
-            scanner.nextLine(); // consume any leftover newline character
-        }
-
 //        edit items here
 
         String notes = transaction.getNotes();
@@ -943,6 +921,7 @@ public class Dealership {
             System.out.print("Enter choice: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -978,10 +957,6 @@ public class Dealership {
     }
 
     private void addUser() {
-        if (scanner.hasNextLine()) {
-            scanner.nextLine(); // consume any leftover newline character
-        }
-
         System.out.print("Enter full name: ");
         String fullName = getNextLine();
 
@@ -1018,6 +993,7 @@ public class Dealership {
             System.out.print("Choose user type: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -1090,6 +1066,7 @@ public class Dealership {
             System.out.print("Enter choice: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -1125,10 +1102,6 @@ public class Dealership {
     }
 
     private User updateUserMenu(User user) {
-        if (scanner.hasNextLine()) {
-            scanner.nextLine(); // consume any leftover newline character
-        }
-
         String fullName = user.getFullName();
         System.out.println("\nCurrent full name: " + fullName);
         System.out.print("Enter new full name (enter to leave the same): ");
@@ -1175,6 +1148,7 @@ public class Dealership {
             System.out.print("Choose new user type: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -1231,16 +1205,21 @@ public class Dealership {
 
     public void showManagerStatisticMenu() {
         int choice;
+        ArrayList<Service> services;
+        ArrayList<Transaction> transactions;
         do {
+            services = serviceInterface.getAllServices();
+            transactions = transactionInterface.getAllTransactions();
             System.out.println("\nStatistic Menu:");
-            System.out.println("1. Number of cars sold");
-            System.out.println("2. Revenue");
+            System.out.println("1. Number of cars sold in a period of time");
+            System.out.println("2. Total revenue in a period of time");
             System.out.println("3. Revenue of services done by a mechanic");
             System.out.println("4. Revenue of cars sold by a salesperson");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -1250,16 +1229,16 @@ public class Dealership {
 
             switch (choice) {
                 case 1:
-                    System.out.println("");
+                    countSoldCarsMenu(transactions);
                     break;
                 case 2:
-                    System.out.println("");
+                    totalRevenueMenu(services, transactions);
                     break;
                 case 3:
-                    System.out.println("");
+                    revenueServiceByMechanicMenu(services);
                     break;
                 case 4:
-                    System.out.println("");
+                    revenueTransactionBySalespersonMenu(transactions);
                     break;
                 case 0:
                     break;
@@ -1268,6 +1247,78 @@ public class Dealership {
                     break;
             }
         }  while (choice != 0);
+    }
+
+    public void explainDateInput() {
+        System.out.println("Day is in dd/MM/yyyy");
+        System.out.println("Month is in MM/yyyy");
+        System.out.println("Year is in yyyy");
+        System.out.println("0 to cancel");
+        System.out.print("Enter date: ");
+    }
+
+    public void countSoldCarsMenu(ArrayList<Transaction> transactions) {
+        Scanner scanner = new Scanner(System.in);
+        String input = "";
+        int choice;
+        do {
+            System.out.println("\nCount sold cars in a period of time:");
+            explainDateInput();
+            try {
+                input = scanner.nextLine();
+                choice = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                choice = -1;
+                try {
+                    SimpleDateFormat df = Statistics.determineRange(input);
+                    int soldCars = Statistics.countSoldCarsInPeriod(transactions, df.parse(input));
+                    System.out.println("\nThere are " + soldCars + " cars sold in " + input + ".");
+                    return;
+                } catch (ParseException d) {
+                    System.out.println("Invalid date. Please try again.");
+                }
+            }
+
+        }  while (choice != 0);
+    }
+
+    public void totalRevenueMenu(ArrayList<Service> services, ArrayList<Transaction> transactions) {
+        Scanner scanner = new Scanner(System.in);
+        String input = "";
+        int choice;
+        do {
+            System.out.println("\nTotal revenue in a period of time:");
+            explainDateInput();
+            try {
+                input = scanner.nextLine();
+                choice = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                choice = -1;
+                try {
+                    SimpleDateFormat df = Statistics.determineRange(input);
+                    BigDecimal revenue = Statistics.totalRevenueInPeriod(services, transactions, df.parse(input));
+                    System.out.println("\n" + name + " has a revenue of " + numParse(revenue) + " in " + input + " VND.");
+                    return;
+                } catch (ParseException d) {
+                    System.out.println("Invalid date. Please try again.");
+                }
+            }
+
+        }  while (choice != 0);
+    }
+
+    public void revenueServiceByMechanicMenu(ArrayList<Service> services) {
+        ArrayList<Mechanic> mechanics = userInterface.getAllMechanics();
+        Mechanic mechanic = (Mechanic) selectChoiceOrSearchString(mechanics, "Mechanic");
+        BigDecimal revenue = Statistics.revenueServiceByMechanic(services, mechanic);
+        System.out.println("\nMechanic " + mechanic.getFullName() + " has a services done revenue of " + numParse(revenue) + " VND.");
+    }
+
+    public void revenueTransactionBySalespersonMenu(ArrayList<Transaction> transactions) {
+        ArrayList<Salesperson> salespersons = userInterface.getAllSalespersons();
+        Salesperson salesperson = (Salesperson) selectChoiceOrSearchString(salespersons, "Salesperson");
+        BigDecimal revenue = Statistics.revenueCarsBySalesperson(transactions, salesperson);
+        System.out.println("\nSalesperson " + salesperson.getFullName() + " has a cars sold revenue of " + numParse(revenue) + " VND.");
     }
 
     public void showEmployeeStatisticMenu() {
@@ -1280,6 +1331,7 @@ public class Dealership {
             System.out.print("Enter choice: ");
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -1303,8 +1355,8 @@ public class Dealership {
         }  while (choice != 0);
     }
 
-    private void performStatistics() {
-        // Implement statistics methods like revenue calculation, etc.
+    public String numParse(BigDecimal num) {
+        return String.format("%,.0f", num);
     }
 
     public String updateEntityOperations(Entity entity) {
@@ -1323,10 +1375,6 @@ public class Dealership {
     }
 
     private void searchMenu(ArrayList<? extends Entity> items, Function<Entity, String> updateOperations) {
-        if (scanner.hasNextLine()) {
-            scanner.nextLine(); // consume any leftover newline character
-        }
-
         System.out.print("Enter search input: ");
         String searchInput = scanner.nextLine();
 
@@ -1335,7 +1383,7 @@ public class Dealership {
 
         for (Entity e : items) {
             String itemString = e.getSearchString();
-            if (itemString.toLowerCase().contains(searchInput)) {
+            if (itemString.toLowerCase().contains(searchInput.toLowerCase())) {
                 partMatch.add(e);
             }
             int distance = levenshteinDistance(searchInput, itemString);
@@ -1373,6 +1421,7 @@ public class Dealership {
 
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -1391,17 +1440,50 @@ public class Dealership {
         }  while (choice != 0);
     }
 
-    private Entity searchMenuReturn(String searchInput, ArrayList<? extends Entity> items) {
-        if (scanner.hasNextLine()) {
-            scanner.nextLine(); // consume any leftover newline character
-        }
+    public Entity selectChoiceOrSearchString(ArrayList<? extends Entity> items, String entity) {
+        String choiceString;
+        int choice;
+        boolean searchName;
+        while (true) {
+            System.out.println("\nSelect " + entity + ":");
+            int count = 1;
+            for (Entity e : items) {
+                System.out.println(count + ". " + e.getSearchString());
+                count += 1;
+            }
+            System.out.print("Enter " + entity + " (choice or search): ");
+            choiceString = scanner.nextLine();
+            try {
+                choice = Integer.parseInt(choiceString);
+                searchName = false;
+            } catch (NumberFormatException e) {
+                if (choiceString.isEmpty()) {
+                    System.out.println("Cannot be empty. Please try again.");
+                    continue;
+                }
+                searchName = true;
+                choice = -1;
+            }
 
+            if (searchName) {
+                return searchMenuReturn(choiceString, items);
+            } else {
+                if (choice > 0 && choice <= items.size()) {
+                    return items.get(choice - 1);
+                } else {
+                    System.out.println("Invalid option. Please try again.");
+                }
+            }
+        }
+    }
+
+    private Entity searchMenuReturn(String searchInput, ArrayList<? extends Entity> items) {
         ArrayList<Entity> highSim = new ArrayList<>();
         ArrayList<Entity> partMatch = new ArrayList<>();
 
         for (Entity e : items) {
             String itemString = e.getSearchString();
-            if (itemString.toLowerCase().contains(searchInput)) {
+            if (itemString.toLowerCase().contains(searchInput.toLowerCase())) {
                 partMatch.add(e);
             }
             int distance = levenshteinDistance(searchInput, itemString);
@@ -1426,42 +1508,6 @@ public class Dealership {
         }
     }
 
-    public Entity selectChoiceOrSearchString(ArrayList<? extends Entity> items, String entity) {
-        String choiceString;
-        int choice;
-        int count = 1;
-        boolean searchName;
-        do {
-            System.out.println("\nSelect " + entity + ":");
-            for (Entity e : items) {
-                System.out.println(count + ". " + e.getSearchString());
-                count += 1;
-            }
-            System.out.println("0. Back");
-            System.out.print("Enter " + entity + " (choice or search): ");
-            choiceString = scanner.nextLine();
-            try {
-                choice = Integer.parseInt(choiceString);
-                searchName = false;
-            } catch (NumberFormatException e) {
-                searchName = true;
-                choice = -1;
-            }
-
-            if (searchName) {
-                return searchMenuReturn(choiceString, items);
-            } else {
-                if (choice > 0 && choice <= items.size()) {
-                    return items.get(choice - 1);
-                } else if (choice == 0) {
-                } else {
-                    System.out.println("Invalid option. Please try again.");
-                }
-            }
-        }  while (choice != 0);
-        return null;
-    }
-
     public Entity listAndSelectReturn(ArrayList<? extends Entity> items, String message) {
         int choice;
         do {
@@ -1471,11 +1517,11 @@ public class Dealership {
                 System.out.println(count + ". " + e.getSearchString());
                 count += 1;
             }
-            System.out.println("0. Back");
             System.out.print("Select choice: ");
 
             try {
                 choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
@@ -1485,7 +1531,7 @@ public class Dealership {
 
             if (choice > 0 && choice <= items.size()) {
                 return items.get(choice - 1);
-            } else if (choice == 0) {} else {
+            } else {
                 System.out.println("Invalid option. Please try again.");
             }
         }  while (choice != 0);
