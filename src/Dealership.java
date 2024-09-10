@@ -3,6 +3,7 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.*;
 
@@ -161,7 +162,7 @@ public class Dealership {
                     showCarMenu();
                     break;
                 case 2:
-                    showEmployeeStatisticMenu();
+                    showSalespersonStatisticMenu();
                     break;
                 case 0:
                     System.out.println("Logging out...");
@@ -196,7 +197,7 @@ public class Dealership {
                     showServiceMenu();
                     break;
                 case 2:
-                    showManagerStatisticMenu();
+                    showMechanicStatisticMenu();
                     break;
                 case 0:
                     System.out.println("Logging out...");
@@ -1215,6 +1216,10 @@ public class Dealership {
             System.out.println("2. Total revenue in a period of time");
             System.out.println("3. Revenue of services done by a mechanic");
             System.out.println("4. Revenue of cars sold by a salesperson");
+            System.out.println("5. List cars sold in a period of time");
+            System.out.println("6. List transaction in a period of time");
+            System.out.println("7. List services done in a period of time");
+            System.out.println("8. List auto parts sold in a period of time");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
             try {
@@ -1240,6 +1245,18 @@ public class Dealership {
                 case 4:
                     revenueTransactionBySalespersonMenu(transactions);
                     break;
+                case 5:
+                    listCarsMenu(transactions);
+                    break;
+                case 6:
+                    listTransactionsMenu(transactions);
+                    break;
+                case 7:
+                    listServicesMenu(services);
+                    break;
+                case 8:
+                    listPartsMenu(transactions);
+                    break;
                 case 0:
                     break;
                 default:
@@ -1258,7 +1275,6 @@ public class Dealership {
     }
 
     public void countSoldCarsMenu(ArrayList<Transaction> transactions) {
-        Scanner scanner = new Scanner(System.in);
         String input = "";
         int choice;
         do {
@@ -1267,23 +1283,27 @@ public class Dealership {
             try {
                 input = scanner.nextLine();
                 choice = Integer.parseInt(input);
+                if (input.length() != 4) {
+                    System.out.println("Invalid date. Please try again.");
+                    continue;
+                }
             } catch (NumberFormatException e) {
                 choice = -1;
-                try {
-                    SimpleDateFormat df = Statistics.determineRange(input);
-                    int soldCars = Statistics.countSoldCarsInPeriod(transactions, df.parse(input));
-                    System.out.println("\nThere are " + soldCars + " cars sold in " + input + ".");
-                    return;
-                } catch (ParseException d) {
-                    System.out.println("Invalid date. Please try again.");
-                }
+            }
+
+
+            try {
+                int soldCars =  Statistics.countSoldCarsInPeriod(transactions, input);
+                System.out.println("\nThere are " + soldCars + " cars sold in " + input + ".");
+                return;
+            } catch (ParseException d) {
+                System.out.println("Invalid date. Please try again.");
             }
 
         }  while (choice != 0);
     }
 
     public void totalRevenueMenu(ArrayList<Service> services, ArrayList<Transaction> transactions) {
-        Scanner scanner = new Scanner(System.in);
         String input = "";
         int choice;
         do {
@@ -1292,16 +1312,20 @@ public class Dealership {
             try {
                 input = scanner.nextLine();
                 choice = Integer.parseInt(input);
+                if (input.length() != 4) {
+                    System.out.println("Invalid date. Please try again.");
+                    continue;
+                }
             } catch (NumberFormatException e) {
                 choice = -1;
-                try {
-                    SimpleDateFormat df = Statistics.determineRange(input);
-                    BigDecimal revenue = Statistics.totalRevenueInPeriod(services, transactions, df.parse(input));
-                    System.out.println("\n" + name + " has a revenue of " + numParse(revenue) + " in " + input + " VND.");
-                    return;
-                } catch (ParseException d) {
-                    System.out.println("Invalid date. Please try again.");
-                }
+            }
+
+            try {
+                BigDecimal revenue = Statistics.totalRevenueInPeriod(services, transactions, input);
+                System.out.println("\n" + name + " has a revenue of " + numParse(revenue) + " VND in " + input + ".");
+                return;
+            } catch (ParseException d) {
+                System.out.println("Invalid date. Please try again.");
             }
 
         }  while (choice != 0);
@@ -1321,12 +1345,94 @@ public class Dealership {
         System.out.println("\nSalesperson " + salesperson.getFullName() + " has a cars sold revenue of " + numParse(revenue) + " VND.");
     }
 
-    public void showEmployeeStatisticMenu() {
+    @FunctionalInterface
+    public interface BiConsumerWithExceptions<T, U, E extends Exception> {
+        void accept(T t, U u) throws E;
+    }
+
+    public <T> void listMenu(String message, ArrayList<T> list, BiConsumerWithExceptions<ArrayList<T>, String, ParseException> action) {
+        String input = "";
+        int choice;
+        do {
+            System.out.println("\n" + message);
+            explainDateInput();
+            try {
+                input = scanner.nextLine();
+                choice = Integer.parseInt(input);
+                if (input.length() != 4) {
+                    System.out.println("Invalid date. Please try again.");
+                    continue;
+                }
+            } catch (NumberFormatException e) {
+                choice = -1;
+            }
+    
+            try {
+                action.accept(list, input);
+                return;
+            } catch (ParseException d) {
+                System.out.println("Invalid date. Please try again.");
+            }
+    
+        } while (choice != 0);
+    }
+    
+    public void listCarsMenu(ArrayList<Transaction> transactions) {
+        listMenu("List cars sold in a period of time:", transactions, Statistics::listCarInAPeriod);
+    }
+    
+    public void listTransactionsMenu(ArrayList<Transaction> transactions) {
+        listMenu("List sales transactions created in a period of time:", transactions, Statistics::listTransactionInAPeriod);
+    }
+    
+    public void listServicesMenu(ArrayList<Service> services) {
+        listMenu("List services done in a period of time:", services, Statistics::listServiceInAPeriod);
+    }
+    
+    public void listPartsMenu(ArrayList<Transaction> transactions) {
+        listMenu("List auto parts sold in a period of time:", transactions, Statistics::listPartInAPeriod);
+    }
+
+    public void showSalespersonStatisticMenu() {
         int choice;
         do {
             System.out.println("\nStatistic Menu:");
-            System.out.println("1. Revenue");
-            System.out.println("2. Car/services done");
+            System.out.println("1. Revenue of card sold in a period of time");
+            System.out.println("2. List car sold in a period of time");
+            System.out.println("0. Back");
+            System.out.print("Enter choice: ");
+            try {
+                choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid option. Please try again.");
+                scanner.next(); // consume the invalid token
+                choice = -1; // default value that will not exit the loop
+                continue;
+            }
+
+            switch (choice) {
+                case 1:
+                    System.out.println("");
+                    break;
+                case 2:
+                    System.out.println("");
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+                    break;
+            }
+        }  while (choice != 0);
+    }
+
+    public void showMechanicStatisticMenu() {
+        int choice;
+        do {
+            System.out.println("\nStatistic Menu:");
+            System.out.println("1. Revenue of services done in a period of time");
+            System.out.println("2. List services done in a period of time");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
             try {
