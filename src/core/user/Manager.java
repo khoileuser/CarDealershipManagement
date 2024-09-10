@@ -27,4 +27,14 @@ public class Manager extends User {
         }
         return false;
     }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
 }

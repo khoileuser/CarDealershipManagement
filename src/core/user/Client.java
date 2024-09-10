@@ -42,4 +42,14 @@ public class Client extends User {
     public BigDecimal getTotalSpending() {
         return totalSpending;
     }
+
+    @Override
+    public String getUsername() {
+        return "Client doesn't have login credentials";
+    }
+
+    @Override
+    public String getPassword() {
+        return "Client doesn't have login credentials";
+    }
 }

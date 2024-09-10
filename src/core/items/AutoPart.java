@@ -1,9 +1,11 @@
 package core.items;
 
+import core.Entity;
+
 import java.io.Serial;
 import java.math.BigDecimal;
 
-public class AutoPart extends Item {
+public class AutoPart extends Item implements Entity {
     @Serial
     private static final long serialVersionUID = 2L;
 
@@ -107,5 +109,10 @@ public class AutoPart extends Item {
                 ", cost=" + cost +
                 ", notes='" + notes + '\'' +
                 '}';
+    }
+
+    @Override
+    public String getSearchString() {
+        return manufacturer + " " + partName + " (" + partNumber + ")";
     }
 }

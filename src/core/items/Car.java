@@ -1,12 +1,13 @@
 package core.items;
 
+import core.Entity;
 import core.Service;
 
 import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
-public class Car extends Item {
+public class Car extends Item implements Entity {
     @Serial
     private static final long serialVersionUID = 3L;
 
@@ -113,6 +114,10 @@ public class Car extends Item {
         this.servicesHistory.add(service);
     }
 
+    public void removeService(Service service) {
+        this.servicesHistory.remove(service);
+    }
+
     public String getNotes() {
         return notes;
     }
@@ -135,6 +140,11 @@ public class Car extends Item {
                 ", servicesHistory=" + servicesHistory +
                 ", notes='" + notes + '\'' +
                 '}';
+    }
+
+    @Override
+    public String getSearchString() {
+        return make + " " + model + " " + year;
     }
 }
 

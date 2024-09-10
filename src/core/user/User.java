@@ -1,5 +1,7 @@
 package core.user;
 
+import core.Entity;
+
 import java.io.Serial;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -7,7 +9,7 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.io.Serializable;
 
-public abstract class User implements Serializable {
+public abstract class User implements Serializable, Entity {
     @Serial
     private static final long serialVersionUID = 4L;
 
@@ -106,6 +108,14 @@ public abstract class User implements Serializable {
         this.userType = userType;
     }
 
+    public ArrayList<String> getActivityLog() {
+        return activityLog;
+    }
+
+    public void setActivityLog(ArrayList<String> activityLog) {
+        this.activityLog = activityLog;
+    }
+
     public boolean isActive() { return status; }
 
     public void deactivateUser() { this.status = false; }
@@ -114,6 +124,10 @@ public abstract class User implements Serializable {
     public abstract void viewProfile();
 
     public abstract boolean authenticate(String username, String password);
+
+    public abstract String getUsername();
+
+    public abstract String getPassword();
 
     @Override
     public String toString() {
@@ -129,5 +143,10 @@ public abstract class User implements Serializable {
                 ", userType='" + userType + '\'' +
                 ", status='" + status + '\'' +
                 '}';
+    }
+
+    @Override
+    public String getSearchString() {
+        return fullName + " " + email + " " + userType;
     }
 }

@@ -69,4 +69,16 @@ public class CarOperation implements CarInterface {
     public void addService(Car car, Service service) {
         car.addService(service);
     }
+
+    @Override
+    public void removeServiceFromCars(Service service) {
+        for (Car c : carList) {
+            for (Service s : c.getServicesHistory()) {
+                if (s.getServiceID().equals(service.getServiceID())) {
+                    c.removeService(service);
+                    System.out.println("Service removed from: " + c);
+                }
+            }
+        }
+    }
 }

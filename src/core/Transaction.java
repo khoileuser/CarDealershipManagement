@@ -12,7 +12,7 @@ import core.items.Item;
 import core.user.Client;
 import utils.Membership;
 
-public class SalesTransaction implements Serializable {
+public class Transaction implements Serializable, Entity {
     @Serial
     private static final long serialVersionUID = 10L;
 
@@ -25,7 +25,7 @@ public class SalesTransaction implements Serializable {
     private BigDecimal totalAmount;
     private String notes;
 
-    public SalesTransaction(String clientID, String salespersonID, String notes) {
+    public Transaction(String clientID, String salespersonID, String notes) {
         this.transactionDate = setTransactionDate();
         this.clientID = clientID;
         this.salespersonID = salespersonID;
@@ -126,11 +126,19 @@ public class SalesTransaction implements Serializable {
         return "New total: " + this.totalAmount + ", saved: " + discountAmount;
     }
 
+    public StringBuilder getStringItems() {
+        StringBuilder parts = new StringBuilder();
+        for (Item i : items) {
+            parts.append(i.getSearchString()).append(", ");
+        }
+        return new StringBuilder(parts.substring(0, parts.length() - 2));
+    }
+
     @Override
     public String toString() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
-        return "SaleTransaction{" +
+        return "Transaction{" +
                 "transactionID='" + transactionID + '\'' +
                 ", transactionDate=" + formatter.format(transactionDate) +
                 ", clientID='" + clientID + '\'' +
@@ -140,5 +148,10 @@ public class SalesTransaction implements Serializable {
                 ", totalAmount=" + totalAmount +
                 ", notes='" + notes + '\'' +
                 '}';
+    }
+
+    @Override
+    public String getSearchString() {
+        return transactionDate + " | " + "Items: " + getStringItems();
     }
 }

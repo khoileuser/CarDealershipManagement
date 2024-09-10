@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.io.Serializable;
 
-public class Service implements Serializable {
+public class Service implements Serializable, Entity {
     @Serial
     private static final long serialVersionUID = 11L;
 
@@ -105,6 +105,14 @@ public class Service implements Serializable {
         this.notes = notes;
     }
 
+    public StringBuilder getStringParts() {
+        StringBuilder parts = new StringBuilder();
+        for (AutoPart p : replacedParts) {
+            parts.append(p.getSearchString()).append(", ");
+        }
+        return new StringBuilder(parts.substring(0, parts.length() - 2));
+    }
+
     @Override
     public String toString() {
         return "Service{" +
@@ -117,5 +125,10 @@ public class Service implements Serializable {
                 ", serviceCost=" + serviceCost +
                 ", notes='" + notes + '\'' +
                 '}';
+    }
+
+    @Override
+    public String getSearchString() {
+        return getStringServiceDate() + " | " + serviceType + " | Parts: " + getStringParts();
     }
 }
