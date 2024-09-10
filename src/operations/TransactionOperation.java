@@ -12,8 +12,8 @@ public class TransactionOperation implements TransactionInterface {
         this.transactionList = new ArrayList<>();
     }
 
-    public void setTransactionList(ArrayList<Object> salesTransactionList) {
-        for (Object o : salesTransactionList) {
+    public void setTransactionList(ArrayList<Object> transactionList) {
+        for (Object o : transactionList) {
             if (o instanceof Transaction) {
                 this.transactionList.add((Transaction) o);
             }

@@ -62,9 +62,9 @@ public class Statistics {
         return soldCars;
     }
 
-//    public static double calculateRevenue(ArrayList<SalesTransaction> transactions, ArrayList<Service> services) {
+//    public static double calculateRevenue(ArrayList<Transaction> transactions, ArrayList<Service> services) {
 //        double totalRevenue = 0;
-//        for (SalesTransaction transaction : transactions) {
+//        for (Transaction transaction : transactions) {
 //            totalRevenue += transaction.getTotalAmount();
 //        }
 //        return totalRevenue;

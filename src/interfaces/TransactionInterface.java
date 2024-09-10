@@ -5,7 +5,7 @@ import core.Transaction;
 import java.util.ArrayList;
 
 public interface TransactionInterface {
-    void setTransactionList(ArrayList<Object> salesTransactionList);
+    void setTransactionList(ArrayList<Object> transactionList);
 
     // Add a new sales transaction
     void addTransaction(Transaction transaction);

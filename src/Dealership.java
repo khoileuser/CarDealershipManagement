@@ -120,7 +120,7 @@ public class Dealership {
                     showServiceMenu();
                     break;
                 case 4:
-                    showSalesTransactionMenu();
+                    showTransactionMenu();
                     break;
                 case 5:
                     showUserMenu();
@@ -789,7 +789,7 @@ public class Dealership {
         return updatedService;
     }
 
-    private void showSalesTransactionMenu() {
+    private void showTransactionMenu() {
         int choice;
         ArrayList<Transaction> transactions;
         do {
