@@ -41,6 +41,17 @@ public class CarOperation implements CarInterface {
     }
 
     @Override
+    public ArrayList<Car> getAvailableCars() {
+        ArrayList<Car> availableCars = new ArrayList<>();
+        for (Car c : carList) {
+            if (c.getStatus().equals("available")) {
+                availableCars.add(c);
+            }
+        }
+        return availableCars;
+    }
+
+    @Override
     public void updateCar(Car updatedCar) {
         for (int i = 0; i < carList.size(); i++) {
             if (carList.get(i).getCarID().equals(updatedCar.getCarID())) {

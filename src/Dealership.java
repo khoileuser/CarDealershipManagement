@@ -1,21 +1,18 @@
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.function.Function;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+
+import java.io.IOException;
+import java.text.ParseException;
 
 import core.*;
 import core.items.*;
 import core.user.*;
 import interfaces.*;
 import operations.*;
-
-import utils.FileHandler;
-import utils.Authentication;
-import utils.Membership;
-import utils.Statistics;
+import utils.*;
 
 public class Dealership {
     private final String name;
@@ -235,9 +232,8 @@ public class Dealership {
             cars = carInterface.getAllCars();
             System.out.println("\nCar Operations Menu:");
             System.out.println("1. Add a car");
-            System.out.println("2. Select a car");
+            System.out.println("2. View and select a car");
             System.out.println("3. Search for car");
-            System.out.println("4. View all cars");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
             try {
@@ -258,15 +254,7 @@ public class Dealership {
                     listAndSelect(cars, "All cars:", this::updateEntityOperations);
                     break;
                 case 3:
-                    searchMenu(cars, this::updateEntityOperations);
-                    break;
-                case 4:
-                    System.out.println("\nAll cars:");
-                    int count = 1;
-                    for (Car c : cars) {
-                        System.out.println(count + ". " + c.getSearchString());
-                        count += 1;
-                    }
+                    searchMenu(cars, "\nEnter search input (ID (c-)/string): ", this::updateEntityOperations);
                     break;
                 case 0:
                     break;
@@ -296,25 +284,10 @@ public class Dealership {
         System.out.print("Enter price: ");
         BigDecimal price = getNextBigDecimal();
 
-        System.out.println("1. Available");
-        System.out.println("2. Sold");
-        System.out.print("Choose status: ");
-        String status; int choice;
-        choice = getNextInt();
-        scanner.nextLine();
-        status = switch (choice) {
-            case 1 -> "available";
-            case 2 -> "sold";
-            default -> {
-                System.out.println("Invalid, set default to available");
-                yield "available";
-            }
-        };
-
         System.out.print("Enter notes: ");
         String notes = scanner.nextLine();
 
-        Car car = new Car(make, model, year, mileage, color, status, price, notes);
+        Car car = new Car(make, model, year, mileage, color, price, notes);
         carInterface.addCar(car);
     }
 
@@ -412,25 +385,6 @@ public class Dealership {
         System.out.print("Enter new price (enter to leave the same): ");
         price = getNextBigDecimalEmpty(price);
 
-        String status = car.getStatus();
-        System.out.println("\nCurrent status: " + status);
-        System.out.println("1. Available");
-        System.out.println("2. Sold");
-        System.out.println("0. Same as current");
-        System.out.print("Choose new status: ");
-        int choice;
-        choice = getNextInt();
-        scanner.nextLine();
-        status = switch (choice) {
-            case 1 -> "available";
-            case 2 -> "sold";
-            case 0 -> status;
-            default -> {
-                System.out.println("Invalid, set default to available");
-                yield "available";
-            }
-        };
-
         String notes = car.getNotes();
         System.out.println("\nCurrent notes: " + notes);
         System.out.print("Enter new notes (enter to leave the same): ");
@@ -448,7 +402,7 @@ public class Dealership {
         }
 
 
-        Car updatedCar = new Car(make, model, year, mileage, color, status, price, notes);
+        Car updatedCar = new Car(make, model, year, mileage, color, price, notes);
         updatedCar.setCarID(car.getCarID());
         carInterface.updateCar(updatedCar);
         return updatedCar;
@@ -461,9 +415,8 @@ public class Dealership {
             autoParts = autoPartInterface.getAllAutoParts();
             System.out.println("\nAuto Part Operations Menu:");
             System.out.println("1. Add an auto part");
-            System.out.println("2. Select an auto part");
+            System.out.println("2. View and select an auto part");
             System.out.println("3. Search for auto part");
-            System.out.println("4. View all auto parts");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
             try {
@@ -484,15 +437,7 @@ public class Dealership {
                     listAndSelect(autoParts, "All auto parts:", this::updateEntityOperations);
                     break;
                 case 3:
-                    searchMenu(autoParts, this::updateEntityOperations);
-                    break;
-                case 4:
-                    System.out.println("\nAll auto parts:");
-                    int count = 1;
-                    for (AutoPart p : autoParts) {
-                        System.out.println(count + ". " + p.getSearchString());
-                        count += 1;
-                    }
+                    searchMenu(autoParts, "\nEnter search input (ID (p-)/string): ", this::updateEntityOperations);
                     break;
                 case 0:
                     break;
@@ -635,11 +580,10 @@ public class Dealership {
             System.out.println("\nService Operations Menu:");
             System.out.println("1. Add a service");
             if (!isMechanic) {
-                System.out.println("2. Select a service");
+                System.out.println("2. View and select a service");
                 System.out.println("3. Search for service");
-                System.out.println("4. View all services");
             } else {
-                System.out.println("2. View all services");
+                System.out.println("2. View and select service");
             }
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
@@ -662,15 +606,7 @@ public class Dealership {
                         listAndSelect(services, "All services:", this::updateEntityOperations);
                         break;
                     case 3:
-                        searchMenu(services, this::updateEntityOperations);
-                        break;
-                    case 4:
-                        System.out.println("\nAll services:");
-                        int count = 1;
-                        for (Service s : services) {
-                            System.out.println(count + ". " + s.getSearchString());
-                            count += 1;
-                        }
+                        searchMenu(services, "\nEnter search input (ID (s-)/string): ", this::updateEntityOperations);
                         break;
                     case 0:
                         break;
@@ -684,12 +620,7 @@ public class Dealership {
                         addService();
                         break;
                     case 2:
-                        System.out.println("\nAll services:");
-                        int count = 1;
-                        for (Service s : services) {
-                            System.out.println(count + ". " + s.getSearchString());
-                            count += 1;
-                        }
+                        listAndSelect(services, "All services:", this::viewOnlyEntityOperations);
                         break;
                     case 0:
                         break;
@@ -741,7 +672,7 @@ public class Dealership {
 
     }
 
-    private String updateServiceOperations(Service service) {
+    private String updateServiceOperations(Service service, boolean viewOnly) {
         int choice;
         do {
             String serviceString =  "Service: " + service.getServiceType();
@@ -761,6 +692,10 @@ public class Dealership {
             }
             System.out.println("Service Cost: " + service.getServiceCost());
             System.out.println("Notes: " + service.getNotes());
+
+            if (viewOnly) {
+                break;
+            }
 
             System.out.println("\nUpdate Service Operations Menu:");
             System.out.println("1. Update service");
@@ -910,11 +845,10 @@ public class Dealership {
             System.out.println("\nSales Transaction Operations Menu:");
             System.out.println("1. Add a sales transaction");
             if (!isSalesperson) {
-                System.out.println("2. Select a sales transaction");
+                System.out.println("2. View and select a sales transaction");
                 System.out.println("3. Search for sales transaction");
-                System.out.println("4. View all sales transactions");
             } else {
-                System.out.println("2. View all sales transactions");
+                System.out.println("2. View and select a sales transaction");
             }
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
@@ -937,15 +871,7 @@ public class Dealership {
                         listAndSelect(transactions, "All sales transactions:", this::updateEntityOperations);
                         break;
                     case 3:
-                        searchMenu(transactions, this::updateEntityOperations);
-                        break;
-                    case 4:
-                        System.out.println("\nAll sales transactions:");
-                        int count = 1;
-                        for (Transaction t : transactions) {
-                            System.out.println(count + ". " + t.getSearchString());
-                            count += 1;
-                        }
+                        searchMenu(transactions, "\nEnter search input (ID (t-)/string): ", this::updateEntityOperations);
                         break;
                     case 0:
                         break;
@@ -959,12 +885,7 @@ public class Dealership {
                         addTransaction();
                         break;
                     case 2:
-                        System.out.println("\nAll sales transactions:");
-                        int count = 1;
-                        for (Transaction t : transactions) {
-                            System.out.println(count + ". " + t.getSearchString());
-                            count += 1;
-                        }
+                        listAndSelect(transactions, "All sales transactions:", this::viewOnlyEntityOperations);
                         break;
                     case 0:
                         break;
@@ -994,8 +915,8 @@ public class Dealership {
             }
         }
 
-        ArrayList<Car> cars = carInterface.getAllCars();
-        entities = addChoiceOrSearch(cars, "Cars", null);
+        ArrayList<Car> availableCars = carInterface.getAvailableCars();
+        entities = addChoiceOrSearch(availableCars, "Cars", null);
         for (Entity e : entities) {
             if (e instanceof Car) {
                 items.add((Car) e);
@@ -1017,10 +938,11 @@ public class Dealership {
         // add client total spending after apply discount (if exists)
         client.addTotalSpending(transaction.getTotalAmount());
 
+        // add transaction and set all cars in items to sold
         transactionInterface.addTransaction(transaction);
     }
 
-    private String updateTransactionOperations(Transaction transaction) {
+    private String updateTransactionOperations(Transaction transaction, boolean viewOnly) {
         int choice;
         do {
             String transactionString =  "Sales Transaction at " + transaction.getStringTransactionDate();
@@ -1060,6 +982,10 @@ public class Dealership {
             System.out.println("Total Amount: " + transaction.getTotalAmount());
             System.out.println("Notes: " + transaction.getNotes());
 
+            if (viewOnly) {
+                break;
+            }
+
             System.out.println("\nUpdate Sales Transaction Operations Menu:");
             System.out.println("1. Update sales transaction");
             System.out.println("2. Remove sales transaction");
@@ -1086,11 +1012,6 @@ public class Dealership {
                         choose = scanner.next();
                         if (choose.toLowerCase().startsWith("y")) {
                             transactionInterface.removeTransaction(transaction);
-                            for (Item i : transaction.getItems()) {
-                                if (i instanceof Car) {
-                                    ((Car) i).setStatus("available");
-                                }
-                            }
                             break;
                         } else if (!choose.toLowerCase().startsWith("n")) {
                             System.out.println("Invalid option. Please try again.");
@@ -1129,12 +1050,24 @@ public class Dealership {
 
         System.out.println("Update item(s):");
         ArrayList<AutoPart> parts = autoPartInterface.getAllAutoParts();
-        ArrayList<Car> cars = carInterface.getAllCars();
-        ArrayList<Item> items = (ArrayList<Item>) Stream.concat(parts.stream(), cars.stream()).toList();
+        ArrayList<Car> availableCars = carInterface.getAvailableCars();
+        ArrayList<Item> items = (ArrayList<Item>) Stream.concat(parts.stream(), availableCars.stream()).toList();
+        ArrayList<Item> transactionItems = transaction.getItems();
+        ArrayList<Entity> entities = addChoiceOrSearch(items, "Item", transactionItems);
 
-        ArrayList<Entity> entities = addChoiceOrSearch(items, "Item", transaction.getItems());
+        String notes = transaction.getNotes();
+        System.out.println("\nCurrent notes: " + notes);
+        System.out.print("Enter new notes (enter to leave the same): ");
+        notes = getNextLineEmpty(notes);
+
         ArrayList<Item> newItems = new ArrayList<>();
         if (!entities.isEmpty()) {
+            for (Item i : transactionItems) {
+                if (i instanceof Car) {
+                    ((Car) i).setStatus("available");
+                }
+            }
+
             for (Entity e : entities) {
                 if (e instanceof AutoPart) {
                     newItems.add((AutoPart) e);
@@ -1146,14 +1079,11 @@ public class Dealership {
             newItems = transaction.getItems();
         }
 
-        String notes = transaction.getNotes();
-        System.out.println("\nCurrent notes: " + notes);
-        System.out.print("Enter new notes (enter to leave the same): ");
-        notes = getNextLineEmpty(notes);
-
         Transaction updatedTransaction = new Transaction(clientID, salespersonID, totalAmount, notes);
         updatedTransaction.setTransactionID(transaction.getTransactionID());
         updatedTransaction.setItems(newItems);
+
+        // update transaction and set all cars in items to sold
         transactionInterface.updateTransaction(updatedTransaction);
         return updatedTransaction;
     }
@@ -1165,9 +1095,8 @@ public class Dealership {
             users = userInterface.getAllUsers();
             System.out.println("\nUser Operations Menu:");
 //            System.out.println("1. Add a user");
-            System.out.println("1. Select a user");
+            System.out.println("1. View and select a user");
             System.out.println("2. Search for user");
-            System.out.println("3. View all users");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
             try {
@@ -1185,15 +1114,7 @@ public class Dealership {
                     listAndSelect(users, "All users:", this::updateEntityOperations);
                     break;
                 case 2:
-                    searchMenu(users, this::updateEntityOperations);
-                    break;
-                case 3:
-                    System.out.println("\nAll users:");
-                    int count = 1;
-                    for (User u : users) {
-                        System.out.println(count + ". " + u.getSearchString());
-                        count += 1;
-                    }
+                    searchMenu(users, "\nEnter search input (ID (u-)/string): ", this::updateEntityOperations);
                     break;
                 case 0:
                     break;
@@ -1697,42 +1618,77 @@ public class Dealership {
         } else if (entity instanceof User) {
             return updateUserOperations((User) entity);
         } else if (entity instanceof Transaction) {
-            return updateTransactionOperations((Transaction) entity);
+            return updateTransactionOperations((Transaction) entity, false);
         } else if (entity instanceof Service) {
-            return updateServiceOperations((Service) entity);
+            return updateServiceOperations((Service) entity, false);
         }
         return "ok";
     }
 
-    private void searchMenu(ArrayList<? extends Entity> items, Function<Entity, String> updateOperations) {
-        System.out.print("Enter search input: ");
+    public String viewOnlyEntityOperations(Entity entity) {
+         if (entity instanceof Transaction) {
+            return updateTransactionOperations((Transaction) entity, true);
+         } else if (entity instanceof Service) {
+             return updateServiceOperations((Service) entity, true);
+         }
+        return "ok";
+    }
+
+    private void searchMenu(ArrayList<? extends Entity> items, String message, Function<Entity, String> updateOperations) {
+        System.out.print(message);
         String searchInput = scanner.nextLine();
 
-        ArrayList<Entity> highSim = new ArrayList<>();
-        ArrayList<Entity> partMatch = new ArrayList<>();
-
-        for (Entity e : items) {
-            String itemString = e.getSearchString();
-            if (itemString.toLowerCase().contains(searchInput.toLowerCase())) {
-                partMatch.add(e);
-            }
-            int distance = levenshteinDistance(searchInput, itemString);
-            if (distance <= 20) {
-                highSim.add(e);
+        boolean searchWithID = false;
+        try {
+            Integer.parseInt(searchInput);
+            searchWithID = true;
+        } catch (NumberFormatException _) {
+            List<String> startID = Arrays.asList("c-", "p-", "s-", "t-", "u-");
+            boolean startsWithAny = startID.stream().anyMatch(searchInput::startsWith);
+            if (startsWithAny) {
+                searchWithID = true;
             }
         }
 
-        if (!partMatch.isEmpty()) {
-            if (partMatch.size() == 1) {
-                updateOperations.apply(partMatch.getFirst());
-            } else {
-                listAndSelect(partMatch, "Matched search:", updateOperations);
+        if (searchWithID) {
+            boolean found = false;
+            for (Entity e : items) {
+                if (e.getID().contains(searchInput.toLowerCase())) {
+                    found = true;
+                    updateOperations.apply(e);
+                    break;
+                }
+            }
+            if (!found) {
+                System.out.println(searchInput + " is might not in the system.");
             }
         } else {
-            if (!highSim.isEmpty()) {
-                listAndSelect(highSim, "Relevant search:", updateOperations);
+            ArrayList<Entity> highSim = new ArrayList<>();
+            ArrayList<Entity> partMatch = new ArrayList<>();
+
+            for (Entity e : items) {
+                String itemString = e.getSearchString();
+                if (itemString.toLowerCase().contains(searchInput.toLowerCase())) {
+                    partMatch.add(e);
+                }
+                int distance = levenshteinDistance(searchInput, itemString);
+                if (distance <= 20) {
+                    highSim.add(e);
+                }
+            }
+
+            if (!partMatch.isEmpty()) {
+                if (partMatch.size() == 1) {
+                    updateOperations.apply(partMatch.getFirst());
+                } else {
+                    listAndSelect(partMatch, "Matched search:", updateOperations);
+                }
             } else {
-                System.out.println(searchInput + " is might not in the system.");
+                if (!highSim.isEmpty()) {
+                    listAndSelect(highSim, "Relevant search:", updateOperations);
+                } else {
+                    System.out.println(searchInput + " is might not in the system.");
+                }
             }
         }
     }

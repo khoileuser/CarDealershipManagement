@@ -23,14 +23,13 @@ public class Car extends Item implements Entity {
     private ArrayList<Service> servicesHistory;
     private String notes;
 
-    public Car(String make, String model, int year, double mileage, String color,
-                String status, BigDecimal price, String notes) {
+    public Car(String make, String model, int year, double mileage, String color, BigDecimal price, String notes) {
         this.make = make;
         this.model = model;
         this.year = year;
         this.mileage = mileage;
         this.color = color;
-        this.status = status;
+        this.status = "available";
         this.price = price;
         this.notes = notes;
         this.servicesHistory = new ArrayList<>();
@@ -140,6 +139,11 @@ public class Car extends Item implements Entity {
                 ", servicesHistory=" + servicesHistory +
                 ", notes='" + notes + '\'' +
                 '}';
+    }
+
+    @Override
+    public String getID() {
+        return carID;
     }
 
     @Override

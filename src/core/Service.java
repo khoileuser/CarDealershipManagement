@@ -112,11 +112,12 @@ public class Service implements Serializable, Entity {
 
     public void setDiscountPercentage(Membership membership) {
         this.discountPercentage = membership.getDiscountPercentage();
-        System.out.println("\nClient has " + membership + " membership, gets " + membership.getDiscountPercentage() + "% off from auto parts and services.");
-
-        BigDecimal discountAmount = this.serviceCost.multiply(new BigDecimal(this.discountPercentage)).divide(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP);
-        this.serviceCost = this.serviceCost.subtract(discountAmount);
-        System.out.println("New service cost: " + this.serviceCost + ", saved: " + discountAmount);
+        if (membership != Membership.NONE) {
+            System.out.println("\nClient has " + membership + " membership, gets " + membership.getDiscountPercentage() + "% off from auto parts and services.");
+            BigDecimal discountAmount = this.serviceCost.multiply(new BigDecimal(this.discountPercentage)).divide(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP);
+            this.serviceCost = this.serviceCost.subtract(discountAmount);
+            System.out.println("New service cost: " + this.serviceCost + ", saved: " + discountAmount);
+        }
     }
 
     public BigDecimal getServiceCost() {
@@ -156,6 +157,11 @@ public class Service implements Serializable, Entity {
                 ", serviceCost=" + serviceCost +
                 ", notes='" + notes + '\'' +
                 '}';
+    }
+
+    @Override
+    public String getID() {
+        return serviceID;
     }
 
     @Override

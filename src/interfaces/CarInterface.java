@@ -14,6 +14,8 @@ public interface CarInterface {
     // Retrieve all cars
     ArrayList<Car> getAllCars();
 
+    ArrayList<Car> getAvailableCars();
+
     // Update car details
     void updateCar(Car car);
 

@@ -51,6 +51,11 @@ public class TransactionOperation implements TransactionInterface {
     public void updateTransaction(Transaction updatedTransaction) {
         for (int i = 0; i < transactionList.size(); i++) {
             if (transactionList.get(i).getTransactionID().equals(updatedTransaction.getTransactionID())) {
+                for (Item e : updatedTransaction.getItems()) {
+                    if (e instanceof Car) {
+                        ((Car) e).setStatus("sold");
+                    }
+                }
                 transactionList.set(i, updatedTransaction);
                 System.out.println("Transaction updated: " + updatedTransaction);
                 return;
@@ -63,6 +68,12 @@ public class TransactionOperation implements TransactionInterface {
     public void removeTransaction(Transaction transaction) {
         for (int i = 0; i < transactionList.size(); i++) {
             if (transactionList.get(i).getTransactionID().equals(transaction.getTransactionID())) {
+                for (Item e : transaction.getItems()) {
+                    if (e instanceof Car) {
+                        System.out.println(e);
+                        ((Car) e).setStatus("available");
+                    }
+                }
                 transactionList.remove(i);
                 System.out.println("Transaction removed: " + transaction);
                 return;

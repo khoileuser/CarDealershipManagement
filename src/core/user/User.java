@@ -145,6 +145,11 @@ public abstract class User implements Serializable, Entity {
     }
 
     @Override
+    public String getID() {
+        return userID;
+    }
+
+    @Override
     public String getSearchString() {
         return userType + " " + fullName;
     }

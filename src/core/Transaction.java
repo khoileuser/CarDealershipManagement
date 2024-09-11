@@ -98,18 +98,18 @@ public class Transaction implements Serializable, Entity {
 
     public void setDiscountPercentage(Membership membership) {
         this.discountPercentage = membership.getDiscountPercentage();
-        System.out.println("\nClient has " + membership + " membership, gets " + membership.getDiscountPercentage() + "% off from auto parts.");
-
-        BigDecimal partsTotal = new BigDecimal(0);
-        for (Item i : this.items) {
-            if (i instanceof AutoPart) {
-                partsTotal = partsTotal.add(i.getPrice());
+        if (membership != Membership.NONE) {
+            System.out.println("\nClient has " + membership + " membership, gets " + membership.getDiscountPercentage() + "% off from auto parts.");
+            BigDecimal partsTotal = new BigDecimal(0);
+            for (Item i : this.items) {
+                if (i instanceof AutoPart) {
+                    partsTotal = partsTotal.add(i.getPrice());
+                }
             }
+            BigDecimal discountAmount = partsTotal.multiply(new BigDecimal(this.discountPercentage)).divide(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP);
+            this.totalAmount = this.totalAmount.subtract(discountAmount);
+            System.out.println("New total amount: " + this.totalAmount + ", saved: " + discountAmount);
         }
-
-        BigDecimal discountAmount = partsTotal.multiply(new BigDecimal(this.discountPercentage)).divide(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP);
-        this.totalAmount = this.totalAmount.subtract(discountAmount);
-        System.out.println("New total amount: " + this.totalAmount + ", saved: " + discountAmount);
     }
 
     public BigDecimal getTotalAmount() {
@@ -148,6 +148,11 @@ public class Transaction implements Serializable, Entity {
                 ", totalAmount=" + totalAmount +
                 ", notes='" + notes + '\'' +
                 '}';
+    }
+
+    @Override
+    public String getID() {
+        return transactionID;
     }
 
     @Override

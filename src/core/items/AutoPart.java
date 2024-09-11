@@ -112,6 +112,11 @@ public class AutoPart extends Item implements Entity {
     }
 
     @Override
+    public String getID() {
+        return partID;
+    }
+
+    @Override
     public String getSearchString() {
         return manufacturer + " " + partName + " (" + partNumber + ")";
     }
