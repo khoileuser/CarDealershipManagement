@@ -128,8 +128,9 @@ public class Service implements Serializable, Entity {
         return "Service{" +
                 "serviceID='" + serviceID + '\'' +
                 ", serviceDate=" + serviceDate +
-                ", clientID=" + clientID +
-                ", mechanicID=" + mechanicID +
+                ", clientID='" + clientID + '\'' +
+                ", mechanicID='" + mechanicID + '\'' +
+                ", carID='" + carID + '\'' +
                 ", serviceType='" + serviceType + '\'' +
                 ", replacedParts=" + replacedParts +
                 ", serviceCost=" + serviceCost +

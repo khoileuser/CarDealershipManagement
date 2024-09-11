@@ -135,7 +135,7 @@ public class Car extends Item implements Entity {
                 ", year=" + year +
                 ", mileage=" + mileage +
                 ", color='" + color + '\'' +
-                ", status=" + status +
+                ", status='" + status + '\'' +
                 ", price=" + price +
                 ", servicesHistory=" + servicesHistory +
                 ", notes='" + notes + '\'' +
@@ -144,7 +144,7 @@ public class Car extends Item implements Entity {
 
     @Override
     public String getSearchString() {
-        return make + " " + model + " " + year;
+        return make + " " + model + " " + year + " (" + color + ")";
     }
 }
 

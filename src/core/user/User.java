@@ -129,17 +129,15 @@ public abstract class User implements Serializable, Entity {
 
     @Override
     public String toString() {
-        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-
         return "User{" +
                 "userID='" + userID + '\'' +
                 ", fullName='" + fullName + '\'' +
-                ", dateOfBirth=" + df.format(dateOfBirth) +
+                ", dateOfBirth=" + dateOfBirth +
                 ", address='" + address + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
-                ", userType='" + userType + '\'' +
-                ", status='" + status + '\'' +
+                ", userType=" + userType +
+                ", status=" + status +
                 '}';
     }
 

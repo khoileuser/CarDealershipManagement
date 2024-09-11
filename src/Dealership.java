@@ -327,15 +327,14 @@ public class Dealership {
             System.out.println("Price: " + car.getPrice());
             System.out.println("Status: " + car.getStatus());
             System.out.println("Notes: " + car.getNotes());
-            if (!car.getServicesHistory().isEmpty()) {
-                System.out.println("Services history: ");
-                int serviceCount = 1;
-                for (Service s : car.getServicesHistory()) {
-                    System.out.println(serviceCount + ". " + s.getServiceType() + " | " + s.getNotes());
-                    serviceCount += 1;
+            ArrayList<Service> services = car.getServicesHistory();
+            if (!services.isEmpty()) {
+                System.out.println("Services History: ");
+                for (Service s : services) {
+                    System.out.println("- " + s.getSearchString());
                 }
             } else {
-                System.out.println("Services history: Empty");
+                System.out.println("Services History: Empty");
             }
 
             System.out.println("\nUpdate Car Operations Menu:");
@@ -741,7 +740,15 @@ public class Dealership {
             System.out.println("Client ID: " + service.getClientID());
             System.out.println("Mechanic ID: " + service.getMechanicID());
             System.out.println("Service Type: " + service.getServiceType());
-            System.out.println("Replaced Parts: " + service.getStringParts());
+            ArrayList<AutoPart> parts = service.getReplacedParts();
+            if (!parts.isEmpty()) {
+                System.out.println("Replaced Parts: ");
+                for (AutoPart p : parts) {
+                    System.out.println("- " + p.getSearchString());
+                }
+            } else {
+                System.out.println("Replaced Parts: Empty");
+            }
             System.out.println("Service Cost: " + service.getServiceCost());
             System.out.println("Notes: " + service.getNotes());
 
@@ -1004,7 +1011,34 @@ public class Dealership {
             System.out.println("Transaction ID: " + transaction.getTransactionID());
             System.out.println("Client ID: " + transaction.getClientID());
             System.out.println("Mechanic ID: " + transaction.getSalespersonID());
-            System.out.println("Items: " + transaction.getStringItems());
+            ArrayList<Item> items = transaction.getItems();
+            if (!items.isEmpty()) {
+                ArrayList<Car> cars = new ArrayList<>();
+                ArrayList<AutoPart> parts = new ArrayList<>();
+                for (Item i : items) {
+                    if (i instanceof Car) {
+                        cars.add((Car) i);
+                    } else if (i instanceof AutoPart) {
+                        parts.add((AutoPart) i);
+                    }
+                }
+
+                if (!cars.isEmpty()) {
+                    System.out.println("Cars: ");
+                    for (Car c : cars) {
+                        System.out.println("- " + c.getSearchString());
+                    }
+                }
+                if (!parts.isEmpty()) {
+                    System.out.println("Auto Parts: ");
+                    for (AutoPart p : parts) {
+                        System.out.println("- " + p.getSearchString());
+                    }
+                }
+            } else {
+                System.out.println("Items: Empty");
+            }
+
             System.out.println("Discount Percentage: " + transaction.getDiscountPercentage());
             System.out.println("Total Amount: " + transaction.getTotalAmount());
             System.out.println("Notes: " + transaction.getNotes());
@@ -1436,15 +1470,23 @@ public class Dealership {
 
             switch (choice) {
                 case 1:
-                    processMenu("Count sold cars in a period of time:", null, transactions, (_, transactionsList, input) -> {
-                        int soldCars = Statistics.countSoldCarsInPeriod(transactionsList, input);
-                        System.out.println("\nThere are " + soldCars + " cars sold in " + input + ".");
+                    processMenu("Count sold cars in a period of time:", null, transactions, (_, transactionsList, input, dateType) -> {
+                        int soldCars = Statistics.countSoldCarsInPeriod(transactionsList, input, dateType);
+                        if (dateType.equals("week")) {
+                            System.out.println("\nThere are " + soldCars + " cars sold in the week starts from " + input + ".");
+                        } else {
+                            System.out.println("\nThere are " + soldCars + " cars sold in " + input + ".");
+                        }
                     });
                     break;
                 case 2:
-                    processMenu("Total revenue in a period of time:", services, transactions, (servicesList, transactionsList, input) -> {
-                        BigDecimal revenue = Statistics.totalRevenueInPeriod(servicesList, transactionsList, input);
-                        System.out.println("\n" + name + " has a revenue of " + numParse(revenue) + " VND in " + input + ".");
+                    processMenu("Total revenue in a period of time:", services, transactions, (servicesList, transactionsList, input, dateType) -> {
+                        BigDecimal revenue = Statistics.totalRevenueInPeriod(servicesList, transactionsList, input, dateType);
+                        if (dateType.equals("week")) {
+                            System.out.println("\n" + name + " has a revenue of " + numParse(revenue) + " VND in the week starts from " + input + ".");
+                        } else {
+                            System.out.println("\n" + name + " has a revenue of " + numParse(revenue) + " VND in " + input + ".");
+                        }
                     });
                     break;
                 case 3:
@@ -1489,20 +1531,21 @@ public class Dealership {
     }
 
     public void explainDateInput() {
-        System.out.println("Day is in dd/MM/yyyy");
-        System.out.println("Month is in MM/yyyy");
-        System.out.println("Year is in yyyy");
-        System.out.println("0 to cancel");
-        System.out.print("Enter date: ");
+        System.out.println("1. Day (dd/MM/yyyy)");
+        System.out.println("2. Week (Enter start date of the week in dd/MM/yyyy format)");
+        System.out.println("3. Month (MM/yyyy)");
+        System.out.println("0. Cancel");
+        System.out.print("Enter your choice: ");
     }
 
     @FunctionalInterface
-    public interface BiConsumerWithExceptions<T, U, V, E extends Exception> {
-        void accept(T t, U u, V v) throws E;
+    public interface BiConsumerWithExceptions<T, U, V, B, E extends Exception> {
+        void accept(T t, U u, V v, B b) throws E;
     }
 
-    public <T, U> void processMenu(String message, ArrayList<T> services, ArrayList<U> transactions, BiConsumerWithExceptions<ArrayList<T>, ArrayList<U>, String, ParseException> action) {
+    public <T, U> void processMenu(String message, ArrayList<T> services, ArrayList<U> transactions, BiConsumerWithExceptions<ArrayList<T>, ArrayList<U>, String, String, ParseException> action) {
         String input = "";
+        String dateType = "";
         int choice;
         do {
             System.out.println("\n" + message);
@@ -1510,34 +1553,66 @@ public class Dealership {
             try {
                 input = scanner.nextLine();
                 choice = Integer.parseInt(input);
-                if (input.length() != 4) {
-                    System.out.println("Invalid date. Please try again.");
-                    continue;
+                switch (choice) {
+                    case 1:
+                        dateType = "day";
+                        System.out.print("Enter date (dd/MM/yyyy): ");
+                        input = scanner.nextLine();
+                        if (input.length() != 10) {
+                            System.out.println("Invalid date. Please try again.");
+                            continue;
+                        }
+                        break;
+                    case 2:
+                        dateType = "week";
+                        System.out.print("Enter start date of the week (dd/MM/yyyy): ");
+                        input = scanner.nextLine();
+                        if (input.length() != 10) {
+                            System.out.println("Invalid date. Please try again.");
+                            continue;
+                        }
+                        break;
+                    case 3:
+                        dateType = "month";
+                        System.out.print("Enter month (MM/yyyy): ");
+                        input = scanner.nextLine();
+                        if (input.length() != 7) {
+                            System.out.println("Invalid date. Please try again.");
+                            continue;
+                        }
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        System.out.println("Invalid choice");
+                        continue;
                 }
             } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please try again.");
                 choice = -1;
+                continue;
             }
-
+    
             try {
-                action.accept(services, transactions, input);
+                action.accept(services, transactions, input, dateType);
                 return;
             } catch (ParseException d) {
                 System.out.println("Invalid date. Please try again.");
             }
-
+    
         } while (choice != 0);
     }
 
     public void listCarsMenu(ArrayList<Transaction> transactions) {
-        processMenu("List cars sold in a period of time:", null, transactions, (_, transactionsList, input) -> Statistics.listCarInAPeriod(transactionsList, input));
+        processMenu("List cars sold in a period of time:", null, transactions, (_, transactionsList, input, dateType) -> Statistics.listCarInAPeriod(transactionsList, input, dateType));
     }
 
     public void listTransactionsMenu(ArrayList<Transaction> transactions) {
-        processMenu("List sales transactions created in a period of time:", null, transactions, (_, transactionsList, input) -> Statistics.listTransactionInAPeriod(transactionsList, input));
+        processMenu("List sales transactions created in a period of time:", null, transactions, (_, transactionsList, input, dateType) -> Statistics.listTransactionInAPeriod(transactionsList, input, dateType));
     }
 
     public void listServicesMenu(ArrayList<Service> services) {
-        processMenu("List services done in a period of time:", services, null, (servicesList, _, input) -> Statistics.listServiceInAPeriod(servicesList, input));
+        processMenu("List services done in a period of time:", services, null, (servicesList, _, input, dateType) -> Statistics.listServiceInAPeriod(servicesList, input, dateType));
     }
 
     public void listPartsMenu(ArrayList<Service> services, ArrayList<Transaction> transactions) {
@@ -1569,9 +1644,13 @@ public class Dealership {
 
             switch (choice) {
                 case 1:
-                    processMenu("Total revenue in a period of time:", services, transactions, (servicesList, transactionsList, input) -> {
-                        BigDecimal revenue = Statistics.totalRevenueInPeriod(servicesList, transactionsList, input);
-                        System.out.println("\n" + name + " has a revenue of " + numParse(revenue) + " VND in " + input + ".");
+                    processMenu("Total revenue in a period of time:", services, transactions, (servicesList, transactionsList, input, dateType) -> {
+                        BigDecimal revenue = Statistics.totalRevenueInPeriod(servicesList, transactionsList, input, dateType);
+                        if (dateType.equals("week")) {
+                            System.out.println("\n" + name + " has a revenue of " + numParse(revenue) + " VND in the week starts from " + input + ".");
+                        } else {
+                            System.out.println("\n" + name + " has a revenue of " + numParse(revenue) + " VND in " + input + ".");
+                        }
                     });
                     break;
                 case 2:

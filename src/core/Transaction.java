@@ -130,11 +130,9 @@ public class Transaction implements Serializable, Entity {
 
     @Override
     public String toString() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-
         return "Transaction{" +
                 "transactionID='" + transactionID + '\'' +
-                ", transactionDate=" + formatter.format(transactionDate) +
+                ", transactionDate=" + transactionDate +
                 ", clientID='" + clientID + '\'' +
                 ", salespersonID='" + salespersonID + '\'' +
                 ", items=" + items +
@@ -146,6 +144,6 @@ public class Transaction implements Serializable, Entity {
 
     @Override
     public String getSearchString() {
-        return transactionDate + " | " + "Items: " + getStringItems();
+        return getStringTransactionDate() + " | " + "Items: " + getStringItems();
     }
 }

@@ -19,75 +19,49 @@ public class Statistics {
     static Calendar cal1 = Calendar.getInstance();
     static Calendar cal2 = Calendar.getInstance();
 
-    public static SimpleDateFormat determineRange(String date) throws ParseException {
-        SimpleDateFormat dayFormat = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat monthFormat = new SimpleDateFormat("MM/yyyy");
-        SimpleDateFormat yearFormat = new SimpleDateFormat("yyyy");
-
-        try {
-            dayFormat.parse(date);
-            return dayFormat;
-        } catch (ParseException e) {
-            try {
-                monthFormat.parse(date);
-                return monthFormat;
-            } catch (ParseException d) {
-                try {
-                    yearFormat.parse(date);
-                    return yearFormat;
-                } catch (ParseException f) {
-                    throw new ParseException("Invalid date.", 0);
-                }
-            }
+    public static SimpleDateFormat getDateFormat(String dateType) throws ParseException {
+        if (dateType.equals("day")) {
+            return new SimpleDateFormat("dd/MM/yyyy");
+        }  else if (dateType.equals("week")) {
+            return new SimpleDateFormat("dd/MM/yyyy");
+        } else if (dateType.equals("month")) {
+            return new SimpleDateFormat("MM/yyyy");
+        } else if (dateType.equals("year")) {
+            return new SimpleDateFormat("yyyy");
+        } else {
+            throw new ParseException("Invalid dateType.", 0);
         }
     }
 
-    public static Map<String, Boolean> determineComparisonFlags(String date) throws ParseException {
-        Map<String, Boolean> comparisonFlags = new HashMap<>();
-        comparisonFlags.put("compareYear", false);
-        comparisonFlags.put("compareMonth", false);
-        comparisonFlags.put("compareDay", false);
-    
-        SimpleDateFormat df = determineRange(date);
-    
-        switch (df.toPattern()) {
-            case "dd/MM/yyyy":
-                comparisonFlags.put("compareYear", true);
-                comparisonFlags.put("compareMonth", true);
-                comparisonFlags.put("compareDay", true);
-                break;
-            case "MM/yyyy":
-                comparisonFlags.put("compareYear", true);
-                comparisonFlags.put("compareMonth", true);
-                break;
-            case "yyyy":
-                comparisonFlags.put("compareYear", true);
-                break;
+    public static boolean compareDates(String dateType, Date compareDate) {
+        switch (dateType) {
+            case "day":
+                return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                       cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR);
+            case "week":
+                Calendar startOfWeek = (Calendar) cal1.clone();
+                startOfWeek.set(Calendar.DAY_OF_WEEK, startOfWeek.getFirstDayOfWeek());
+                Calendar endOfWeek = (Calendar) startOfWeek.clone();
+                endOfWeek.add(Calendar.DAY_OF_WEEK, 6);
+                return compareDate.compareTo(startOfWeek.getTime()) >= 0 &&
+                    compareDate.compareTo(endOfWeek.getTime()) <= 0;
+            case "month":
+                return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
+                       cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH);
+            default:
+                return false;
         }
-    
-        return comparisonFlags;
     }
 
-    public static boolean compareDates(Calendar cal1, Calendar cal2, String date) throws ParseException {
-        Map<String, Boolean> comparisonFlags = determineComparisonFlags(date);
-
-        boolean compareYear = comparisonFlags.get("compareYear");
-        boolean compareMonth = comparisonFlags.get("compareMonth");
-        boolean compareDay = comparisonFlags.get("compareDay");
-    
-        return (!compareYear || cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR)) &&
-               (!compareMonth || cal1.get(Calendar.MONTH) == cal2.get(Calendar.MONTH)) &&
-               (!compareDay || cal1.get(Calendar.DAY_OF_MONTH) == cal2.get(Calendar.DAY_OF_MONTH));
-    }
-
-    public static int countSoldCarsInPeriod(ArrayList<Transaction> transactions, String date) throws ParseException {
-        SimpleDateFormat df = determineRange(date);
+    public static int countSoldCarsInPeriod(ArrayList<Transaction> transactions, String date, String dateType) throws ParseException {
+        SimpleDateFormat df = getDateFormat(dateType);
         cal1.setTime(df.parse(date));
     
         int soldCars = 0;
         for (Transaction transaction : transactions) {
-            cal2.setTime(transaction.getTransactionDate());
-            if (compareDates(cal1, cal2, date)) {
+            Date transactionDate = transaction.getTransactionDate();
+            cal2.setTime(transactionDate);
+            if (compareDates(dateType, transactionDate)) {
                 for (Item i : transaction.getItems()) {
                     if (i instanceof Car) {
                         soldCars++;
@@ -98,20 +72,23 @@ public class Statistics {
         return soldCars;
     }
 
-    public static BigDecimal totalRevenueInPeriod(ArrayList<Service> services, ArrayList<Transaction> transactions, String date) throws ParseException {
-        SimpleDateFormat df = determineRange(date);
+    public static BigDecimal totalRevenueInPeriod(ArrayList<Service> services, ArrayList<Transaction> transactions, String date, String dateType) throws ParseException {
+        SimpleDateFormat df = getDateFormat(dateType);
         cal1.setTime(df.parse(date));
 
         BigDecimal revenue = BigDecimal.valueOf(0);
         for (Transaction transaction : transactions) {
-            cal2.setTime(transaction.getTransactionDate());
-            if (compareDates(cal1, cal2, date)) {
+            Date transactionDate = transaction.getTransactionDate();
+            cal2.setTime(transactionDate);
+            if (compareDates(dateType, transactionDate)) {
+                System.out.println(transaction.getTotalAmount());
                 revenue = revenue.add(transaction.getTotalAmount());
             }
         }
         for (Service service : services) {
-            cal2.setTime(service.getServiceDate());
-            if (compareDates(cal1, cal2, date)) {
+            Date serviceDate = service.getServiceDate();
+            cal2.setTime(serviceDate);
+            if (compareDates(dateType, serviceDate)) {
                 revenue = revenue.add(service.getServiceCost());
             }
         }
@@ -142,15 +119,21 @@ public class Statistics {
         return carRevenue;
     }
 
-    public static void listCarInAPeriod(ArrayList<Transaction> transactions, String date) throws ParseException {
-        SimpleDateFormat df = determineRange(date);
+    public static void listCarInAPeriod(ArrayList<Transaction> transactions, String date, String dateType) throws ParseException {
+        SimpleDateFormat df = getDateFormat(dateType);
+
         cal1.setTime(df.parse(date));
 
-        System.out.println("\nCars sold in " + date + ":");
+        if (dateType.equals("week")) {
+            System.out.println("\nCars sold in the week starts from " + date + ":");
+        } else {
+            System.out.println("\nCars sold in " + date + ":");
+        }
         int count = 1;
         for (Transaction transaction : transactions) {
-            cal2.setTime(transaction.getTransactionDate());
-            if (compareDates(cal1, cal2, date)) {
+            Date transactionDate = transaction.getTransactionDate();
+            cal2.setTime(transactionDate);
+            if (compareDates(dateType, transactionDate)) {
                 for (Item i : transaction.getItems()) {
                     if (i instanceof Car) {
                         System.out.println(count + ". " + i.getSearchString());
@@ -161,47 +144,62 @@ public class Statistics {
         }
     }
 
-    public static void listTransactionInAPeriod(ArrayList<Transaction> transactions, String date) throws ParseException {
-        SimpleDateFormat df = determineRange(date);
+    public static void listTransactionInAPeriod(ArrayList<Transaction> transactions, String date, String dateType) throws ParseException {
+        SimpleDateFormat df = getDateFormat(dateType);
         cal1.setTime(df.parse(date));
 
-        System.out.println("\nSales Transactions created in " + date + ":");
+        if (dateType.equals("week")) {
+            System.out.println("\nSales Transactions created in the week starts from " + date + ":");
+        } else {
+            System.out.println("\nSales Transactions created in " + date + ":");
+        }
         int count = 1;
         for (Transaction transaction : transactions) {
-            cal2.setTime(transaction.getTransactionDate());
-            if (compareDates(cal1, cal2, date)) {
+            Date transactionDate = transaction.getTransactionDate();
+            cal2.setTime(transactionDate);
+            if (compareDates(dateType, transactionDate)) {
                 System.out.println(count + ". " + transaction.getSearchString());
                 count += 1;
             }
         }
     }
 
-    public static void listServiceInAPeriod(ArrayList<Service> services, String date) throws ParseException {
-        SimpleDateFormat df = determineRange(date);
+    public static void listServiceInAPeriod(ArrayList<Service> services, String date, String dateType) throws ParseException {
+        SimpleDateFormat df = getDateFormat(dateType);
         cal1.setTime(df.parse(date));
 
-        System.out.println("\nServices done in " + date + ":");
+        if (dateType.equals("week")) {
+            System.out.println("\nServices done in the week starts from " + date + ":");
+        } else {
+            System.out.println("\nServices done in " + date + ":");
+        }
         int count = 1;
         for (Service service : services) {
-            cal2.setTime(service.getServiceDate());
-            if (compareDates(cal1, cal2, date)) {
+            Date serviceDate = service.getServiceDate();
+            cal2.setTime(serviceDate);
+            if (compareDates(dateType, serviceDate)) {
                 System.out.println(count + ". " + service.getSearchString());
                 count += 1;
             }
         }
     }
 
-    public static void listPartInAPeriod(ArrayList<Service> services, ArrayList<Transaction> transactions, String date) throws ParseException {
-        SimpleDateFormat df = determineRange(date);
+    public static void listPartInAPeriod(ArrayList<Service> services, ArrayList<Transaction> transactions, String date, String dateType) throws ParseException {
+        SimpleDateFormat df = getDateFormat(dateType);
         cal1.setTime(df.parse(date));
 
-        System.out.println("\nAuto Parts sold in " + date + ":");
+        if (dateType.equals("week")) {
+            System.out.println("\nAuto Parts sold in the week starts from " + date + ":");
+        } else {
+            System.out.println("\nAuto Parts sold in " + date + ":");
+        }
         int count = 1;
 
         System.out.println("\nAuto Parts sold in transactions:");
         for (Transaction transaction : transactions) {
-            cal2.setTime(transaction.getTransactionDate());
-            if (compareDates(cal1, cal2, date)) {
+            Date transactionDate = transaction.getTransactionDate();
+            cal2.setTime(transactionDate);
+            if (compareDates(dateType, transactionDate)) {
                 for (Item i : transaction.getItems()) {
                     if (i instanceof AutoPart) {
                         System.out.println(count + ". " + i.getSearchString());
@@ -213,8 +211,9 @@ public class Statistics {
 
         System.out.println("\nAuto Parts sold in services:");
         for (Service service : services) {
-            cal2.setTime(service.getServiceDate());
-            if (compareDates(cal1, cal2, date)) {
+            Date serviceDate = service.getServiceDate();
+            cal2.setTime(serviceDate);
+            if (compareDates(dateType, serviceDate)) {
                 for (AutoPart i : service.getReplacedParts()) {
                     System.out.println(count + ". " + i.getSearchString());
                     count += 1;
