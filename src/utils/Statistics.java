@@ -208,4 +208,40 @@ public class Statistics {
             }
         }
     }
+
+    public static BigDecimal revenueCarSoldInAPeriod(ArrayList<Transaction> transactions, Salesperson salesperson, String date) throws ParseException {
+        SimpleDateFormat df = determineRange(date);
+        cal1.setTime(df.parse(date));
+
+        BigDecimal revenue = new BigDecimal(0);
+        for (Transaction transaction : transactions) {
+            if (transaction.getSalespersonID().equals(salesperson.getUserID())) {
+                cal2.setTime(transaction.getTransactionDate());
+                if (compareDates(cal1, cal2, date)) {
+                    for (Item i : transaction.getItems()) {
+                        if (i instanceof Car) {
+                            revenue = revenue.add(i.getPrice());
+                        }
+                    }
+                }
+            }
+        }
+        return revenue;
+    }
+
+    public static BigDecimal revenueServiceDoneInAPeriod(ArrayList<Service> services, Mechanic mechanic, String date) throws ParseException {
+        SimpleDateFormat df = determineRange(date);
+        cal1.setTime(df.parse(date));
+
+        BigDecimal revenue = new BigDecimal(0);
+        for (Service service : services) {
+            if (service.getMechanicID().equals(mechanic.getUserID())) {
+                cal2.setTime(service.getServiceDate());
+                if (compareDates(cal1, cal2, date)) {
+                    revenue = revenue.add(service.getServiceCost());
+                }
+            }
+        }
+        return revenue;
+    }
 }

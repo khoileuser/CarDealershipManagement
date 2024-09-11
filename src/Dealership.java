@@ -24,6 +24,7 @@ public class Dealership {
     private final UserInterface userInterface;
     private final TransactionInterface transactionInterface;
     private final ServiceInterface serviceInterface;
+    User loggedInUser;
 
     Scanner scanner = new Scanner(System.in);
 
@@ -60,7 +61,7 @@ public class Dealership {
         String password = scanner.nextLine();
 
         Authentication authentication = new Authentication(username, password);
-        User loggedInUser = authentication.authenticate(userInterface.getAllUsers());
+        loggedInUser = authentication.authenticate(userInterface.getAllUsers());
 
         if (loggedInUser != null) {
             System.out.println("Login successful. Welcome, " + loggedInUser.getFullName());
@@ -1234,16 +1235,22 @@ public class Dealership {
 
             switch (choice) {
                 case 1:
-                    countSoldCarsMenu(transactions);
+                    processMenu("Count sold cars in a period of time:", null, transactions, (nullList, transactionsList, input) -> {
+                        int soldCars = Statistics.countSoldCarsInPeriod(transactionsList, input);
+                        System.out.println("\nThere are " + soldCars + " cars sold in " + input + ".");
+                    });
                     break;
                 case 2:
-                    totalRevenueMenu(services, transactions);
+                    processMenu("Total revenue in a period of time:", services, transactions, (servicesList, transactionsList, input) -> {
+                        BigDecimal revenue = Statistics.totalRevenueInPeriod(servicesList, transactionsList, input);
+                        System.out.println("\n" + name + " has a revenue of " + numParse(revenue) + " VND in " + input + ".");
+                    });
                     break;
                 case 3:
                     revenueServiceByMechanicMenu(services);
                     break;
                 case 4:
-                    revenueTransactionBySalespersonMenu(transactions);
+                    revenueCarSoldBySalespersonMenu(transactions);
                     break;
                 case 5:
                     listCarsMenu(transactions);
@@ -1266,170 +1273,11 @@ public class Dealership {
         }  while (choice != 0);
     }
 
-    public void explainDateInput() {
-        System.out.println("Day is in dd/MM/yyyy");
-        System.out.println("Month is in MM/yyyy");
-        System.out.println("Year is in yyyy");
-        System.out.println("0 to cancel");
-        System.out.print("Enter date: ");
-    }
-
-    public void countSoldCarsMenu(ArrayList<Transaction> transactions) {
-        String input = "";
-        int choice;
-        do {
-            System.out.println("\nCount sold cars in a period of time:");
-            explainDateInput();
-            try {
-                input = scanner.nextLine();
-                choice = Integer.parseInt(input);
-                if (input.length() != 4) {
-                    System.out.println("Invalid date. Please try again.");
-                    continue;
-                }
-            } catch (NumberFormatException e) {
-                choice = -1;
-            }
-
-
-            try {
-                int soldCars =  Statistics.countSoldCarsInPeriod(transactions, input);
-                System.out.println("\nThere are " + soldCars + " cars sold in " + input + ".");
-                return;
-            } catch (ParseException d) {
-                System.out.println("Invalid date. Please try again.");
-            }
-
-        }  while (choice != 0);
-    }
-
-    public void totalRevenueMenu(ArrayList<Service> services, ArrayList<Transaction> transactions) {
-        String input = "";
-        int choice;
-        do {
-            System.out.println("\nTotal revenue in a period of time:");
-            explainDateInput();
-            try {
-                input = scanner.nextLine();
-                choice = Integer.parseInt(input);
-                if (input.length() != 4) {
-                    System.out.println("Invalid date. Please try again.");
-                    continue;
-                }
-            } catch (NumberFormatException e) {
-                choice = -1;
-            }
-
-            try {
-                BigDecimal revenue = Statistics.totalRevenueInPeriod(services, transactions, input);
-                System.out.println("\n" + name + " has a revenue of " + numParse(revenue) + " VND in " + input + ".");
-                return;
-            } catch (ParseException d) {
-                System.out.println("Invalid date. Please try again.");
-            }
-
-        }  while (choice != 0);
-    }
-
-    public void revenueServiceByMechanicMenu(ArrayList<Service> services) {
-        ArrayList<Mechanic> mechanics = userInterface.getAllMechanics();
-        Mechanic mechanic = (Mechanic) selectChoiceOrSearchString(mechanics, "Mechanic");
-        BigDecimal revenue = Statistics.revenueServiceByMechanic(services, mechanic);
-        System.out.println("\nMechanic " + mechanic.getFullName() + " has a services done revenue of " + numParse(revenue) + " VND.");
-    }
-
-    public void revenueTransactionBySalespersonMenu(ArrayList<Transaction> transactions) {
-        ArrayList<Salesperson> salespersons = userInterface.getAllSalespersons();
-        Salesperson salesperson = (Salesperson) selectChoiceOrSearchString(salespersons, "Salesperson");
-        BigDecimal revenue = Statistics.revenueCarsBySalesperson(transactions, salesperson);
-        System.out.println("\nSalesperson " + salesperson.getFullName() + " has a cars sold revenue of " + numParse(revenue) + " VND.");
-    }
-
-    @FunctionalInterface
-    public interface BiConsumerWithExceptions<T, U, E extends Exception> {
-        void accept(T t, U u) throws E;
-    }
-
-    public <T> void listMenu(String message, ArrayList<T> list, BiConsumerWithExceptions<ArrayList<T>, String, ParseException> action) {
-        String input = "";
-        int choice;
-        do {
-            System.out.println("\n" + message);
-            explainDateInput();
-            try {
-                input = scanner.nextLine();
-                choice = Integer.parseInt(input);
-                if (input.length() != 4) {
-                    System.out.println("Invalid date. Please try again.");
-                    continue;
-                }
-            } catch (NumberFormatException e) {
-                choice = -1;
-            }
-    
-            try {
-                action.accept(list, input);
-                return;
-            } catch (ParseException d) {
-                System.out.println("Invalid date. Please try again.");
-            }
-    
-        } while (choice != 0);
-    }
-    
-    public void listCarsMenu(ArrayList<Transaction> transactions) {
-        listMenu("List cars sold in a period of time:", transactions, Statistics::listCarInAPeriod);
-    }
-    
-    public void listTransactionsMenu(ArrayList<Transaction> transactions) {
-        listMenu("List sales transactions created in a period of time:", transactions, Statistics::listTransactionInAPeriod);
-    }
-    
-    public void listServicesMenu(ArrayList<Service> services) {
-        listMenu("List services done in a period of time:", services, Statistics::listServiceInAPeriod);
-    }
-    
-    public void listPartsMenu(ArrayList<Transaction> transactions) {
-        listMenu("List auto parts sold in a period of time:", transactions, Statistics::listPartInAPeriod);
-    }
-
-    public void showSalespersonStatisticMenu() {
-        int choice;
-        do {
-            System.out.println("\nStatistic Menu:");
-            System.out.println("1. Revenue of card sold in a period of time");
-            System.out.println("2. List car sold in a period of time");
-            System.out.println("0. Back");
-            System.out.print("Enter choice: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
-
-            switch (choice) {
-                case 1:
-                    System.out.println("");
-                    break;
-                case 2:
-                    System.out.println("");
-                    break;
-                case 0:
-                    break;
-                default:
-                    System.out.println("Invalid option. Please try again.");
-                    break;
-            }
-        }  while (choice != 0);
-    }
-
     public void showMechanicStatisticMenu() {
         int choice;
+        ArrayList<Service> services;
         do {
+            services = serviceInterface.getAllServices();
             System.out.println("\nStatistic Menu:");
             System.out.println("1. Revenue of services done in a period of time");
             System.out.println("2. List services done in a period of time");
@@ -1447,10 +1295,124 @@ public class Dealership {
 
             switch (choice) {
                 case 1:
-                    System.out.println("");
+                    Mechanic mechanic = (Mechanic) loggedInUser;
+                    processMenu("Revenue of cars sold in a period of time:", services, null, (servicesList, nullList, input) -> {
+                        BigDecimal revenue = Statistics.revenueServiceDoneInAPeriod(servicesList, mechanic, input);
+                        System.out.println("\nMechanic " + mechanic.getFullName() + " has a service done revenue of " + numParse(revenue) + " VND in " + input + ".");
+                    });
                     break;
                 case 2:
-                    System.out.println("");
+                    listServicesMenu(services);
+                    break;
+                case 0:
+                    break;
+                default:
+                    System.out.println("Invalid option. Please try again.");
+                    break;
+            }
+        }  while (choice != 0);
+    }
+
+    public void revenueServiceByMechanicMenu(ArrayList<Service> services) {
+        ArrayList<Mechanic> mechanics = userInterface.getAllMechanics();
+        Mechanic mechanic = (Mechanic) selectChoiceOrSearchString(mechanics, "Mechanic");
+        BigDecimal revenue = Statistics.revenueServiceByMechanic(services, mechanic);
+        System.out.println("\nMechanic " + mechanic.getFullName() + " has a services done revenue of " + numParse(revenue) + " VND.");
+    }
+
+    public void revenueCarSoldBySalespersonMenu(ArrayList<Transaction> transactions) {
+        ArrayList<Salesperson> salespersons = userInterface.getAllSalespersons();
+        Salesperson salesperson = (Salesperson) selectChoiceOrSearchString(salespersons, "Salesperson");
+        BigDecimal revenue = Statistics.revenueCarsBySalesperson(transactions, salesperson);
+        System.out.println("\nSalesperson " + salesperson.getFullName() + " has a cars sold revenue of " + numParse(revenue) + " VND.");
+    }
+
+    public void explainDateInput() {
+        System.out.println("Day is in dd/MM/yyyy");
+        System.out.println("Month is in MM/yyyy");
+        System.out.println("Year is in yyyy");
+        System.out.println("0 to cancel");
+        System.out.print("Enter date: ");
+    }
+
+    @FunctionalInterface
+    public interface BiConsumerWithExceptions<T, U, V, E extends Exception> {
+        void accept(T t, U u, V v) throws E;
+    }
+
+    public <T, U> void processMenu(String message, ArrayList<T> list, ArrayList<U> transactions, BiConsumerWithExceptions<ArrayList<T>, ArrayList<U>, String, ParseException> action) {
+        String input = "";
+        int choice;
+        do {
+            System.out.println("\n" + message);
+            explainDateInput();
+            try {
+                input = scanner.nextLine();
+                choice = Integer.parseInt(input);
+                if (input.length() != 4) {
+                    System.out.println("Invalid date. Please try again.");
+                    continue;
+                }
+            } catch (NumberFormatException e) {
+                choice = -1;
+            }
+
+            try {
+                action.accept(list, transactions, input);
+                return;
+            } catch (ParseException d) {
+                System.out.println("Invalid date. Please try again.");
+            }
+
+        } while (choice != 0);
+    }
+
+    public void listCarsMenu(ArrayList<Transaction> transactions) {
+        processMenu("List cars sold in a period of time:", null, transactions, (nullList, transactionsList, input) -> Statistics.listCarInAPeriod(transactionsList, input));
+    }
+
+    public void listTransactionsMenu(ArrayList<Transaction> transactions) {
+        processMenu("List sales transactions created in a period of time:", null, transactions, (nullList, transactionsList, input) -> Statistics.listTransactionInAPeriod(transactionsList, input));
+    }
+
+    public void listServicesMenu(ArrayList<Service> services) {
+        processMenu("List services done in a period of time:", services, null, (servicesList, nullList, input) -> Statistics.listServiceInAPeriod(servicesList, input));
+    }
+
+    public void listPartsMenu(ArrayList<Transaction> transactions) {
+        processMenu("List auto parts sold in a period of time:", null, transactions, (nullList, transactionsList, input) -> Statistics.listPartInAPeriod(transactionsList, input));
+    }
+
+    public void showSalespersonStatisticMenu() {
+        int choice;
+        ArrayList<Transaction> transactions;
+        do {
+            transactions = transactionInterface.getAllTransactions();
+            System.out.println("\nStatistic Menu:");
+            System.out.println("1. Revenue of cars sold in a period of time");
+            System.out.println("2. List car sold in a period of time");
+            System.out.println("0. Back");
+            System.out.print("Enter choice: ");
+            try {
+                choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid option. Please try again.");
+                scanner.next(); // consume the invalid token
+                choice = -1; // default value that will not exit the loop
+                continue;
+            }
+
+            switch (choice) {
+                case 1:
+                    Salesperson salesperson = (Salesperson) loggedInUser;
+                    processMenu("Revenue of cars sold in a period of time:", null, transactions, (nullList, transactionsList, input) -> {
+                        BigDecimal revenue = Statistics.revenueCarSoldInAPeriod(transactionsList, salesperson, input);
+                        System.out.println("\nSalesperson " + salesperson.getFullName() + " has a cars sold revenue of " + numParse(revenue) + " VND in " + input + ".");
+                    });
+                    break;
+                case 2:
+                    listCarsMenu(transactions);
                     break;
                 case 0:
                     break;
