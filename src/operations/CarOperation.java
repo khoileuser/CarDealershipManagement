@@ -71,12 +71,15 @@ public class CarOperation implements CarInterface {
     }
 
     @Override
-    public void removeServiceFromCars(Service service) {
+    public void removeService(Service service) {
         for (Car c : carList) {
-            for (Service s : c.getServicesHistory()) {
-                if (s.getServiceID().equals(service.getServiceID())) {
-                    c.removeService(service);
-                    System.out.println("Service removed from: " + c);
+            if (c.getCarID().equals(service.getCarID())) {
+                for (Service s : c.getServicesHistory()) {
+                    if (s.getServiceID().equals(service.getServiceID())) {
+                        c.removeService(service);
+                        System.out.println("Service removed from: " + c);
+                        break;
+                    }
                 }
             }
         }

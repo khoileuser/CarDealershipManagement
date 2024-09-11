@@ -1,8 +1,10 @@
 package core.user;
+import utils.Activity;
 import utils.Membership;
 
 import java.io.Serial;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 
 public class Client extends User {
     @Serial
@@ -51,5 +53,20 @@ public class Client extends User {
     @Override
     public String getPassword() {
         return "Client doesn't have login credentials";
+    }
+
+    @Override
+    public ArrayList<Activity> getActivityLog() {
+        return null;
+    }
+
+    @Override
+    public void setActivityLog(ArrayList<Activity> activityLog) {
+
+    }
+
+    @Override
+    public void addActivity(Activity activity) {
+
     }
 }

@@ -1,6 +1,8 @@
 package operations;
 
 import core.Transaction;
+import core.items.Car;
+import core.items.Item;
 import interfaces.TransactionInterface;
 
 import java.util.ArrayList;
@@ -32,6 +34,11 @@ public class TransactionOperation implements TransactionInterface {
         lastID = lastID + 1;
         transaction.setTransactionID("t-" + lastID);
         transactionList.add(transaction);
+        for (Item i : transaction.getItems()) {
+            if (i instanceof Car) {
+                ((Car) i).setStatus("sold");
+            }
+        }
         System.out.println("Transaction added: " + transaction);
     }
 

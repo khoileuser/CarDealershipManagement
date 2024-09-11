@@ -1,5 +1,6 @@
 package utils;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -190,12 +191,14 @@ public class Statistics {
         }
     }
 
-    public static void listPartInAPeriod(ArrayList<Transaction> transactions, String date) throws ParseException {
+    public static void listPartInAPeriod(ArrayList<Service> services, ArrayList<Transaction> transactions, String date) throws ParseException {
         SimpleDateFormat df = determineRange(date);
         cal1.setTime(df.parse(date));
 
         System.out.println("\nAuto Parts sold in " + date + ":");
         int count = 1;
+
+        System.out.println("\nAuto Parts sold in transactions:");
         for (Transaction transaction : transactions) {
             cal2.setTime(transaction.getTransactionDate());
             if (compareDates(cal1, cal2, date)) {
@@ -207,41 +210,16 @@ public class Statistics {
                 }
             }
         }
-    }
 
-    public static BigDecimal revenueCarSoldInAPeriod(ArrayList<Transaction> transactions, Salesperson salesperson, String date) throws ParseException {
-        SimpleDateFormat df = determineRange(date);
-        cal1.setTime(df.parse(date));
-
-        BigDecimal revenue = new BigDecimal(0);
-        for (Transaction transaction : transactions) {
-            if (transaction.getSalespersonID().equals(salesperson.getUserID())) {
-                cal2.setTime(transaction.getTransactionDate());
-                if (compareDates(cal1, cal2, date)) {
-                    for (Item i : transaction.getItems()) {
-                        if (i instanceof Car) {
-                            revenue = revenue.add(i.getPrice());
-                        }
-                    }
-                }
-            }
-        }
-        return revenue;
-    }
-
-    public static BigDecimal revenueServiceDoneInAPeriod(ArrayList<Service> services, Mechanic mechanic, String date) throws ParseException {
-        SimpleDateFormat df = determineRange(date);
-        cal1.setTime(df.parse(date));
-
-        BigDecimal revenue = new BigDecimal(0);
+        System.out.println("\nAuto Parts sold in services:");
         for (Service service : services) {
-            if (service.getMechanicID().equals(mechanic.getUserID())) {
-                cal2.setTime(service.getServiceDate());
-                if (compareDates(cal1, cal2, date)) {
-                    revenue = revenue.add(service.getServiceCost());
+            cal2.setTime(service.getServiceDate());
+            if (compareDates(cal1, cal2, date)) {
+                for (AutoPart i : service.getReplacedParts()) {
+                    System.out.println(count + ". " + i.getSearchString());
+                    count += 1;
                 }
             }
         }
-        return revenue;
     }
 }

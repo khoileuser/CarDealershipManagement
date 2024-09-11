@@ -4,7 +4,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActivityLog {
+public class Activity {
+    private String ActivityID;
     private final List<String> logs = new ArrayList<>();
 
     public void logActivity(String userID, String activity) {

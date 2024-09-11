@@ -25,7 +25,7 @@ public class Transaction implements Serializable, Entity {
     private BigDecimal totalAmount;
     private String notes;
 
-    public Transaction(String clientID, String salespersonID, String notes) {
+    public Transaction(String clientID, String salespersonID, BigDecimal totalAmount, String notes) {
         this.transactionDate = setTransactionDate();
         this.clientID = clientID;
         this.salespersonID = salespersonID;
@@ -33,7 +33,7 @@ public class Transaction implements Serializable, Entity {
 
         this.items = new ArrayList<>();
         this.discountPercentage = 0;
-        this.totalAmount = new BigDecimal(0);
+        this.totalAmount = totalAmount;
     }
 
     public String getTransactionID() {
@@ -79,16 +79,10 @@ public class Transaction implements Serializable, Entity {
 
     public void setItems(ArrayList<Item> items) {
         this.items = items;
-        this.totalAmount = new BigDecimal(0);
-        for (Item i : items) {
-            this.totalAmount = this.totalAmount.add(i.getPrice());
-        }
     }
 
     public void addItem(Item item) {
         this.items.add(item);
-        BigDecimal itemPrice = item.getPrice();
-        this.totalAmount = this.totalAmount.add(itemPrice);
     }
 
     public int getDiscountPercentage() {

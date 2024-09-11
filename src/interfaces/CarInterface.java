@@ -22,5 +22,5 @@ public interface CarInterface {
 
     void addService(Car car, Service service);
 
-    void removeServiceFromCars(Service service);
+    void removeService(Service service);
 }

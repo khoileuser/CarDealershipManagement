@@ -1,6 +1,9 @@
 package core.user;
 
+import utils.Activity;
+
 import java.io.Serial;
+import java.util.ArrayList;
 
 public abstract class Employee extends User {
     @Serial
@@ -8,11 +11,13 @@ public abstract class Employee extends User {
 
     protected String username;
     protected String password;
+    protected ArrayList<Activity> activityLog;
 
     public Employee(String fullName, String dateOfBirth, String address, String phoneNumber, String email, UserType userType, String username, String password) throws Exception {
         super(fullName, dateOfBirth, address, phoneNumber, email, userType);
         this.username = username;
         this.password = password;
+        this.activityLog = new ArrayList<>();
     }
 
     @Override
@@ -36,5 +41,20 @@ public abstract class Employee extends User {
     @Override
     public String getPassword() {
         return password;
+    }
+
+    @Override
+    public ArrayList<Activity> getActivityLog() {
+        return activityLog;
+    }
+
+    @Override
+    public void setActivityLog(ArrayList<Activity> activityLog) {
+        this.activityLog = activityLog;
+    }
+
+    @Override
+    public void addActivity(Activity activity) {
+        this.activityLog.add(activity);
     }
 }

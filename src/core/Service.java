@@ -18,15 +18,17 @@ public class Service implements Serializable, Entity {
     private final Date serviceDate;
     private String clientID;
     private String mechanicID;
+    private String carID;
     private String serviceType;
     private ArrayList<AutoPart> replacedParts;
     private BigDecimal serviceCost;
     private String notes;
 
-    public Service(String clientID, String mechanicID, String serviceType, BigDecimal serviceCost, String notes) {
+    public Service(String clientID, String mechanicID, String carID, String serviceType, BigDecimal serviceCost, String notes) {
         this.serviceDate = setServiceDate();
         this.clientID = clientID;
         this.mechanicID = mechanicID;
+        this.carID = carID;
         this.serviceType = serviceType;
         this.serviceCost = serviceCost;
         this.notes = notes;
@@ -67,6 +69,14 @@ public class Service implements Serializable, Entity {
 
     public void setMechanicID(String mechanicID) {
         this.mechanicID = mechanicID;
+    }
+
+    public String getCarID() {
+        return carID;
+    }
+
+    public void setCarID(String carID) {
+        this.carID = carID;
     }
 
     public String getServiceType() {

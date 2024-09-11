@@ -1,6 +1,7 @@
 package core.user;
 
 import core.Entity;
+import utils.Activity;
 
 import java.io.Serial;
 import java.text.ParseException;
@@ -21,7 +22,6 @@ public abstract class User implements Serializable, Entity {
     protected String email;
     protected UserType userType;
     protected boolean status;
-    protected ArrayList<String> activityLog;
 
     public User(String fullName, String dateOfBirth, String address, String phoneNumber, String email, UserType userType) throws Exception {
         Date dob = null;
@@ -108,14 +108,6 @@ public abstract class User implements Serializable, Entity {
         this.userType = userType;
     }
 
-    public ArrayList<String> getActivityLog() {
-        return activityLog;
-    }
-
-    public void setActivityLog(ArrayList<String> activityLog) {
-        this.activityLog = activityLog;
-    }
-
     public boolean isActive() { return status; }
 
     public void deactivateUser() { this.status = false; }
@@ -128,6 +120,12 @@ public abstract class User implements Serializable, Entity {
     public abstract String getUsername();
 
     public abstract String getPassword();
+
+    public abstract ArrayList<Activity> getActivityLog();
+
+    public abstract void setActivityLog(ArrayList<Activity> activityLog);
+
+    public abstract void addActivity(Activity activity);
 
     @Override
     public String toString() {

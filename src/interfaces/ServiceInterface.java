@@ -2,13 +2,14 @@ package interfaces;
 
 import core.Service;
 import core.items.AutoPart;
+import core.items.Car;
 
 import java.util.ArrayList;
 
 public interface ServiceInterface {
     void setServiceList(ArrayList<Object> serviceList);
 
-    void addService(Service service);
+    void addService(Service service, Car car);
 
     ArrayList<Service> getAllServices();
 

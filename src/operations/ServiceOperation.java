@@ -2,6 +2,7 @@ package operations;
 
 import core.Service;
 import core.items.AutoPart;
+import core.items.Car;
 import interfaces.ServiceInterface;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ public class ServiceOperation implements ServiceInterface {
     }
 
     @Override
-    public void addService(Service service) {
+    public void addService(Service service, Car car) {
         int lastID = 0;
         for (Service s : serviceList) {
             int id = (int) Integer.parseInt(s.getServiceID().replace("s-", ""));
@@ -33,6 +34,7 @@ public class ServiceOperation implements ServiceInterface {
         lastID = lastID + 1;
         service.setServiceID("s-" + lastID);
         serviceList.add(service);
+        car.addService(service);
         System.out.println("Service added: " + service);
     }
 

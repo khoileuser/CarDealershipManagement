@@ -1,11 +1,10 @@
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.*;
+import java.util.stream.Stream;
 
 import core.*;
 import core.items.*;
@@ -47,6 +46,7 @@ public class Dealership {
 
     // Main method to start the system
     public void start() throws Exception {
+
         System.out.println(userInterface.getAllUsers());
         System.out.println(carInterface.getAllCars());
         System.out.println(autoPartInterface.getAllAutoParts());
@@ -65,6 +65,7 @@ public class Dealership {
 
         if (loggedInUser != null) {
             System.out.println("Login successful. Welcome, " + loggedInUser.getFullName());
+            System.out.println("Role: " + loggedInUser.getUserType());
             switch (loggedInUser.getUserType()) {
                 case MANAGER:
                     showManagerMenu();
@@ -119,10 +120,10 @@ public class Dealership {
                     showAutoPartMenu();
                     break;
                 case 3:
-                    showServiceMenu();
+                    showServiceMenu(false);
                     break;
                 case 4:
-                    showTransactionMenu();
+                    showTransactionMenu(false);
                     break;
                 case 5:
                     showUserMenu();
@@ -145,7 +146,9 @@ public class Dealership {
         do {
             System.out.println("\nSalesperson Menu:");
             System.out.println("1. Car Operations");
-            System.out.println("2. Perform Statistics");
+            System.out.println("2. Auto Part Operations");
+            System.out.println("3. Sales Transaction Operations");
+            System.out.println("4. Perform Statistics");
             System.out.println("0. Logout");
             System.out.print("Enter choice: ");
             try {
@@ -163,7 +166,13 @@ public class Dealership {
                     showCarMenu();
                     break;
                 case 2:
-                    showSalespersonStatisticMenu();
+                    showAutoPartMenu();
+                    break;
+                case 3:
+                    showTransactionMenu(true);
+                    break;
+                case 4:
+                    showEmployeeStatisticMenu();
                     break;
                 case 0:
                     System.out.println("Logging out...");
@@ -179,8 +188,10 @@ public class Dealership {
         int choice;
         do {
             System.out.println("\nMechanic Menu:");
-            System.out.println("1. Service Operations");
-            System.out.println("2. Perform Statistics");
+            System.out.println("1. Car Operations");
+            System.out.println("2. Auto Part Operations");
+            System.out.println("3. Service Operations");
+            System.out.println("4. Perform Statistics");
             System.out.println("0. Logout");
             System.out.print("Enter choice: ");
             try {
@@ -195,10 +206,16 @@ public class Dealership {
 
             switch (choice) {
                 case 1:
-                    showServiceMenu();
+                    showCarMenu();
                     break;
                 case 2:
-                    showMechanicStatisticMenu();
+                    showAutoPartMenu();
+                    break;
+                case 3:
+                    showServiceMenu(true);
+                    break;
+                case 4:
+                    showEmployeeStatisticMenu();
                     break;
                 case 0:
                     System.out.println("Logging out...");
@@ -321,16 +338,9 @@ public class Dealership {
                 System.out.println("Services history: Empty");
             }
 
-            boolean sold;
-            sold = car.getStatus().equals("sold");
             System.out.println("\nUpdate Car Operations Menu:");
-            if (sold) {
-                System.out.println("1. Change car status to available");
-            } else {
-                System.out.println("1. Change car status to sold");
-            }
-            System.out.println("2. Update car");
-            System.out.println("3. Remove car");
+            System.out.println("1. Update car");
+            System.out.println("2. Remove car");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
             try {
@@ -345,17 +355,9 @@ public class Dealership {
 
             switch (choice) {
                 case 1:
-                    if (sold) {
-                        car.setStatus("available");
-                    } else {
-                        car.setStatus("sold");
-                    }
-                    carInterface.updateCar(car);
-                    break;
-                case 2:
                     car = updateCarMenu(car);
                     break;
-                case 3:
+                case 2:
                     String choose;
                     do {
                         System.out.print("Are you sure you want to remove " + carString + " ? (Y/N) > ");
@@ -624,16 +626,20 @@ public class Dealership {
         return updatedPart;
     }
 
-    private void showServiceMenu() {
+    private void showServiceMenu(boolean isMechanic) {
         int choice;
         ArrayList<Service> services;
         do {
             services = serviceInterface.getAllServices();
             System.out.println("\nService Operations Menu:");
             System.out.println("1. Add a service");
-            System.out.println("2. Select a service");
-            System.out.println("3. Search for service");
-            System.out.println("4. View all services");
+            if (!isMechanic) {
+                System.out.println("2. Select a service");
+                System.out.println("3. Search for service");
+                System.out.println("4. View all services");
+            } else {
+                System.out.println("2. View all services");
+            }
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
             try {
@@ -646,42 +652,74 @@ public class Dealership {
                 continue;
             }
 
-            switch (choice) {
-                case 1:
-                    addService();
-                    break;
-                case 2:
-                    listAndSelect(services, "All services:", this::updateEntityOperations);
-                    break;
-                case 3:
-                    searchMenu(services, this::updateEntityOperations);
-                    break;
-                case 4:
-                    System.out.println("\nAll services:");
-                    int count = 1;
-                    for (Service s : services) {
-                        System.out.println(count + ". " + s.getSearchString());
-                        count += 1;
-                    }
-                    break;
-                case 0:
-                    break;
-                default:
-                    System.out.println("Invalid option. Please try again.");
-                    break;
+            if (!isMechanic) {
+                switch (choice) {
+                    case 1:
+                        addService();
+                        break;
+                    case 2:
+                        listAndSelect(services, "All services:", this::updateEntityOperations);
+                        break;
+                    case 3:
+                        searchMenu(services, this::updateEntityOperations);
+                        break;
+                    case 4:
+                        System.out.println("\nAll services:");
+                        int count = 1;
+                        for (Service s : services) {
+                            System.out.println(count + ". " + s.getSearchString());
+                            count += 1;
+                        }
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        System.out.println("Invalid option. Please try again.");
+                        break;
+                }
+            } else {
+                switch (choice) {
+                    case 1:
+                        addService();
+                        break;
+                    case 2:
+                        System.out.println("\nAll services:");
+                        int count = 1;
+                        for (Service s : services) {
+                            System.out.println(count + ". " + s.getSearchString());
+                            count += 1;
+                        }
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        System.out.println("Invalid option. Please try again.");
+                        break;
+                }
             }
         }  while (choice != 0);
     }
 
     private void addService() {
         ArrayList<Mechanic> mechanics = userInterface.getAllMechanics();
-        Mechanic mechanic = (Mechanic) selectChoiceOrSearchString(mechanics, "Mechanic");
+        Mechanic mechanic = (Mechanic) selectChoiceOrSearch(mechanics, "Mechanic", false);
 
         ArrayList<Client> clients = userInterface.getAllClients();
-        Client client = (Client) selectChoiceOrSearchString(clients, "Client");
+        Client client = (Client) selectChoiceOrSearch(clients, "Client", false);
+
+        Car car = selectCar(client, false);
 
         System.out.print("Enter service type: ");
         String serviceType = getNextLine();
+
+        ArrayList<AutoPart> parts = autoPartInterface.getAllAutoParts();
+        ArrayList<Entity> entities = addChoiceOrSearch(parts, "Auto Parts", null);
+        ArrayList<AutoPart> replacedParts = new ArrayList<>();
+        for (Entity e : entities) {
+            if (e instanceof AutoPart) {
+                replacedParts.add((AutoPart) e);
+            }
+        }
 
         System.out.print("Enter service cost: ");
         BigDecimal serviceCost = getNextBigDecimal();
@@ -689,10 +727,9 @@ public class Dealership {
         System.out.print("Enter notes: ");
         String notes = scanner.nextLine();
 
-//        add replaced parts here
-
-        Service service = new Service(mechanic.getUserID(), client.getUserID(), serviceType, serviceCost, notes);
-        serviceInterface.addService(service);
+        Service service = new Service(client.getUserID(), mechanic.getUserID(), car.getCarID(), serviceType, serviceCost, notes);
+        service.setReplacedParts(replacedParts);
+        serviceInterface.addService(service, car);
     }
 
     private String updateServiceOperations(Service service) {
@@ -734,7 +771,7 @@ public class Dealership {
                         choose = scanner.next();
                         if (choose.toLowerCase().startsWith("y")) {
                             serviceInterface.removeService(service);
-                            carInterface.removeServiceFromCars(service);
+                            carInterface.removeService(service);
                             break;
                         } else if (!choose.toLowerCase().startsWith("n")) {
                             System.out.println("Invalid option. Please try again.");
@@ -752,6 +789,26 @@ public class Dealership {
     }
 
     private Service updateServiceMenu(Service service) {
+        String mechanicID = service.getMechanicID();
+        ArrayList<Mechanic> mechanics = userInterface.getAllMechanics();
+        Mechanic mechanic = (Mechanic) selectChoiceOrSearch(mechanics, "Mechanic", true);
+        if (mechanic != null) {
+            mechanicID = mechanic.getUserID();
+        }
+
+        String clientID = service.getClientID();
+        ArrayList<Client> clients = userInterface.getAllClients();
+        Client client = (Client) selectChoiceOrSearch(clients, "Client", true);
+        if (client != null) {
+            clientID = client.getUserID();
+        }
+
+        String carID = service.getCarID();
+        Car car = selectCar(client, true);
+        if (car != null) {
+            carID = car.getCarID();
+        }
+
         String serviceType = service.getServiceType();
         System.out.println("\nCurrent service type: " + serviceType);
         System.out.print("Enter new service type (enter to leave the same): ");
@@ -762,29 +819,86 @@ public class Dealership {
         System.out.print("Enter new service cost (enter to leave the same): ");
         serviceCost = getNextBigDecimalEmpty(serviceCost);
 
+        System.out.println("Update replaced part(s):");
+        ArrayList<AutoPart> parts = autoPartInterface.getAllAutoParts();
+        ArrayList<Entity> entities = addChoiceOrSearch(parts, "Auto Parts", service.getReplacedParts());
+        ArrayList<AutoPart> replacedParts = new ArrayList<>();
+        if (!entities.isEmpty()) {
+            for (Entity e : entities) {
+                if (e instanceof AutoPart) {
+                    replacedParts.add((AutoPart) e);
+                }
+            }
+        } else {
+            replacedParts = service.getReplacedParts();
+        }
+
         String notes = service.getNotes();
         System.out.println("\nCurrent notes: " + notes);
         System.out.print("Enter new notes (enter to leave the same): ");
         notes = getNextLineEmpty(notes);
 
-//        add / remove replaced parts
-
-        Service updatedService = new Service(service.getClientID(), service.getMechanicID(), serviceType, serviceCost, notes);
+        Service updatedService = new Service(clientID, mechanicID, carID, serviceType, serviceCost, notes);
         updatedService.setServiceID(service.getServiceID());
+        updatedService.setReplacedParts(replacedParts);
         serviceInterface.updateService(updatedService);
         return updatedService;
     }
 
-    private void showTransactionMenu() {
+    private Car selectCar(Client client, boolean back) {
+        Car car;
+        ArrayList<Car> cars = carInterface.getAllCars();
+        ArrayList<Transaction> transactions = transactionInterface.getAllTransactions();
+        boolean ownByClient = false;
+        while (true) {
+            if (back) {
+                car = (Car) selectChoiceOrSearch(cars, "Car", true);
+                if (car == null) {
+                    break;
+                }
+            } else {
+                car = (Car) selectChoiceOrSearch(cars, "Car", false);
+            }
+            for (Transaction t : transactions) {
+                assert client != null;
+                if (t.getClientID().equals(client.getUserID())) {
+                    ArrayList<Item> items = t.getItems();
+                    for (Item i : items) {
+                        if (i instanceof Car) {
+                            if (((Car) i).getCarID().equals(car.getCarID())) {
+                                ownByClient = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (ownByClient) {
+                    break;
+                }
+            }
+            if (!ownByClient) {
+                System.out.println("\nYou selected the car which is not own by the client, please check again.");
+                continue;
+            }
+            break;
+        }
+        return car;
+    }
+
+    private void showTransactionMenu(boolean isSalesperson) {
         int choice;
         ArrayList<Transaction> transactions;
         do {
             transactions = transactionInterface.getAllTransactions();
             System.out.println("\nSales Transaction Operations Menu:");
             System.out.println("1. Add a sales transaction");
-            System.out.println("2. Select a sales transaction");
-            System.out.println("3. Search for sales transaction");
-            System.out.println("4. View all sales transactions");
+            if (!isSalesperson) {
+                System.out.println("2. Select a sales transaction");
+                System.out.println("3. Search for sales transaction");
+                System.out.println("4. View all sales transactions");
+            } else {
+                System.out.println("2. View all sales transactions");
+            }
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
             try {
@@ -797,46 +911,88 @@ public class Dealership {
                 continue;
             }
 
-            switch (choice) {
-                case 1:
-                    addTransaction();
-                    break;
-                case 2:
-                    listAndSelect(transactions, "All sales transactions:", this::updateEntityOperations);
-                    break;
-                case 3:
-                    searchMenu(transactions, this::updateEntityOperations);
-                    break;
-                case 4:
-                    System.out.println("\nAll sales transactions:");
-                    int count = 1;
-                    for (Transaction t : transactions) {
-                        System.out.println(count + ". " + t.getSearchString());
-                        count += 1;
-                    }
-                    break;
-                case 0:
-                    break;
-                default:
-                    System.out.println("Invalid option. Please try again.");
-                    break;
+            if (!isSalesperson) {
+                switch (choice) {
+                    case 1:
+                        addTransaction();
+                        break;
+                    case 2:
+                        listAndSelect(transactions, "All sales transactions:", this::updateEntityOperations);
+                        break;
+                    case 3:
+                        searchMenu(transactions, this::updateEntityOperations);
+                        break;
+                    case 4:
+                        System.out.println("\nAll sales transactions:");
+                        int count = 1;
+                        for (Transaction t : transactions) {
+                            System.out.println(count + ". " + t.getSearchString());
+                            count += 1;
+                        }
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        System.out.println("Invalid option. Please try again.");
+                        break;
+                }
+            } else {
+                switch (choice) {
+                    case 1:
+                        addTransaction();
+                        break;
+                    case 2:
+                        System.out.println("\nAll sales transactions:");
+                        int count = 1;
+                        for (Transaction t : transactions) {
+                            System.out.println(count + ". " + t.getSearchString());
+                            count += 1;
+                        }
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        System.out.println("Invalid option. Please try again.");
+                        break;
+                }
             }
         }  while (choice != 0);
     }
 
     private void addTransaction() {
         ArrayList<Salesperson> salespersons = userInterface.getAllSalespersons();
-        Salesperson salesperson = (Salesperson) selectChoiceOrSearchString(salespersons, "Salesperson");
+        Salesperson salesperson = (Salesperson) selectChoiceOrSearch(salespersons, "Salesperson", false);
 
         ArrayList<Client> clients = userInterface.getAllClients();
-        Client client = (Client) selectChoiceOrSearchString(clients, "Client");
+        Client client = (Client) selectChoiceOrSearch(clients, "Client", false);
+
+        ArrayList<Item> items = new ArrayList<>();
+        ArrayList<Entity> entities;
+
+        ArrayList<AutoPart> parts = autoPartInterface.getAllAutoParts();
+        entities = addChoiceOrSearch(parts, "Auto Parts", null);
+        for (Entity e : entities) {
+            if (e instanceof AutoPart) {
+                items.add((AutoPart) e);
+            }
+        }
+
+        ArrayList<Car> cars = carInterface.getAllCars();
+        entities = addChoiceOrSearch(cars, "Cars", null);
+        for (Entity e : entities) {
+            if (e instanceof Car) {
+                items.add((Car) e);
+            }
+        }
+
+        System.out.print("\nEnter total amount: ");
+        BigDecimal totalAmount = getNextBigDecimal();
 
         System.out.print("Enter notes: ");
         String notes = scanner.nextLine();
 
-//        add items here
-
-        Transaction transaction = new Transaction(client.getUserID(), salesperson.getUserID(), notes);
+        Transaction transaction = new Transaction(client.getUserID(), salesperson.getUserID(), totalAmount, notes);
+        transaction.setItems(items);
         transactionInterface.addTransaction(transaction);
     }
 
@@ -879,6 +1035,11 @@ public class Dealership {
                         choose = scanner.next();
                         if (choose.toLowerCase().startsWith("y")) {
                             transactionInterface.removeTransaction(transaction);
+                            for (Item i : transaction.getItems()) {
+                                if (i instanceof Car) {
+                                    ((Car) i).setStatus("available");
+                                }
+                            }
                             break;
                         } else if (!choose.toLowerCase().startsWith("n")) {
                             System.out.println("Invalid option. Please try again.");
@@ -896,15 +1057,52 @@ public class Dealership {
     }
 
     private Transaction updateTransactionMenu(Transaction transaction) {
-//        edit items here
+        String salespersonID = transaction.getSalespersonID();
+        ArrayList<Salesperson> salespersons = userInterface.getAllSalespersons();
+        Salesperson salesperson = (Salesperson) selectChoiceOrSearch(salespersons, "Salesperson", true);
+        if (salesperson != null) {
+            salespersonID = salesperson.getUserID();
+        }
+
+        String clientID = transaction.getClientID();
+        ArrayList<Client> clients = userInterface.getAllClients();
+        Client client = (Client) selectChoiceOrSearch(clients, "Client", true);
+        if (client != null) {
+            clientID = client.getUserID();
+        }
+
+        BigDecimal totalAmount = transaction.getTotalAmount();
+        System.out.println("\nCurrent total amount: " + totalAmount);
+        System.out.print("Enter new service cost (enter to leave the same): ");
+        totalAmount = getNextBigDecimalEmpty(totalAmount);
+
+        System.out.println("Update item(s):");
+        ArrayList<AutoPart> parts = autoPartInterface.getAllAutoParts();
+        ArrayList<Car> cars = carInterface.getAllCars();
+        ArrayList<Item> items = (ArrayList<Item>) Stream.concat(parts.stream(), cars.stream()).toList();
+
+        ArrayList<Entity> entities = addChoiceOrSearch(items, "Item", transaction.getItems());
+        ArrayList<Item> newItems = new ArrayList<>();
+        if (!entities.isEmpty()) {
+            for (Entity e : entities) {
+                if (e instanceof AutoPart) {
+                    newItems.add((AutoPart) e);
+                } else if (e instanceof Car) {
+                    newItems.add((Car) e);
+                }
+            }
+        } else {
+            newItems = transaction.getItems();
+        }
 
         String notes = transaction.getNotes();
         System.out.println("\nCurrent notes: " + notes);
         System.out.print("Enter new notes (enter to leave the same): ");
         notes = getNextLineEmpty(notes);
 
-        Transaction updatedTransaction = new Transaction(transaction.getClientID(), transaction.getSalespersonID(), notes);
+        Transaction updatedTransaction = new Transaction(clientID, salespersonID, totalAmount, notes);
         updatedTransaction.setTransactionID(transaction.getTransactionID());
+        updatedTransaction.setItems(newItems);
         transactionInterface.updateTransaction(updatedTransaction);
         return updatedTransaction;
     }
@@ -915,10 +1113,10 @@ public class Dealership {
         do {
             users = userInterface.getAllUsers();
             System.out.println("\nUser Operations Menu:");
-            System.out.println("1. Add a user");
-            System.out.println("2. Select a user");
-            System.out.println("3. Search for user");
-            System.out.println("4. View all users");
+//            System.out.println("1. Add a user");
+            System.out.println("1. Select a user");
+            System.out.println("2. Search for user");
+            System.out.println("3. View all users");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
             try {
@@ -933,15 +1131,12 @@ public class Dealership {
 
             switch (choice) {
                 case 1:
-                    addUser();
-                    break;
-                case 2:
                     listAndSelect(users, "All users:", this::updateEntityOperations);
                     break;
-                case 3:
+                case 2:
                     searchMenu(users, this::updateEntityOperations);
                     break;
-                case 4:
+                case 3:
                     System.out.println("\nAll users:");
                     int count = 1;
                     for (User u : users) {
@@ -986,12 +1181,12 @@ public class Dealership {
 
         UserType userType = null;
         int choice;
-        do {
+        boolean done = false;
+        while (true) {
             System.out.println("\nSelect user type:");
             System.out.println("1. Salesperson");
             System.out.println("2. Mechanic");
             System.out.println("3. Client");
-            System.out.println("0. Same as current");
             System.out.print("Choose user type: ");
             try {
                 choice = scanner.nextInt();
@@ -999,26 +1194,29 @@ public class Dealership {
             } catch (InputMismatchException e) {
                 System.out.println("Invalid option. Please try again.");
                 scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
                 continue;
             }
             switch (choice) {
                 case 1:
                     userType = UserType.SALESPERSON;
+                    done = true;
                     break;
                 case 2:
                     userType = UserType.MECHANIC;
+                    done = true;
                     break;
                 case 3:
                     userType = UserType.CLIENT;
-                    break;
-                case 0:
+                    done = true;
                     break;
                 default:
                     System.out.println("Invalid option. Please try again.");
                     break;
             }
-        } while (choice != 0);
+            if (done) {
+                break;
+            }
+        }
 
         String username = "";
         String password = "";
@@ -1034,7 +1232,6 @@ public class Dealership {
 
         User user = null;
         try {
-            assert userType != null;
             user = switch (userType) {
                 case SALESPERSON -> new Salesperson(fullName, dateOfBirth, address, phoneNumber, email, username, password);
                 case MECHANIC -> new Mechanic(fullName, dateOfBirth, address, phoneNumber, email, username, password);
@@ -1059,11 +1256,15 @@ public class Dealership {
             System.out.println("Email: " + user.getEmail());
             System.out.println("User Type: " + user.getUserType());
             System.out.println("Status: " + user.isActive());
-            System.out.println("Activity Log: " + user.getActivityLog());
+            if (user.getUserType() != UserType.CLIENT) {
+                System.out.println("Activity Log: " + user.getActivityLog());
+            }
 
             System.out.println("\nUpdate User Operations Menu:");
             System.out.println("1. Update user");
-            System.out.println("2. Remove user");
+            if (user.getUserType() != UserType.MANAGER) {
+                System.out.println("2. Remove user");
+            }
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
             try {
@@ -1235,7 +1436,7 @@ public class Dealership {
 
             switch (choice) {
                 case 1:
-                    processMenu("Count sold cars in a period of time:", null, transactions, (nullList, transactionsList, input) -> {
+                    processMenu("Count sold cars in a period of time:", null, transactions, (_, transactionsList, input) -> {
                         int soldCars = Statistics.countSoldCarsInPeriod(transactionsList, input);
                         System.out.println("\nThere are " + soldCars + " cars sold in " + input + ".");
                     });
@@ -1262,47 +1463,7 @@ public class Dealership {
                     listServicesMenu(services);
                     break;
                 case 8:
-                    listPartsMenu(transactions);
-                    break;
-                case 0:
-                    break;
-                default:
-                    System.out.println("Invalid option. Please try again.");
-                    break;
-            }
-        }  while (choice != 0);
-    }
-
-    public void showMechanicStatisticMenu() {
-        int choice;
-        ArrayList<Service> services;
-        do {
-            services = serviceInterface.getAllServices();
-            System.out.println("\nStatistic Menu:");
-            System.out.println("1. Revenue of services done in a period of time");
-            System.out.println("2. List services done in a period of time");
-            System.out.println("0. Back");
-            System.out.print("Enter choice: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
-
-            switch (choice) {
-                case 1:
-                    Mechanic mechanic = (Mechanic) loggedInUser;
-                    processMenu("Revenue of cars sold in a period of time:", services, null, (servicesList, nullList, input) -> {
-                        BigDecimal revenue = Statistics.revenueServiceDoneInAPeriod(servicesList, mechanic, input);
-                        System.out.println("\nMechanic " + mechanic.getFullName() + " has a service done revenue of " + numParse(revenue) + " VND in " + input + ".");
-                    });
-                    break;
-                case 2:
-                    listServicesMenu(services);
+                    listPartsMenu(services, transactions);
                     break;
                 case 0:
                     break;
@@ -1315,14 +1476,14 @@ public class Dealership {
 
     public void revenueServiceByMechanicMenu(ArrayList<Service> services) {
         ArrayList<Mechanic> mechanics = userInterface.getAllMechanics();
-        Mechanic mechanic = (Mechanic) selectChoiceOrSearchString(mechanics, "Mechanic");
+        Mechanic mechanic = (Mechanic) selectChoiceOrSearch(mechanics, "Mechanic", false);
         BigDecimal revenue = Statistics.revenueServiceByMechanic(services, mechanic);
         System.out.println("\nMechanic " + mechanic.getFullName() + " has a services done revenue of " + numParse(revenue) + " VND.");
     }
 
     public void revenueCarSoldBySalespersonMenu(ArrayList<Transaction> transactions) {
         ArrayList<Salesperson> salespersons = userInterface.getAllSalespersons();
-        Salesperson salesperson = (Salesperson) selectChoiceOrSearchString(salespersons, "Salesperson");
+        Salesperson salesperson = (Salesperson) selectChoiceOrSearch(salespersons, "Salesperson", false);
         BigDecimal revenue = Statistics.revenueCarsBySalesperson(transactions, salesperson);
         System.out.println("\nSalesperson " + salesperson.getFullName() + " has a cars sold revenue of " + numParse(revenue) + " VND.");
     }
@@ -1340,7 +1501,7 @@ public class Dealership {
         void accept(T t, U u, V v) throws E;
     }
 
-    public <T, U> void processMenu(String message, ArrayList<T> list, ArrayList<U> transactions, BiConsumerWithExceptions<ArrayList<T>, ArrayList<U>, String, ParseException> action) {
+    public <T, U> void processMenu(String message, ArrayList<T> services, ArrayList<U> transactions, BiConsumerWithExceptions<ArrayList<T>, ArrayList<U>, String, ParseException> action) {
         String input = "";
         int choice;
         do {
@@ -1358,7 +1519,7 @@ public class Dealership {
             }
 
             try {
-                action.accept(list, transactions, input);
+                action.accept(services, transactions, input);
                 return;
             } catch (ParseException d) {
                 System.out.println("Invalid date. Please try again.");
@@ -1368,29 +1529,32 @@ public class Dealership {
     }
 
     public void listCarsMenu(ArrayList<Transaction> transactions) {
-        processMenu("List cars sold in a period of time:", null, transactions, (nullList, transactionsList, input) -> Statistics.listCarInAPeriod(transactionsList, input));
+        processMenu("List cars sold in a period of time:", null, transactions, (_, transactionsList, input) -> Statistics.listCarInAPeriod(transactionsList, input));
     }
 
     public void listTransactionsMenu(ArrayList<Transaction> transactions) {
-        processMenu("List sales transactions created in a period of time:", null, transactions, (nullList, transactionsList, input) -> Statistics.listTransactionInAPeriod(transactionsList, input));
+        processMenu("List sales transactions created in a period of time:", null, transactions, (_, transactionsList, input) -> Statistics.listTransactionInAPeriod(transactionsList, input));
     }
 
     public void listServicesMenu(ArrayList<Service> services) {
-        processMenu("List services done in a period of time:", services, null, (servicesList, nullList, input) -> Statistics.listServiceInAPeriod(servicesList, input));
+        processMenu("List services done in a period of time:", services, null, (servicesList, _, input) -> Statistics.listServiceInAPeriod(servicesList, input));
     }
 
-    public void listPartsMenu(ArrayList<Transaction> transactions) {
-        processMenu("List auto parts sold in a period of time:", null, transactions, (nullList, transactionsList, input) -> Statistics.listPartInAPeriod(transactionsList, input));
+    public void listPartsMenu(ArrayList<Service> services, ArrayList<Transaction> transactions) {
+        processMenu("List auto parts sold in a period of time:", services, transactions, Statistics::listPartInAPeriod);
     }
 
-    public void showSalespersonStatisticMenu() {
+    public void showEmployeeStatisticMenu() {
         int choice;
         ArrayList<Transaction> transactions;
+        ArrayList<Service> services;
         do {
             transactions = transactionInterface.getAllTransactions();
+            services = serviceInterface.getAllServices();
             System.out.println("\nStatistic Menu:");
-            System.out.println("1. Revenue of cars sold in a period of time");
-            System.out.println("2. List car sold in a period of time");
+            System.out.println("1. Total revenue in a period of time");
+            System.out.println("2. List cars sold in a period of time");
+            System.out.println("3. List services done in a period of time");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
             try {
@@ -1405,14 +1569,16 @@ public class Dealership {
 
             switch (choice) {
                 case 1:
-                    Salesperson salesperson = (Salesperson) loggedInUser;
-                    processMenu("Revenue of cars sold in a period of time:", null, transactions, (nullList, transactionsList, input) -> {
-                        BigDecimal revenue = Statistics.revenueCarSoldInAPeriod(transactionsList, salesperson, input);
-                        System.out.println("\nSalesperson " + salesperson.getFullName() + " has a cars sold revenue of " + numParse(revenue) + " VND in " + input + ".");
+                    processMenu("Total revenue in a period of time:", services, transactions, (servicesList, transactionsList, input) -> {
+                        BigDecimal revenue = Statistics.totalRevenueInPeriod(servicesList, transactionsList, input);
+                        System.out.println("\n" + name + " has a revenue of " + numParse(revenue) + " VND in " + input + ".");
                     });
                     break;
                 case 2:
                     listCarsMenu(transactions);
+                    break;
+                case 3:
+                    listServicesMenu(services);
                     break;
                 case 0:
                     break;
@@ -1502,22 +1668,25 @@ public class Dealership {
                 if (result.equals("remove")) {
                     return;
                 }
-            } else if (choice == 0) {} else {
+            } else {
                 System.out.println("Invalid option. Please try again.");
             }
         }  while (choice != 0);
     }
 
-    public Entity selectChoiceOrSearchString(ArrayList<? extends Entity> items, String entity) {
+    public Entity selectChoiceOrSearch(ArrayList<? extends Entity> items, String entity, boolean back) {
         String choiceString;
-        int choice;
+        int choice = 0;
         boolean searchName;
-        while (true) {
+        do {
             System.out.println("\nSelect " + entity + ":");
             int count = 1;
             for (Entity e : items) {
                 System.out.println(count + ". " + e.getSearchString());
                 count += 1;
+            }
+            if (back) {
+                System.out.println("0. Leave the same");
             }
             System.out.print("Enter " + entity + " (choice or search): ");
             choiceString = scanner.nextLine();
@@ -1538,11 +1707,14 @@ public class Dealership {
             } else {
                 if (choice > 0 && choice <= items.size()) {
                     return items.get(choice - 1);
+                } else if (back && choice == 0) {
+                    assert true; // do nothing
                 } else {
                     System.out.println("Invalid option. Please try again.");
                 }
             }
-        }
+        } while (back && choice != 0);
+        return null;
     }
 
     private Entity searchMenuReturn(String searchInput, ArrayList<? extends Entity> items) {
@@ -1599,11 +1771,172 @@ public class Dealership {
 
             if (choice > 0 && choice <= items.size()) {
                 return items.get(choice - 1);
+            } else if (choice == 0) {
+                assert true; // do nothing
             } else {
                 System.out.println("Invalid option. Please try again.");
             }
         }  while (choice != 0);
         return null;
+    }
+
+    public ArrayList<Entity> addChoiceOrSearch(ArrayList<? extends Entity> entities, String entity, ArrayList<? extends Entity> initialEntities) {
+        String choiceString;
+        int choice = -1;
+        int count;
+        boolean searchName;
+        ArrayList<Entity> addedEntities = new ArrayList<>();
+        if (initialEntities != null) {
+            addedEntities = (ArrayList<Entity>) initialEntities;
+        }
+        do {
+            if (!addedEntities.isEmpty()) {
+                System.out.println("\n\nCurrent added " + entity + ":");
+                count = 1;
+                for (Entity e : addedEntities) {
+                    System.out.println(count + ". " + e.getSearchString());
+                    count += 1;
+                }
+
+                System.out.println("\nUpdate " + entity + " list:");
+                System.out.println("1. Add " + entity.toLowerCase());
+                System.out.println("2. Remove " + entity.toLowerCase());
+                System.out.println("0. Finish");
+                System.out.print("Enter choice: ");
+                choiceString = scanner.nextLine();
+                try {
+                    choice = Integer.parseInt(choiceString);
+                } catch (NumberFormatException e) {
+                    if (choiceString.isEmpty()) {
+                        System.out.println("Cannot be empty. Please try again.");
+                        continue;
+                    }
+                    choice = -1;
+                }
+
+                int _choice = -1;
+                switch (choice) {
+                    case 1:
+                        do {
+                            System.out.println("\nAdd " + entity + ":");
+                            count = 1;
+                            for (Entity e : entities) {
+                                System.out.println(count + ". " + e.getSearchString());
+                                count += 1;
+                            }
+                            System.out.println("0. Finish");
+                            System.out.print("Enter " + entity + " (choice or search): ");
+                            choiceString = scanner.nextLine();
+                            try {
+                                _choice = Integer.parseInt(choiceString);
+                                searchName = false;
+                            } catch (NumberFormatException e) {
+                                if (choiceString.isEmpty()) {
+                                    System.out.println("Cannot be empty. Please try again.");
+                                    continue;
+                                }
+                                searchName = true;
+                                _choice = -1;
+                            }
+
+                            if (searchName) {
+                                Entity searchItem = searchMenuReturn(choiceString, entities);
+                                addedEntities.add(searchItem);
+                            } else {
+                                if (_choice > 0 && _choice <= entities.size()) {
+                                    addedEntities.add(entities.get(_choice - 1));
+                                } else if (_choice == 0) {
+                                    assert true; // do nothing
+                                } else {
+                                    System.out.println("Invalid option. Please try again.");
+                                }
+                            }
+                        } while (_choice != 0);
+                        break;
+                    case 2:
+                        do {
+                            System.out.println("\nRemove " + entity + ":");
+                            count = 1;
+                            for (Entity e : addedEntities) {
+                                System.out.println(count + ". " + e.getSearchString());
+                                count += 1;
+                            }
+                            System.out.println("0. Finish");
+                            System.out.print("Enter " + entity + " (choice or search): ");
+                            choiceString = scanner.nextLine();
+                            try {
+                                _choice = Integer.parseInt(choiceString);
+                                searchName = false;
+                            } catch (NumberFormatException e) {
+                                if (choiceString.isEmpty()) {
+                                    System.out.println("Cannot be empty. Please try again.");
+                                    continue;
+                                }
+                                searchName = true;
+                                _choice = -1;
+                            }
+
+                            if (searchName) {
+                                Entity searchItem = searchMenuReturn(choiceString, addedEntities);
+                                addedEntities.remove(searchItem);
+                            } else {
+                                if (_choice > 0 && _choice <= addedEntities.size()) {
+                                    addedEntities.remove(addedEntities.get(_choice - 1));
+                                } else if (_choice == 0) {
+                                    assert true; // do nothing
+                                } else {
+                                    System.out.println("Invalid option. Please try again.");
+                                }
+                            }
+
+                            if (addedEntities.isEmpty()) {
+                                break;
+                            }
+                        } while (_choice != 0);
+                        break;
+                    case 0:
+                        break;
+                    default:
+                        System.out.println("Invalid option. Please try again.");
+                }
+
+            } else {
+                System.out.println("\nAdd " + entity + ":");
+                count = 1;
+                for (Entity e : entities) {
+                    System.out.println(count + ". " + e.getSearchString());
+                    count += 1;
+                }
+                System.out.println("0. Finish");
+                System.out.print("Enter " + entity + " (choice or search): ");
+                choiceString = scanner.nextLine();
+                try {
+                    choice = Integer.parseInt(choiceString);
+                    searchName = false;
+                } catch (NumberFormatException e) {
+                    if (choiceString.isEmpty()) {
+                        System.out.println("Cannot be empty. Please try again.");
+                        continue;
+                    }
+                    searchName = true;
+                    choice = -1;
+                }
+
+                if (searchName) {
+                    Entity searchItem = searchMenuReturn(choiceString, entities);
+                    addedEntities.add(searchItem);
+                } else {
+                    if (choice > 0 && choice <= entities.size()) {
+                        addedEntities.add(entities.get(choice - 1));
+                    } else if (choice == 0) {
+                        assert true; // do nothing
+                    } else {
+                        System.out.println("Invalid option. Please try again.");
+                    }
+                }
+            }
+        } while (choice != 0);
+        return addedEntities;
     }
 
     private String getNextLine() {
@@ -1655,7 +1988,7 @@ public class Dealership {
                 continue;
             }
             try {
-                return BigDecimal.valueOf(Double.parseDouble(stringInput));
+                return new BigDecimal(stringInput);
             } catch (NumberFormatException e) {
                 System.out.print("Invalid input. Please enter a decimal: ");
             }
@@ -1707,7 +2040,7 @@ public class Dealership {
                 return defaultValue;
             } else {
                 try {
-                    return BigDecimal.valueOf(Double.parseDouble(stringInput));
+                    return new BigDecimal(stringInput);
                 } catch (NumberFormatException e) {
                     System.out.print("Invalid input. Please enter a valid decimal or leave it empty: ");
                 }
