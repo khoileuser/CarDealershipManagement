@@ -14,6 +14,7 @@ import operations.*;
 
 import utils.FileHandler;
 import utils.Authentication;
+import utils.Membership;
 import utils.Statistics;
 
 public class Dealership {
@@ -46,7 +47,6 @@ public class Dealership {
 
     // Main method to start the system
     public void start() throws Exception {
-
         System.out.println(userInterface.getAllUsers());
         System.out.println(carInterface.getAllCars());
         System.out.println(autoPartInterface.getAllAutoParts());
@@ -65,6 +65,7 @@ public class Dealership {
 
         if (loggedInUser != null) {
             System.out.println("Login successful. Welcome, " + loggedInUser.getFullName());
+            loggedInUser.setStatus(true);
             System.out.println("Role: " + loggedInUser.getUserType());
             switch (loggedInUser.getUserType()) {
                 case MANAGER:
@@ -83,6 +84,7 @@ public class Dealership {
             System.out.println("Login failed. Exiting the system.");
         }
 
+        loggedInUser.setStatus(false);
         scanner.close();
 
         // Save data before exit
@@ -728,7 +730,15 @@ public class Dealership {
 
         Service service = new Service(client.getUserID(), mechanic.getUserID(), car.getCarID(), serviceType, serviceCost, notes);
         service.setReplacedParts(replacedParts);
+
+        // apply discount and set new service cost
+        service.setDiscountPercentage(client.getMembershipType());
+
+        // add client total spending after apply discount (if exists)
+        client.addTotalSpending(serviceCost);
+
         serviceInterface.addService(service, car);
+
     }
 
     private String updateServiceOperations(Service service) {
@@ -1000,6 +1010,13 @@ public class Dealership {
 
         Transaction transaction = new Transaction(client.getUserID(), salesperson.getUserID(), totalAmount, notes);
         transaction.setItems(items);
+
+        // apply discount and set new total amount
+        transaction.setDiscountPercentage(client.getMembershipType());
+
+        // add client total spending after apply discount (if exists)
+        client.addTotalSpending(transaction.getTotalAmount());
+
         transactionInterface.addTransaction(transaction);
     }
 
@@ -1289,7 +1306,7 @@ public class Dealership {
             System.out.println("Phone Number: " + user.getPhoneNumber());
             System.out.println("Email: " + user.getEmail());
             System.out.println("User Type: " + user.getUserType());
-            System.out.println("Status: " + user.isActive());
+            System.out.println("Status: " + user.isStatus());
             if (user.getUserType() != UserType.CLIENT) {
                 System.out.println("Activity Log: " + user.getActivityLog());
             }

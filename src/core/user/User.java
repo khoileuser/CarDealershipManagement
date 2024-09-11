@@ -37,7 +37,7 @@ public abstract class User implements Serializable, Entity {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.userType = userType;
-        this.status = true;
+        this.status = false;
     }
 
     public String getUserID() {
@@ -108,10 +108,13 @@ public abstract class User implements Serializable, Entity {
         this.userType = userType;
     }
 
-    public boolean isActive() { return status; }
+    public boolean isStatus() {
+        return status;
+    }
 
-    public void deactivateUser() { this.status = false; }
-    public void reactivateUser() { this.status = true; }
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
 
     public abstract void viewProfile();
 

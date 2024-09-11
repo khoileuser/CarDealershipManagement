@@ -10,8 +10,8 @@ public class Client extends User {
     @Serial
     private static final long serialVersionUID = 5L;
 
-    private final Membership membershipType;
-    private final BigDecimal totalSpending;
+    private Membership membershipType;
+    private BigDecimal totalSpending;
 
     public Client(String fullName, String dateOfBirth, String address, String phoneNumber, String email) throws Exception {
         super(fullName, dateOfBirth, address, phoneNumber, email, UserType.CLIENT);
@@ -29,20 +29,29 @@ public class Client extends User {
         return false;
     }
 
+    public Membership getMembershipType() {
+        return membershipType;
+    }
+
+    public void setMembershipType(Membership membershipType) {
+        this.membershipType = membershipType;
+    }
+
     public void updateMembership() {
-//        this.membershipType = Membership.determineMembership(this.totalSpending);
+        this.membershipType = Membership.determineMembership(this.totalSpending);
     }
 
-    public void addTotalSpending() {
-
-    }
-
-    public void editTotalSpending() {
-
+    public void setTotalSpending(BigDecimal totalSpending) {
+        this.totalSpending = totalSpending;
     }
 
     public BigDecimal getTotalSpending() {
         return totalSpending;
+    }
+
+    public void addTotalSpending(BigDecimal spending) {
+        this.totalSpending = this.totalSpending.add(spending);
+        updateMembership();
     }
 
     @Override

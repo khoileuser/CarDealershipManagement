@@ -8,6 +8,7 @@ import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.io.Serializable;
 
+import core.items.AutoPart;
 import core.items.Item;
 import core.user.Client;
 import utils.Membership;
@@ -34,6 +35,8 @@ public class Transaction implements Serializable, Entity {
         this.items = new ArrayList<>();
         this.discountPercentage = 0;
         this.totalAmount = totalAmount;
+
+
     }
 
     public String getTransactionID() {
@@ -93,6 +96,22 @@ public class Transaction implements Serializable, Entity {
         this.discountPercentage = discountPercentage;
     }
 
+    public void setDiscountPercentage(Membership membership) {
+        this.discountPercentage = membership.getDiscountPercentage();
+        System.out.println("\nClient has " + membership + " membership, gets " + membership.getDiscountPercentage() + "% off from auto parts.");
+
+        BigDecimal partsTotal = new BigDecimal(0);
+        for (Item i : this.items) {
+            if (i instanceof AutoPart) {
+                partsTotal = partsTotal.add(i.getPrice());
+            }
+        }
+
+        BigDecimal discountAmount = partsTotal.multiply(new BigDecimal(this.discountPercentage)).divide(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP);
+        this.totalAmount = this.totalAmount.subtract(discountAmount);
+        System.out.println("New total amount: " + this.totalAmount + ", saved: " + discountAmount);
+    }
+
     public BigDecimal getTotalAmount() {
         return totalAmount;
     }
@@ -107,17 +126,6 @@ public class Transaction implements Serializable, Entity {
 
     public void setNotes(String notes) {
         this.notes = notes;
-    }
-
-    public String checkDiscount(ArrayList<Client> clientList) {
-        for (Client c : clientList) {
-            if (c.getUserID().equals(this.clientID)) {
-                this.discountPercentage = Membership.determineMembership(c.getTotalSpending()).getDiscountPercentage();
-            }
-        }
-        BigDecimal discountAmount = this.totalAmount.multiply(new BigDecimal(this.discountPercentage)).divide(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP);
-        this.totalAmount = this.totalAmount.subtract(discountAmount);
-        return "New total: " + this.totalAmount + ", saved: " + discountAmount;
     }
 
     public StringBuilder getStringItems() {

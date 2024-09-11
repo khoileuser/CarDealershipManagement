@@ -1,9 +1,11 @@
 package core;
 
 import core.items.AutoPart;
+import utils.Membership;
 
 import java.io.Serial;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,6 +23,7 @@ public class Service implements Serializable, Entity {
     private String carID;
     private String serviceType;
     private ArrayList<AutoPart> replacedParts;
+    private int discountPercentage;
     private BigDecimal serviceCost;
     private String notes;
 
@@ -97,6 +100,23 @@ public class Service implements Serializable, Entity {
 
     public void addReplacedPart(AutoPart autoPart) {
         this.replacedParts.add(autoPart);
+    }
+
+    public int getDiscountPercentage() {
+        return discountPercentage;
+    }
+
+    public void setDiscountPercentage(int discountPercentage) {
+        this.discountPercentage = discountPercentage;
+    }
+
+    public void setDiscountPercentage(Membership membership) {
+        this.discountPercentage = membership.getDiscountPercentage();
+        System.out.println("\nClient has " + membership + " membership, gets " + membership.getDiscountPercentage() + "% off from auto parts and services.");
+
+        BigDecimal discountAmount = this.serviceCost.multiply(new BigDecimal(this.discountPercentage)).divide(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP);
+        this.serviceCost = this.serviceCost.subtract(discountAmount);
+        System.out.println("New service cost: " + this.serviceCost + ", saved: " + discountAmount);
     }
 
     public BigDecimal getServiceCost() {
