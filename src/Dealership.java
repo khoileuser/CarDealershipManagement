@@ -25,7 +25,7 @@ public class Dealership {
 
     Scanner scanner = new Scanner(System.in);
 
-    public Dealership(String name) throws IOException {
+    public Dealership(String name) {
         this.name = name;
         // Initialize the system
         this.carInterface = new CarOperation();
@@ -35,23 +35,19 @@ public class Dealership {
         this.serviceInterface = new ServiceOperation();
 
         // Load data from files
-        this.carInterface.setCarList(FileHandler.readObjectsFromFile("data/cars.obj"));
-        this.autoPartInterface.setAutoPartList(FileHandler.readObjectsFromFile("data/parts.obj"));
-        this.userInterface.setUserList(FileHandler.readObjectsFromFile("data/users.obj"));
-        this.transactionInterface.setTransactionList(FileHandler.readObjectsFromFile("data/transactions.obj"));
-        this.serviceInterface.setServiceList(FileHandler.readObjectsFromFile("data/services.obj"));
+        loadData();
     }
 
     // Main method to start the system
-    public void start() throws Exception {
+    public void start() {
         System.out.println(userInterface.getAllUsers());
         System.out.println(carInterface.getAllCars());
         System.out.println(autoPartInterface.getAllAutoParts());
         System.out.println(serviceInterface.getAllServices());
         System.out.println(transactionInterface.getAllTransactions());
 
-        System.out.println("Welcome to Auto136 Dealership Management System");
-        System.out.println("Please login");
+        welcomeScreen();
+        System.out.println("\nPlease login");
         System.out.print("Username: ");
         String username = scanner.nextLine();
         System.out.print("Password: ");
@@ -61,7 +57,7 @@ public class Dealership {
         loggedInUser = authentication.authenticate(userInterface.getAllUsers());
 
         if (loggedInUser != null) {
-            System.out.println("Login successful. Welcome, " + loggedInUser.getFullName());
+            System.out.println("\nLogin successful. Welcome, " + loggedInUser.getFullName());
             loggedInUser.setStatus(true);
             System.out.println("Role: " + loggedInUser.getUserType());
             switch (loggedInUser.getUserType()) {
@@ -289,6 +285,10 @@ public class Dealership {
 
         Car car = new Car(make, model, year, mileage, color, price, notes);
         carInterface.addCar(car);
+
+        Activity activity = new Activity("add", car, null);
+        loggedInUser.addActivity(activity);
+        saveData();
     }
 
     private String updateCarOperations(Car car) {
@@ -338,6 +338,9 @@ public class Dealership {
                         choose = scanner.next();
                         if (choose.toLowerCase().startsWith("y")) {
                             carInterface.removeCar(car);
+                            Activity activity = new Activity("delete", car, null);
+                            loggedInUser.addActivity(activity);
+                            saveData();
                             break; // exit the loop after removing the car
                         } else if (!choose.toLowerCase().startsWith("n")) {
                             System.out.println("Invalid option. Please try again.");
@@ -405,6 +408,10 @@ public class Dealership {
         Car updatedCar = new Car(make, model, year, mileage, color, price, notes);
         updatedCar.setCarID(car.getCarID());
         carInterface.updateCar(updatedCar);
+
+        Activity activity = new Activity("update", car, updatedCar);
+        loggedInUser.addActivity(activity);
+        saveData();
         return updatedCar;
     }
 
@@ -472,6 +479,10 @@ public class Dealership {
 
         AutoPart autoPart = new AutoPart(partName, manufacturer, partNumber, condition, warranty, cost, notes);
         autoPartInterface.addAutoPart(autoPart);
+
+        Activity activity = new Activity("add", autoPart, null);
+        loggedInUser.addActivity(activity);
+        saveData();
     }
 
     private String updatePartOperations(AutoPart part) {
@@ -514,6 +525,9 @@ public class Dealership {
                         choose = scanner.next();
                         if (choose.toLowerCase().startsWith("y")) {
                             autoPartInterface.removeAutoPart(part);
+                            Activity activity = new Activity("delete", part, null);
+                            loggedInUser.addActivity(activity);
+                            saveData();
                             break;
                         } else if (!choose.toLowerCase().startsWith("n")) {
                             System.out.println("Invalid option. Please try again.");
@@ -569,6 +583,10 @@ public class Dealership {
         AutoPart updatedPart = new AutoPart(partName, manufacturer, partNumber, condition, warranty, cost, notes);
         updatedPart.setPartID(part.getPartID());
         autoPartInterface.updateAutoPart(updatedPart);
+
+        Activity activity = new Activity("update", part, updatedPart);
+        loggedInUser.addActivity(activity);
+        saveData();
         return updatedPart;
     }
 
@@ -670,6 +688,9 @@ public class Dealership {
 
         serviceInterface.addService(service, car);
 
+        Activity activity = new Activity("add", service, null);
+        loggedInUser.addActivity(activity);
+        saveData();
     }
 
     private String updateServiceOperations(Service service, boolean viewOnly) {
@@ -724,6 +745,9 @@ public class Dealership {
                         if (choose.toLowerCase().startsWith("y")) {
                             serviceInterface.removeService(service);
                             carInterface.removeService(service);
+                            Activity activity = new Activity("delete", service, null);
+                            loggedInUser.addActivity(activity);
+                            saveData();
                             break;
                         } else if (!choose.toLowerCase().startsWith("n")) {
                             System.out.println("Invalid option. Please try again.");
@@ -794,6 +818,10 @@ public class Dealership {
         updatedService.setServiceID(service.getServiceID());
         updatedService.setReplacedParts(replacedParts);
         serviceInterface.updateService(updatedService);
+
+        Activity activity = new Activity("update", service, updatedService);
+        loggedInUser.addActivity(activity);
+        saveData();
         return updatedService;
     }
 
@@ -940,6 +968,10 @@ public class Dealership {
 
         // add transaction and set all cars in items to sold
         transactionInterface.addTransaction(transaction);
+
+        Activity activity = new Activity("add", transaction, null);
+        loggedInUser.addActivity(activity);
+        saveData();
     }
 
     private String updateTransactionOperations(Transaction transaction, boolean viewOnly) {
@@ -1012,6 +1044,9 @@ public class Dealership {
                         choose = scanner.next();
                         if (choose.toLowerCase().startsWith("y")) {
                             transactionInterface.removeTransaction(transaction);
+                            Activity activity = new Activity("delete", transaction, null);
+                            loggedInUser.addActivity(activity);
+                            saveData();
                             break;
                         } else if (!choose.toLowerCase().startsWith("n")) {
                             System.out.println("Invalid option. Please try again.");
@@ -1085,6 +1120,11 @@ public class Dealership {
 
         // update transaction and set all cars in items to sold
         transactionInterface.updateTransaction(updatedTransaction);
+
+        Activity activity = new Activity("update", transaction, updatedTransaction);
+        loggedInUser.addActivity(activity);
+        saveData();
+
         return updatedTransaction;
     }
 
@@ -1213,6 +1253,10 @@ public class Dealership {
         } catch (Exception _) { }
 
         userInterface.addUser(user);
+
+        Activity activity = new Activity("add", user, null);
+        loggedInUser.addActivity(activity);
+        saveData();
     }
 
     private String updateUserOperations(User user) {
@@ -1229,7 +1273,22 @@ public class Dealership {
             System.out.println("User Type: " + user.getUserType());
             System.out.println("Status: " + user.isStatus());
             if (user.getUserType() != UserType.CLIENT) {
-                System.out.println("Activity Log: " + user.getActivityLog());
+                ArrayList<Activity> activityLog = user.getActivityLog();
+                if (!activityLog.isEmpty()) {
+                    System.out.println("Activity Log: ");
+                    for (Activity a : activityLog) {
+                        String date = a.getStringActivityDate();
+                        String operation = a.getOperation();
+                        String entity = a.getEntity().getSearchString();
+                        switch (operation) {
+                            case "add" -> System.out.println(date + " | Add " + entity);
+                            case "update" -> System.out.println(date + " | Update " + a.getUpdatedEntity().getSearchString() + " from " + entity);
+                            case "delete" -> System.out.println(date + " | Delete " + entity);
+                        }
+                    }
+                } else {
+                    System.out.println("Activity Log: Empty");
+                }
             }
 
             System.out.println("\nUpdate User Operations Menu:");
@@ -1260,6 +1319,9 @@ public class Dealership {
                         choose = scanner.next();
                         if (choose.toLowerCase().startsWith("y")) {
                             userInterface.removeUser(user);
+                            Activity activity = new Activity("delete", user, null);
+                            loggedInUser.addActivity(activity);
+                            saveData();
                             break;
                         } else if (!choose.toLowerCase().startsWith("n")) {
                             System.out.println("Invalid option. Please try again.");
@@ -1375,6 +1437,11 @@ public class Dealership {
         assert updatedUser != null;
         updatedUser.setUserID(user.getUserID());
         userInterface.updateUser(updatedUser);
+
+        Activity activity = new Activity("update", user, updatedUser);
+        loggedInUser.addActivity(activity);
+        saveData();
+
         return updatedUser;
     }
 
@@ -2108,12 +2175,7 @@ public class Dealership {
                 "s3975162 Le Nguyen Khoi\n" +
                 "s39 Tran Tuan Anh\n" +
                 "s39 Nguyen Vu Duy\n" +
-                "s39 Le Minh Tri" +
-                "\nUsers: " + userInterface.getAllUsers().size() +
-                "\nCars: " + carInterface.getAllCars().size() +
-                "\nAuto Parts: " + autoPartInterface.getAllAutoParts().size() +
-                "\nServices: " + serviceInterface.getAllServices().size() +
-                "\nSales Transactions: " + transactionInterface.getAllTransactions().size()
+                "s39 Le Minh Tri"
         );
     }
 
@@ -2139,12 +2201,28 @@ public class Dealership {
     }
 
     // Save data to files before exit
-    private void saveData() throws IOException {
-        FileHandler.writeObjectsToFile(carInterface.getAllCars(), "data/cars.obj");
-        FileHandler.writeObjectsToFile(autoPartInterface.getAllAutoParts(), "data/parts.obj");
-        FileHandler.writeObjectsToFile(userInterface.getAllUsers(), "data/users.obj");
-        FileHandler.writeObjectsToFile(transactionInterface.getAllTransactions(), "data/transactions.obj");
-        FileHandler.writeObjectsToFile(serviceInterface.getAllServices(), "data/services.obj");
-        System.out.println("Data saved successfully.");
+    private void saveData() {
+        try {
+            FileHandler.writeObjectsToFile(carInterface.getAllCars(), "data/cars.obj");
+            FileHandler.writeObjectsToFile(autoPartInterface.getAllAutoParts(), "data/parts.obj");
+            FileHandler.writeObjectsToFile(userInterface.getAllUsers(), "data/users.obj");
+            FileHandler.writeObjectsToFile(transactionInterface.getAllTransactions(), "data/transactions.obj");
+            FileHandler.writeObjectsToFile(serviceInterface.getAllServices(), "data/services.obj");
+            System.out.println("Data saved successfully.");
+        } catch (IOException e) {
+            System.out.println("Failed to save date: " + e.getMessage());
+        }
+    }
+
+    private void loadData() {
+        try {
+            this.carInterface.setCarList(FileHandler.readObjectsFromFile("data/cars.obj"));
+            this.autoPartInterface.setAutoPartList(FileHandler.readObjectsFromFile("data/parts.obj"));
+            this.userInterface.setUserList(FileHandler.readObjectsFromFile("data/users.obj"));
+            this.transactionInterface.setTransactionList(FileHandler.readObjectsFromFile("data/transactions.obj"));
+            this.serviceInterface.setServiceList(FileHandler.readObjectsFromFile("data/services.obj"));
+        } catch (IOException e) {
+            System.out.println("Failed to load data: " + e.getMessage());
+        }
     }
 }

@@ -1,7 +1,7 @@
 package core.user;
 
 import core.Entity;
-import utils.Activity;
+import core.Activity;
 
 import java.io.Serial;
 import java.text.ParseException;

@@ -1,6 +1,6 @@
 package core.user;
 
-import utils.Activity;
+import core.Activity;
 
 import java.io.Serial;
 import java.util.ArrayList;

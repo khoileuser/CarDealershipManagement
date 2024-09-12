@@ -1,6 +1,6 @@
 package core.user;
-import utils.Activity;
-import utils.Membership;
+import core.Activity;
+import core.Membership;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -71,11 +71,11 @@ public class Client extends User {
 
     @Override
     public void setActivityLog(ArrayList<Activity> activityLog) {
-
+        System.out.println("Client doesn't have activity log.");
     }
 
     @Override
     public void addActivity(Activity activity) {
-
+        System.out.println("Client doesn't have activity log.");
     }
 }

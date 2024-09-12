@@ -10,8 +10,6 @@ import java.io.Serializable;
 
 import core.items.AutoPart;
 import core.items.Item;
-import core.user.Client;
-import utils.Membership;
 
 public class Transaction implements Serializable, Entity {
     @Serial
