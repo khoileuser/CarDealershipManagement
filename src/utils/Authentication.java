@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import core.user.User;
 
 public class Authentication {
-    private String username;  // Store username and password
-    private String password;  // Store username and their role (e.g., Manager, Employee)
+    private final String username;  // Store username and password
+    private final String password;  // Store username and their role (e.g., Manager, Employee)
 
     // Constructor
     public Authentication(String username, String password) {
