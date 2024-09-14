@@ -1,6 +1,7 @@
 package core.items;
 
 import core.Entity;
+import utils.Statistics;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -118,6 +119,6 @@ public class AutoPart extends Item implements Entity {
 
     @Override
     public String getSearchString() {
-        return manufacturer + " " + partName + " (" + partNumber + ")";
+        return manufacturer + " " + partName + " (" + partNumber + ") | " + Statistics.numParse(getPrice());
     }
 }

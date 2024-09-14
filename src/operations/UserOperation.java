@@ -32,7 +32,7 @@ public class UserOperation implements UserInterface {
         lastID = lastID + 1;
         user.setUserID("u-" + lastID);
         userList.add(user);
-        System.out.println("User added: " + user);
+        System.out.println("User added: " + user.getSearchString());
     }
 
     @Override
@@ -105,11 +105,11 @@ public class UserOperation implements UserInterface {
         for (int i = 0; i < userList.size(); i++) {
             if (userList.get(i).getUserID().equals(updatedUser.getUserID())) {
                 userList.set(i, updatedUser);
-                System.out.println("User updated: " + updatedUser);
+                System.out.println("User updated: " + updatedUser.getSearchString());
                 return;
             }
         }
-        System.out.println("User not found: " + updatedUser);
+        System.out.println("User not found: " + updatedUser.getSearchString());
     }
 
     @Override
@@ -117,10 +117,10 @@ public class UserOperation implements UserInterface {
         for (int i = 0; i < userList.size(); i++) {
             if (userList.get(i).getUserID().equals(user.getUserID())) {
                 userList.remove(i);
-                System.out.println("User removed: " + user);
+                System.out.println("User removed: " + user.getSearchString());
                 return;
             }
         }
-        System.out.println("User not found: " + user);
+        System.out.println("User not found: " + user.getSearchString());
     }
 }

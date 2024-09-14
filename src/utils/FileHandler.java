@@ -50,7 +50,7 @@ public class FileHandler {
                 obj = objectIn.readObject();
                 objectList.add((Object) obj);
             } catch (EOFException | ClassNotFoundException e) {
-                System.out.println("Finished reading all the objects!!!");
+                System.out.println("Finished reading " + filePath);
                 break;
             }
         }

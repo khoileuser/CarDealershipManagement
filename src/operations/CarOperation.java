@@ -32,7 +32,7 @@ public class CarOperation implements CarInterface {
         lastID = lastID + 1;
         car.setCarID("c-" + lastID);
         carList.add(car);
-        System.out.println("Car added: " + car);
+        System.out.println("Car added: " + car.getSearchString());
     }
 
     @Override
@@ -57,11 +57,11 @@ public class CarOperation implements CarInterface {
             if (carList.get(i).getCarID().equals(updatedCar.getCarID())) {
                 updatedCar.setCarID(carList.get(i).getCarID());
                 carList.set(i, updatedCar);
-                System.out.println("Car updated: " + updatedCar);
+                System.out.println("Car updated: " + updatedCar.getSearchString());
                 return;
             }
         }
-        System.out.println("Car not found: " + updatedCar);
+        System.out.println("Car not found: " + updatedCar.getSearchString());
     }
 
     @Override
@@ -69,11 +69,11 @@ public class CarOperation implements CarInterface {
         for (int i = 0; i < carList.size(); i++) {
             if (carList.get(i).getCarID().equals(car.getCarID())) {
                 carList.remove(i);
-                System.out.println("Car removed: " + car);
+                System.out.println("Car removed: " + car.getSearchString());
                 return;
             }
         }
-        System.out.println("Car not found: " + car);
+        System.out.println("Car not found: " + car.getSearchString());
     }
 
     @Override
@@ -88,7 +88,7 @@ public class CarOperation implements CarInterface {
                 for (Service s : c.getServicesHistory()) {
                     if (s.getServiceID().equals(service.getServiceID())) {
                         c.removeService(service);
-                        System.out.println("Service removed from: " + c);
+                        System.out.println("Service removed from: " + c.getSearchString());
                         break;
                     }
                 }

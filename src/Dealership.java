@@ -40,12 +40,6 @@ public class Dealership {
 
     // Main method to start the system
     public void start() {
-        System.out.println(userInterface.getAllUsers());
-        System.out.println(carInterface.getAllCars());
-        System.out.println(autoPartInterface.getAllAutoParts());
-        System.out.println(serviceInterface.getAllServices());
-        System.out.println(transactionInterface.getAllTransactions());
-
         welcomeScreen();
         System.out.println("\nPlease login");
         System.out.print("Username: ");
@@ -74,14 +68,14 @@ public class Dealership {
                     System.out.println("Invalid role. Exiting.");
             }
         } else {
-            System.out.println("Login failed. Exiting the system.");
+            System.out.println("\nLogin failed. Exiting the system.");
         }
 
-        loggedInUser.setStatus(false);
+        if (loggedInUser != null) {
+            loggedInUser.setStatus(false);
+            saveData();
+        }
         scanner.close();
-
-        // Save data before exit
-        saveData();
     }
 
     // Manager Menu
@@ -299,7 +293,7 @@ public class Dealership {
             System.out.println("Car ID: " + car.getCarID());
             System.out.println("Color: " + car.getColor());
             System.out.println("Mileage: " + car.getMileage());
-            System.out.println("Price: " + car.getPrice());
+            System.out.println("Price: " + Statistics.numParse(car.getPrice()));
             System.out.println("Status: " + car.getStatus());
             System.out.println("Notes: " + car.getNotes());
             ArrayList<Service> services = car.getServicesHistory();
@@ -496,7 +490,7 @@ public class Dealership {
             System.out.println("Part Number: " + part.getPartNumber());
             System.out.println("Condition: " + part.getCondition());
             System.out.println("Warranty: " + part.getWarranty());
-            System.out.println("Cost: " + part.getCost());
+            System.out.println("Cost: " + Statistics.numParse(part.getCost()));
             System.out.println("Notes: " + part.getNotes());
 
             System.out.println("\nUpdate Auto Part Operations Menu:");
@@ -618,7 +612,7 @@ public class Dealership {
             if (!isMechanic) {
                 switch (choice) {
                     case 1:
-                        addService();
+                        addService(false);
                         break;
                     case 2:
                         listAndSelect(services, "All services:", this::updateEntityOperations);
@@ -635,7 +629,7 @@ public class Dealership {
             } else {
                 switch (choice) {
                     case 1:
-                        addService();
+                        addService(true);
                         break;
                     case 2:
                         listAndSelect(services, "All services:", this::viewOnlyEntityOperations);
@@ -650,12 +644,108 @@ public class Dealership {
         }  while (choice != 0);
     }
 
-    private void addService() {
-        ArrayList<Mechanic> mechanics = userInterface.getAllMechanics();
-        Mechanic mechanic = (Mechanic) selectChoiceOrSearch(mechanics, "Mechanic", false);
+    private Client selectClient(boolean back) {
+        int choice;
+        ArrayList<Client> clients;
+        while (true) {
+            clients = userInterface.getAllClients();
+            System.out.println("\n1. Add new client");
+            System.out.println("2. Choose from existing client");
+            System.out.print("Enter choice: ");
+            try {
+                choice = scanner.nextInt();
+                scanner.nextLine(); // consume left over
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid option. Please try again.");
+                scanner.next(); // consume the invalid token
+                continue;
+            }
+
+            switch (choice) {
+                case 1:
+                    return addClient();
+                case 2:
+                    return (Client) selectChoiceOrSearch(clients, "Client", back);
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+
+    public ArrayList<Client> getClientsOwnCar(ArrayList<Client> clients) {
+        ArrayList<String> clientIDs = new ArrayList<>();
+        for (Transaction t : transactionInterface.getAllTransactions()) {
+            for (Item i : t.getItems()) {
+                if (i instanceof Car) {
+                    if (!clientIDs.contains(t.getClientID())) {
+                        clientIDs.add(t.getClientID());
+                    }
+                    break;
+                }
+            }
+        }
+
+        ArrayList<Client> clientsOwnCar = new ArrayList<>();
+        for (String clientID : clientIDs) {
+            for (Client c : clients) {
+                if (c.getUserID().equals(clientID)) {
+                    clientsOwnCar.add(c);
+                }
+            }
+        }
+        return clientsOwnCar;
+    }
+
+    private Client addClient() {
+        System.out.print("\nEnter full name: ");
+        String fullName = getNextLine();
+
+        System.out.print("Enter date of birth: ");
+        String dateOfBirth;
+        while (true) {
+            try {
+                dateOfBirth = getNextLine();
+                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
+                df.parse(dateOfBirth);
+                break;
+            } catch (ParseException e) {
+                System.out.println("Date of birth need to be in format: dd/MM/yyyy (Ex: 27/06/2007)");
+            }
+        }
+
+        System.out.print("Enter address: ");
+        String address = getNextLine();
+
+        System.out.print("Enter phone number: ");
+        String phoneNumber = getNextLine();
+
+        System.out.print("Enter email: ");
+        String email = getNextLine();
+
+        try {
+            Client client = new Client(fullName, dateOfBirth, address, phoneNumber, email);
+            userInterface.addUser(client);
+            Activity activity = new Activity("add", client, null);
+            loggedInUser.addActivity(activity);
+            saveData();
+            return client;
+        } catch (Exception e) {
+            System.out.println("An error has occurred while adding client: " + e.getMessage());
+            return null;
+        }
+    }
+
+    private void addService(boolean isMechanic) {
+        Mechanic mechanic;
+        if (isMechanic) {
+            mechanic = (Mechanic) loggedInUser;
+        } else {
+            ArrayList<Mechanic> mechanics = userInterface.getAllMechanics();
+            mechanic = (Mechanic) selectChoiceOrSearch(mechanics, "Mechanic", false);
+        }
 
         ArrayList<Client> clients = userInterface.getAllClients();
-        Client client = (Client) selectChoiceOrSearch(clients, "Client", false);
+        Client client = (Client) selectChoiceOrSearch(getClientsOwnCar(clients), "Client", false);
 
         Car car = selectCar(client, false);
 
@@ -686,7 +776,8 @@ public class Dealership {
         // add client total spending after apply discount (if exists)
         client.addTotalSpending(serviceCost);
 
-        serviceInterface.addService(service, car);
+        serviceInterface.addService(service);
+        car.addService(service);
 
         Activity activity = new Activity("add", service, null);
         loggedInUser.addActivity(activity);
@@ -696,11 +787,12 @@ public class Dealership {
     private String updateServiceOperations(Service service, boolean viewOnly) {
         int choice;
         do {
-            String serviceString =  "Service: " + service.getServiceType();
+            String serviceString = "Service: " + service.getServiceType();
             System.out.println("\n" + serviceString + "'s information");
             System.out.println("Service ID: " + service.getServiceID());
             System.out.println("Client ID: " + service.getClientID());
             System.out.println("Mechanic ID: " + service.getMechanicID());
+            System.out.println("Car ID: " + service.getCarID());
             System.out.println("Service Type: " + service.getServiceType());
             ArrayList<AutoPart> parts = service.getReplacedParts();
             if (!parts.isEmpty()) {
@@ -711,7 +803,7 @@ public class Dealership {
             } else {
                 System.out.println("Replaced Parts: Empty");
             }
-            System.out.println("Service Cost: " + service.getServiceCost());
+            System.out.println("Service Cost: " + Statistics.numParse(service.getServiceCost()));
             System.out.println("Notes: " + service.getNotes());
 
             if (viewOnly) {
@@ -774,14 +866,24 @@ public class Dealership {
 
         String clientID = service.getClientID();
         ArrayList<Client> clients = userInterface.getAllClients();
-        Client client = (Client) selectChoiceOrSearch(clients, "Client", true);
+        Client client = (Client) selectChoiceOrSearch(getClientsOwnCar(clients), "Client", true);
         if (client != null) {
             clientID = client.getUserID();
+        } else {
+            for (Client c : clients) {
+                if (c.getUserID().equals(clientID)) {
+                    client = c;
+                    break;
+                }
+            }
         }
 
+        String ogCarID = service.getCarID();
         String carID = service.getCarID();
+        boolean changed = false;
         Car car = selectCar(client, true);
         if (car != null) {
+            changed = true;
             carID = car.getCarID();
         }
 
@@ -819,6 +921,21 @@ public class Dealership {
         updatedService.setReplacedParts(replacedParts);
         serviceInterface.updateService(updatedService);
 
+        if (changed) {
+            for (Car c : carInterface.getAllCars()) {
+                if (c.getCarID().equals(ogCarID)) {
+                    ArrayList<Service> newServicesHistory = new ArrayList<>();
+                    for (Service s : c.getServicesHistory()) {
+                        if (!s.getServiceID().equals(service.getServiceID())) {
+                            newServicesHistory.add(s);
+                        }
+                    }
+                    c.setServicesHistory(newServicesHistory);
+                }
+            }
+            car.addService(service);
+        }
+
         Activity activity = new Activity("update", service, updatedService);
         loggedInUser.addActivity(activity);
         saveData();
@@ -826,43 +943,26 @@ public class Dealership {
     }
 
     private Car selectCar(Client client, boolean back) {
-        Car car;
         ArrayList<Car> cars = carInterface.getAllCars();
+        ArrayList<Car> newCars = new ArrayList<>();
         ArrayList<Transaction> transactions = transactionInterface.getAllTransactions();
-        boolean ownByClient = false;
-        while (true) {
-            if (back) {
-                car = (Car) selectChoiceOrSearch(cars, "Car", true);
-                if (car == null) {
-                    break;
-                }
-            } else {
-                car = (Car) selectChoiceOrSearch(cars, "Car", false);
-            }
-            for (Transaction t : transactions) {
-                assert client != null;
-                if (t.getClientID().equals(client.getUserID())) {
-                    ArrayList<Item> items = t.getItems();
-                    for (Item i : items) {
-                        if (i instanceof Car) {
-                            if (((Car) i).getCarID().equals(car.getCarID())) {
-                                ownByClient = true;
+        for (Transaction t : transactions) {
+            if (t.getClientID().equals(client.getUserID())) {
+                ArrayList<Item> items = t.getItems();
+                for (Item i : items) {
+                    if (i instanceof Car) {
+                        for (Car c : cars) {
+                            if (c.getCarID().equals(((Car) i).getCarID())) {
+                                newCars.add(c);
                                 break;
                             }
                         }
                     }
                 }
-                if (ownByClient) {
-                    break;
-                }
             }
-            if (!ownByClient) {
-                System.out.println("\nYou selected the car which is not own by the client, please check again.");
-                continue;
-            }
-            break;
         }
-        return car;
+        cars = newCars;
+        return (Car) selectChoiceOrSearch(cars, "Car", back);
     }
 
     private void showTransactionMenu(boolean isSalesperson) {
@@ -893,7 +993,7 @@ public class Dealership {
             if (!isSalesperson) {
                 switch (choice) {
                     case 1:
-                        addTransaction();
+                        addTransaction(false);
                         break;
                     case 2:
                         listAndSelect(transactions, "All sales transactions:", this::updateEntityOperations);
@@ -910,7 +1010,7 @@ public class Dealership {
             } else {
                 switch (choice) {
                     case 1:
-                        addTransaction();
+                        addTransaction(true);
                         break;
                     case 2:
                         listAndSelect(transactions, "All sales transactions:", this::viewOnlyEntityOperations);
@@ -925,12 +1025,16 @@ public class Dealership {
         }  while (choice != 0);
     }
 
-    private void addTransaction() {
-        ArrayList<Salesperson> salespersons = userInterface.getAllSalespersons();
-        Salesperson salesperson = (Salesperson) selectChoiceOrSearch(salespersons, "Salesperson", false);
+    private void addTransaction(boolean isSalesperson) {
+        Salesperson salesperson;
+        if (isSalesperson) {
+            salesperson = (Salesperson) loggedInUser;
+        } else {
+            ArrayList<Salesperson> salespersons = userInterface.getAllSalespersons();
+            salesperson = (Salesperson) selectChoiceOrSearch(salespersons, "Salesperson", false);
+        }
 
-        ArrayList<Client> clients = userInterface.getAllClients();
-        Client client = (Client) selectChoiceOrSearch(clients, "Client", false);
+        Client client = selectClient(false);
 
         ArrayList<Item> items = new ArrayList<>();
         ArrayList<Entity> entities;
@@ -1011,7 +1115,7 @@ public class Dealership {
             }
 
             System.out.println("Discount Percentage: " + transaction.getDiscountPercentage());
-            System.out.println("Total Amount: " + transaction.getTotalAmount());
+            System.out.println("Total Amount: " + Statistics.numParse(transaction.getTotalAmount()));
             System.out.println("Notes: " + transaction.getNotes());
 
             if (viewOnly) {
@@ -1043,6 +1147,16 @@ public class Dealership {
                         System.out.print("Are you sure you want to remove " + transactionString + " ? (Y/N) > ");
                         choose = scanner.next();
                         if (choose.toLowerCase().startsWith("y")) {
+                            for (Item e : transaction.getItems()) {
+                                if (e instanceof Car) {
+                                    for (Car c : carInterface.getAllCars()) {
+                                        if (c.getCarID().equals(((Car) e).getCarID())) {
+                                            c.setStatus("available");
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
                             transactionInterface.removeTransaction(transaction);
                             Activity activity = new Activity("delete", transaction, null);
                             loggedInUser.addActivity(activity);
@@ -1072,8 +1186,7 @@ public class Dealership {
         }
 
         String clientID = transaction.getClientID();
-        ArrayList<Client> clients = userInterface.getAllClients();
-        Client client = (Client) selectChoiceOrSearch(clients, "Client", true);
+        Client client = selectClient(true);
         if (client != null) {
             clientID = client.getUserID();
         }
@@ -1134,7 +1247,6 @@ public class Dealership {
         do {
             users = userInterface.getAllUsers();
             System.out.println("\nUser Operations Menu:");
-//            System.out.println("1. Add a user");
             System.out.println("1. View and select a user");
             System.out.println("2. Search for user");
             System.out.println("0. Back");
@@ -1165,100 +1277,6 @@ public class Dealership {
         }  while (choice != 0);
     }
 
-    private void addUser() {
-        System.out.print("Enter full name: ");
-        String fullName = getNextLine();
-
-        System.out.print("Enter date of birth: ");
-        String dateOfBirth;
-        while (true) {
-            try {
-                dateOfBirth = getNextLine();
-                SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
-                df.parse(dateOfBirth);
-                break;
-            } catch (ParseException e) {
-                System.out.println("Date of birth need to be in format: dd/MM/yyyy (Ex: 27/06/2007)");
-            }
-        }
-
-        System.out.print("Enter address: ");
-        String address = getNextLine();
-
-        System.out.print("Enter phone number: ");
-        String phoneNumber = getNextLine();
-
-        System.out.print("Enter email: ");
-        String email = getNextLine();
-
-        UserType userType = null;
-        int choice;
-        boolean done = false;
-        while (true) {
-            System.out.println("\nSelect user type:");
-            System.out.println("1. Salesperson");
-            System.out.println("2. Mechanic");
-            System.out.println("3. Client");
-            System.out.print("Choose user type: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                continue;
-            }
-            switch (choice) {
-                case 1:
-                    userType = UserType.SALESPERSON;
-                    done = true;
-                    break;
-                case 2:
-                    userType = UserType.MECHANIC;
-                    done = true;
-                    break;
-                case 3:
-                    userType = UserType.CLIENT;
-                    done = true;
-                    break;
-                default:
-                    System.out.println("Invalid option. Please try again.");
-                    break;
-            }
-            if (done) {
-                break;
-            }
-        }
-
-        String username = "";
-        String password = "";
-        if (userType == UserType.SALESPERSON || userType == UserType.MECHANIC) {
-            System.out.println("You chose " + userType + ", please enter username and password");
-
-            System.out.print("\nEnter new username: ");
-            username = getNextLine();
-
-            System.out.print("\nEnter new password: ");
-            password = getNextLine();
-        }
-
-        User user = null;
-        try {
-            user = switch (userType) {
-                case SALESPERSON -> new Salesperson(fullName, dateOfBirth, address, phoneNumber, email, username, password);
-                case MECHANIC -> new Mechanic(fullName, dateOfBirth, address, phoneNumber, email, username, password);
-                case CLIENT -> new Client(fullName, dateOfBirth, address, phoneNumber, email);
-                default -> null;
-            };
-        } catch (Exception _) { }
-
-        userInterface.addUser(user);
-
-        Activity activity = new Activity("add", user, null);
-        loggedInUser.addActivity(activity);
-        saveData();
-    }
-
     private String updateUserOperations(User user) {
         int choice;
         do {
@@ -1279,16 +1297,38 @@ public class Dealership {
                     for (Activity a : activityLog) {
                         String date = a.getStringActivityDate();
                         String operation = a.getOperation();
+                        String name = a.getEntity().getClass().getSimpleName();
                         String entity = a.getEntity().getSearchString();
                         switch (operation) {
-                            case "add" -> System.out.println(date + " | Add " + entity);
-                            case "update" -> System.out.println(date + " | Update " + a.getUpdatedEntity().getSearchString() + " from " + entity);
-                            case "delete" -> System.out.println(date + " | Delete " + entity);
+                            case "add":
+                                if (name.equals("Transaction") || name.equals("Service")) {
+                                    System.out.println("Add " + name + " at " + entity);
+                                } else {
+                                    System.out.println("Add " + name + " at " + date + " | " + entity);
+                                }
+                                break;
+                            case "update":
+                                if (name.equals("Transaction") || name.equals("Service")) {
+                                    System.out.println("Update " + name + " at " + a.getUpdatedEntity().getSearchString() + " from " + entity);
+                                } else {
+                                    System.out.println("Update " + name + " at " + date + " | " + a.getUpdatedEntity().getSearchString() + " from " + entity);
+                                }
+                                break;
+                            case "delete":
+                                if (name.equals("Transaction") || name.equals("Service")) {
+                                    System.out.println("Delete " + name + " at " + entity);
+                                } else {
+                                    System.out.println("Delete " + name + " at " + date + " | " + entity);
+                                }
+                                break;
                         }
                     }
                 } else {
                     System.out.println("Activity Log: Empty");
                 }
+            } else {
+                System.out.println("Total spending: " + Statistics.numParse(((Client) user).getTotalSpending()));
+                System.out.println("Membership: " + ((Client) user).getMembershipType());
             }
 
             System.out.println("\nUpdate User Operations Menu:");
@@ -1488,9 +1528,9 @@ public class Dealership {
                     processMenu("Total revenue in a period of time:", services, transactions, (servicesList, transactionsList, input, dateType) -> {
                         BigDecimal revenue = Statistics.totalRevenueInPeriod(servicesList, transactionsList, input, dateType);
                         if (dateType.equals("week")) {
-                            System.out.println("\n" + name + " has a revenue of " + numParse(revenue) + " VND in the week starts from " + input + ".");
+                            System.out.println("\n" + name + " has a revenue of " + Statistics.numParse(revenue) + " VND in the week starts from " + input + ".");
                         } else {
-                            System.out.println("\n" + name + " has a revenue of " + numParse(revenue) + " VND in " + input + ".");
+                            System.out.println("\n" + name + " has a revenue of " + Statistics.numParse(revenue) + " VND in " + input + ".");
                         }
                     });
                     break;
@@ -1525,14 +1565,14 @@ public class Dealership {
         ArrayList<Mechanic> mechanics = userInterface.getAllMechanics();
         Mechanic mechanic = (Mechanic) selectChoiceOrSearch(mechanics, "Mechanic", false);
         BigDecimal revenue = Statistics.revenueServiceByMechanic(services, mechanic);
-        System.out.println("\nMechanic " + mechanic.getFullName() + " has a services done revenue of " + numParse(revenue) + " VND.");
+        System.out.println("\nMechanic " + mechanic.getFullName() + " has a services done revenue of " + Statistics.numParse(revenue) + " VND.");
     }
 
     public void revenueCarSoldBySalespersonMenu(ArrayList<Transaction> transactions) {
         ArrayList<Salesperson> salespersons = userInterface.getAllSalespersons();
         Salesperson salesperson = (Salesperson) selectChoiceOrSearch(salespersons, "Salesperson", false);
         BigDecimal revenue = Statistics.revenueCarsBySalesperson(transactions, salesperson);
-        System.out.println("\nSalesperson " + salesperson.getFullName() + " has a cars sold revenue of " + numParse(revenue) + " VND.");
+        System.out.println("\nSalesperson " + salesperson.getFullName() + " has a cars sold revenue of " + Statistics.numParse(revenue) + " VND.");
     }
 
     public void explainDateInput() {
@@ -1549,7 +1589,7 @@ public class Dealership {
     }
 
     public <T, U> void processMenu(String message, ArrayList<T> services, ArrayList<U> transactions, BiConsumerWithExceptions<ArrayList<T>, ArrayList<U>, String, String, ParseException> action) {
-        String input = "";
+        String input;
         String dateType = "";
         int choice;
         do {
@@ -1652,9 +1692,9 @@ public class Dealership {
                     processMenu("Total revenue in a period of time:", services, transactions, (servicesList, transactionsList, input, dateType) -> {
                         BigDecimal revenue = Statistics.totalRevenueInPeriod(servicesList, transactionsList, input, dateType);
                         if (dateType.equals("week")) {
-                            System.out.println("\n" + name + " has a revenue of " + numParse(revenue) + " VND in the week starts from " + input + ".");
+                            System.out.println("\n" + name + " has a revenue of " + Statistics.numParse(revenue) + " VND in the week starts from " + input + ".");
                         } else {
-                            System.out.println("\n" + name + " has a revenue of " + numParse(revenue) + " VND in " + input + ".");
+                            System.out.println("\n" + name + " has a revenue of " + Statistics.numParse(revenue) + " VND in " + input + ".");
                         }
                     });
                     break;
@@ -1671,10 +1711,6 @@ public class Dealership {
                     break;
             }
         }  while (choice != 0);
-    }
-
-    public String numParse(BigDecimal num) {
-        return String.format("%,.0f", num);
     }
 
     public String updateEntityOperations(Entity entity) {
@@ -1787,7 +1823,9 @@ public class Dealership {
                 if (result.equals("remove")) {
                     return;
                 }
-            } else {
+            } else if (choice == 0) {
+                assert true; // do nothing
+            }  else {
                 System.out.println("Invalid option. Please try again.");
             }
         }  while (choice != 0);
@@ -1795,9 +1833,9 @@ public class Dealership {
 
     public Entity selectChoiceOrSearch(ArrayList<? extends Entity> items, String entity, boolean back) {
         String choiceString;
-        int choice = 0;
+        int choice;
         boolean searchName;
-        do {
+        while (true) {
             System.out.println("\nSelect " + entity + ":");
             int count = 1;
             for (Entity e : items) {
@@ -1826,13 +1864,15 @@ public class Dealership {
             } else {
                 if (choice > 0 && choice <= items.size()) {
                     return items.get(choice - 1);
-                } else if (back && choice == 0) {
-                    assert true; // do nothing
+                } else if (choice == 0) {
+                    if (back) {
+                        break;
+                    }
                 } else {
                     System.out.println("Invalid option. Please try again.");
                 }
             }
-        } while (back && choice != 0);
+        }
         return null;
     }
 
@@ -1912,9 +1952,18 @@ public class Dealership {
             if (!addedEntities.isEmpty()) {
                 System.out.println("\n\nCurrent added " + entity + ":");
                 count = 1;
+                BigDecimal currentTotal = new BigDecimal(0);
                 for (Entity e : addedEntities) {
                     System.out.println(count + ". " + e.getSearchString());
+                    if (e instanceof Car) {
+                        currentTotal = currentTotal.add(((Car) e).getPrice());
+                    } else if (e instanceof AutoPart) {
+                        currentTotal = currentTotal.add(((AutoPart) e).getPrice());
+                    }
                     count += 1;
+                }
+                if (currentTotal.compareTo(BigDecimal.ZERO) > 0) {
+                    System.out.println("Current " + entity + " total: " + Statistics.numParse(currentTotal));
                 }
 
                 System.out.println("\nUpdate " + entity + " list:");
@@ -1960,7 +2009,9 @@ public class Dealership {
 
                             if (searchName) {
                                 Entity searchItem = searchMenuReturn(choiceString, entities);
-                                addedEntities.add(searchItem);
+                                if (searchItem != null) {
+                                    addedEntities.add(searchItem);
+                                }
                             } else {
                                 if (_choice > 0 && _choice <= entities.size()) {
                                     addedEntities.add(entities.get(_choice - 1));
@@ -1997,7 +2048,9 @@ public class Dealership {
 
                             if (searchName) {
                                 Entity searchItem = searchMenuReturn(choiceString, addedEntities);
-                                addedEntities.remove(searchItem);
+                                if (searchItem != null) {
+                                    addedEntities.remove(searchItem);
+                                }
                             } else {
                                 if (_choice > 0 && _choice <= addedEntities.size()) {
                                     addedEntities.remove(addedEntities.get(_choice - 1));
@@ -2020,39 +2073,47 @@ public class Dealership {
                 }
 
             } else {
-                System.out.println("\nAdd " + entity + ":");
-                count = 1;
-                for (Entity e : entities) {
-                    System.out.println(count + ". " + e.getSearchString());
-                    count += 1;
-                }
-                System.out.println("0. Finish");
-                System.out.print("Enter " + entity + " (choice or search): ");
-                choiceString = scanner.nextLine();
-                try {
-                    choice = Integer.parseInt(choiceString);
-                    searchName = false;
-                } catch (NumberFormatException e) {
-                    if (choiceString.isEmpty()) {
-                        System.out.println("Cannot be empty. Please try again.");
-                        continue;
+                do {
+                    if (!addedEntities.isEmpty()){
+                        break;
                     }
-                    searchName = true;
-                    choice = -1;
-                }
 
-                if (searchName) {
-                    Entity searchItem = searchMenuReturn(choiceString, entities);
-                    addedEntities.add(searchItem);
-                } else {
-                    if (choice > 0 && choice <= entities.size()) {
-                        addedEntities.add(entities.get(choice - 1));
-                    } else if (choice == 0) {
-                        assert true; // do nothing
-                    } else {
-                        System.out.println("Invalid option. Please try again.");
+                    System.out.println("\nAdd " + entity + ":");
+                    count = 1;
+                    for (Entity e : entities) {
+                        System.out.println(count + ". " + e.getSearchString());
+                        count += 1;
                     }
-                }
+                    System.out.println("0. Finish");
+                    System.out.print("Enter " + entity + " (choice or search): ");
+                    choiceString = scanner.nextLine();
+                    try {
+                        choice = Integer.parseInt(choiceString);
+                        searchName = false;
+                    } catch (NumberFormatException e) {
+                        if (choiceString.isEmpty()) {
+                            System.out.println("Cannot be empty. Please try again.");
+                            continue;
+                        }
+                        searchName = true;
+                        choice = -1;
+                    }
+
+                    if (searchName) {
+                        Entity searchItem = searchMenuReturn(choiceString, entities);
+                        if (searchItem != null) {
+                            addedEntities.add(searchItem);
+                        }
+                    } else {
+                        if (choice > 0 && choice <= entities.size()) {
+                            addedEntities.add(entities.get(choice - 1));
+                        } else if (choice == 0) {
+                            assert true; // do nothing
+                        } else {
+                            System.out.println("Invalid option. Please try again.");
+                        }
+                    }
+                } while (choice != 0);
             }
         } while (choice != 0);
         return addedEntities;
@@ -2167,18 +2228,6 @@ public class Dealership {
         }
     }
 
-    private void welcomeScreen() {
-        System.out.println("COSC2081 GROUP ASSIGNMENT\n" +
-                name + " CAR DEALERSHIP MANAGEMENT SYSTEM\n" +
-                "Instructor: Mr. Minh Vu & Mr. Dung Nguyen\n" +
-                "Group: Confuse Group\n" +
-                "s3975162 Le Nguyen Khoi\n" +
-                "s39 Tran Tuan Anh\n" +
-                "s39 Nguyen Vu Duy\n" +
-                "s39 Le Minh Tri"
-        );
-    }
-
     public int levenshteinDistance(String a, String b) {
         a = a.toLowerCase();
         b = b.toLowerCase();
@@ -2198,6 +2247,24 @@ public class Dealership {
             }
         }
         return costs[b.length()];
+    }
+
+    private void welcomeScreen() {
+        System.out.println("\nCOSC2081 GROUP ASSIGNMENT\n" +
+                name + " CAR DEALERSHIP MANAGEMENT SYSTEM\n" +
+                "Instructor: Mr. Minh Vu & Mr. Dung Nguyen\n" +
+                "Group: Confuse Group\n" +
+                "s3975162 Le Nguyen Khoi\n" +
+                "s39 Tran Tuan Anh\n" +
+                "s39 Nguyen Vu Duy\n" +
+                "s39 Le Minh Tri\n\n" +
+                name + " currently has" +
+                "\nCars: " + carInterface.getAllCars().size() +
+                "\nAuto Parts: " + autoPartInterface.getAllAutoParts().size() +
+                "\nSales Transactions: " + transactionInterface.getAllTransactions().size() +
+                "\nServices: " + serviceInterface.getAllServices().size() +
+                "\nUsers: " + userInterface.getAllUsers().size()
+        );
     }
 
     // Save data to files before exit

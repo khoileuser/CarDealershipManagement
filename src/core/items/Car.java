@@ -2,6 +2,7 @@ package core.items;
 
 import core.Entity;
 import core.Service;
+import utils.Statistics;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -114,7 +115,13 @@ public class Car extends Item implements Entity {
     }
 
     public void removeService(Service service) {
-        this.servicesHistory.remove(service);
+        for (Service s : this.servicesHistory) {
+            if (s.getServiceID().equals(service.getServiceID())) {
+                this.servicesHistory.remove(s);
+                break;
+            }
+        }
+//        this.servicesHistory.remove(service);
     }
 
     public String getNotes() {
@@ -148,7 +155,7 @@ public class Car extends Item implements Entity {
 
     @Override
     public String getSearchString() {
-        return make + " " + model + " " + year + " (" + color + ")";
+        return make + " " + model + " " + year + " (" + color + ") | " + Statistics.numParse(getPrice()) + " (" + status + ")";
     }
 }
 

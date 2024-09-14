@@ -31,7 +31,7 @@ public class AutoPartOperation implements AutoPartInterface {
         lastID = lastID + 1;
         autoPart.setPartID("p-" + lastID);
         autoPartList.add(autoPart);
-        System.out.println("Part added: " + autoPart);
+        System.out.println("Auto Part added: " + autoPart.getSearchString());
     }
 
     @Override
@@ -44,11 +44,11 @@ public class AutoPartOperation implements AutoPartInterface {
         for (int i = 0; i < autoPartList.size(); i++) {
             if (autoPartList.get(i).getPartID().equals(updatedPart.getPartID())) {
                 autoPartList.set(i, updatedPart);
-                System.out.println("Part updated: " + updatedPart);
+                System.out.println("Part updated: " + updatedPart.getSearchString());
                 return;
             }
         }
-        System.out.println("Part not found: " + updatedPart);
+        System.out.println("Part not found: " + updatedPart.getSearchString());
     }
 
     @Override
@@ -56,10 +56,10 @@ public class AutoPartOperation implements AutoPartInterface {
         for (int i = 0; i < autoPartList.size(); i++) {
             if (autoPartList.get(i).getPartID().equals(part.getPartID())) {
                 autoPartList.remove(i);
-                System.out.println("Part removed: " + part);
+                System.out.println("Part removed: " + part.getSearchString());
                 return;
             }
         }
-        System.out.println("Part not found: " + part);
+        System.out.println("Part not found: " + part.getSearchString());
     }
 }

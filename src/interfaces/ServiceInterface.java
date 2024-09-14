@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public interface ServiceInterface {
     void setServiceList(ArrayList<Object> serviceList);
 
-    void addService(Service service, Car car);
+    void addService(Service service);
 
     ArrayList<Service> getAllServices();
 

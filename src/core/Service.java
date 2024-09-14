@@ -1,6 +1,7 @@
 package core;
 
 import core.items.AutoPart;
+import utils.Statistics;
 
 import java.io.Serial;
 import java.math.BigDecimal;
@@ -16,7 +17,7 @@ public class Service implements Serializable, Entity {
 
     // Attribute
     private String serviceID;
-    private final Date serviceDate;
+    private Date serviceDate;
     private String clientID;
     private String mechanicID;
     private String carID;
@@ -115,7 +116,7 @@ public class Service implements Serializable, Entity {
             System.out.println("\nClient has " + membership + " membership, gets " + membership.getDiscountPercentage() + "% off from auto parts and services.");
             BigDecimal discountAmount = this.serviceCost.multiply(new BigDecimal(this.discountPercentage)).divide(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP);
             this.serviceCost = this.serviceCost.subtract(discountAmount);
-            System.out.println("New service cost: " + this.serviceCost + ", saved: " + discountAmount);
+            System.out.println("New service cost: " + Statistics.numParse(this.serviceCost) + ", saved: " + Statistics.numParse(discountAmount));
         }
     }
 
@@ -140,7 +141,13 @@ public class Service implements Serializable, Entity {
         for (AutoPart p : replacedParts) {
             parts.append(p.getSearchString()).append(", ");
         }
-        return new StringBuilder(parts.substring(0, parts.length() - 2));
+        StringBuilder re;
+        try {
+            re = new StringBuilder(parts.substring(0, parts.length() - 2));
+        } catch (StringIndexOutOfBoundsException _) {
+            re = new StringBuilder("0");
+        }
+        return re;
     }
 
     @Override

@@ -10,6 +10,7 @@ import java.io.Serializable;
 
 import core.items.AutoPart;
 import core.items.Item;
+import utils.Statistics;
 
 public class Transaction implements Serializable, Entity {
     @Serial
@@ -33,8 +34,6 @@ public class Transaction implements Serializable, Entity {
         this.items = new ArrayList<>();
         this.discountPercentage = 0;
         this.totalAmount = totalAmount;
-
-
     }
 
     public String getTransactionID() {
@@ -106,7 +105,7 @@ public class Transaction implements Serializable, Entity {
             }
             BigDecimal discountAmount = partsTotal.multiply(new BigDecimal(this.discountPercentage)).divide(new BigDecimal(100)).setScale(0, RoundingMode.HALF_UP);
             this.totalAmount = this.totalAmount.subtract(discountAmount);
-            System.out.println("New total amount: " + this.totalAmount + ", saved: " + discountAmount);
+            System.out.println("New total amount: " + Statistics.numParse(this.totalAmount) + ", saved: " + Statistics.numParse(discountAmount));
         }
     }
 
@@ -129,9 +128,15 @@ public class Transaction implements Serializable, Entity {
     public StringBuilder getStringItems() {
         StringBuilder parts = new StringBuilder();
         for (Item i : items) {
-            parts.append(i.getSearchString()).append(", ");
+            parts.append(i.getSearchString()).append("; ");
         }
-        return new StringBuilder(parts.substring(0, parts.length() - 2));
+        StringBuilder re;
+        try {
+            re = new StringBuilder(parts.substring(0, parts.length() - 2));
+        } catch (StringIndexOutOfBoundsException _) {
+            re = new StringBuilder("0");
+        }
+        return re;
     }
 
     @Override

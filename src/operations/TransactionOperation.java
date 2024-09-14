@@ -39,7 +39,7 @@ public class TransactionOperation implements TransactionInterface {
                 ((Car) i).setStatus("sold");
             }
         }
-        System.out.println("Transaction added: " + transaction);
+        System.out.println("Transaction added: " + transaction.getSearchString());
     }
 
     @Override
@@ -57,28 +57,22 @@ public class TransactionOperation implements TransactionInterface {
                     }
                 }
                 transactionList.set(i, updatedTransaction);
-                System.out.println("Transaction updated: " + updatedTransaction);
+                System.out.println("Transaction updated: " + updatedTransaction.getSearchString());
                 return;
             }
         }
-        System.out.println("Transaction not found: " + updatedTransaction);
+        System.out.println("Transaction not found: " + updatedTransaction.getSearchString());
     }
 
     @Override
     public void removeTransaction(Transaction transaction) {
         for (int i = 0; i < transactionList.size(); i++) {
             if (transactionList.get(i).getTransactionID().equals(transaction.getTransactionID())) {
-                for (Item e : transaction.getItems()) {
-                    if (e instanceof Car) {
-                        System.out.println(e);
-                        ((Car) e).setStatus("available");
-                    }
-                }
                 transactionList.remove(i);
-                System.out.println("Transaction removed: " + transaction);
+                System.out.println("Transaction removed: " + transaction.getSearchString());
                 return;
             }
         }
-        System.out.println("Transaction not found: " + transaction);
+        System.out.println("Transaction not found: " + transaction.getSearchString());
     }
 }

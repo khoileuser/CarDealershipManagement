@@ -23,7 +23,7 @@ public class ServiceOperation implements ServiceInterface {
     }
 
     @Override
-    public void addService(Service service, Car car) {
+    public void addService(Service service) {
         int lastID = 0;
         for (Service s : serviceList) {
             int id = (int) Integer.parseInt(s.getServiceID().replace("s-", ""));
@@ -34,8 +34,7 @@ public class ServiceOperation implements ServiceInterface {
         lastID = lastID + 1;
         service.setServiceID("s-" + lastID);
         serviceList.add(service);
-        car.addService(service);
-        System.out.println("Service added: " + service);
+        System.out.println("Service added: " + service.getSearchString());
     }
 
     @Override
@@ -48,11 +47,11 @@ public class ServiceOperation implements ServiceInterface {
         for (int i = 0; i < serviceList.size(); i++) {
             if (serviceList.get(i).getServiceID().equals(updatedService.getServiceID())) {
                 serviceList.set(i, updatedService);
-                System.out.println("Service updated: " + updatedService);
+                System.out.println("Service updated: " + updatedService.getSearchString());
                 return;
             }
         }
-        System.out.println("Service not found: " + updatedService);
+        System.out.println("Service not found: " + updatedService.getSearchString());
     }
 
     @Override
@@ -60,19 +59,19 @@ public class ServiceOperation implements ServiceInterface {
         for (int i = 0; i < serviceList.size(); i++) {
             if (serviceList.get(i).getServiceID().equals(service.getServiceID())) {
                 serviceList.remove(i);
-                System.out.println("Service removed: " + service);
+                System.out.println("Service removed: " + service.getSearchString());
                 return;
             }
         }
-        System.out.println("Service not found: " + service);
+        System.out.println("Service not found: " + service.getSearchString());
     }
 
     @Override
     public boolean addReplacedPart(Service service, String autoPartName, ArrayList<AutoPart> autoPartList) {
         for (AutoPart a : autoPartList) {
-            if (a.getPartName().equalsIgnoreCase(autoPartName)) {
+            if (a.getPartName().toLowerCase().contains(autoPartName.toLowerCase())) {
                 service.addReplacedPart(a);
-                System.out.println("Added " + autoPartName + " to " + service.getServiceType());
+                System.out.println("Added " + autoPartName + " to " + service.getSearchString());
                 return true;
             }
         }

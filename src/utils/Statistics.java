@@ -221,4 +221,8 @@ public class Statistics {
             }
         }
     }
+
+    public static String numParse(BigDecimal num) {
+        return String.format("%,.0f", num);
+    }
 }
