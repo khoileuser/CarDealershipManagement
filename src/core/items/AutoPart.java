@@ -7,8 +7,6 @@ import java.io.Serial;
 import java.math.BigDecimal;
 
 public class AutoPart extends Item implements Entity {
-    @Serial
-    private static final long serialVersionUID = 2L;
 
     // Attributes
     private String partID;

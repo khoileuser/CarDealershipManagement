@@ -22,9 +22,7 @@ public class Dealership {
     private final TransactionInterface transactionInterface;
     private final ServiceInterface serviceInterface;
     User loggedInUser;
-
-    Scanner scanner = new Scanner(System.in);
-
+    
     public Dealership(String name) {
         this.name = name;
         // Initialize the system

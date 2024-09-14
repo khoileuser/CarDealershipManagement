@@ -12,8 +12,6 @@ import java.util.Date;
 import java.io.Serializable;
 
 public class Service implements Serializable, Entity {
-    @Serial
-    private static final long serialVersionUID = 11L;
 
     // Attribute
     private String serviceID;

@@ -11,8 +11,6 @@ import java.text.SimpleDateFormat;
 import java.io.Serializable;
 
 public abstract class User implements Serializable, Entity {
-    @Serial
-    private static final long serialVersionUID = 4L;
 
     protected String userID;
     protected String fullName;

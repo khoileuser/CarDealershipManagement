@@ -6,8 +6,6 @@ import java.io.Serial;
 import java.util.ArrayList;
 
 public class Manager extends User {
-    @Serial
-    private static final long serialVersionUID = 7L;
 
     protected String username;
     protected String password;

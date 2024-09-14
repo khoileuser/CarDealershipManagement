@@ -7,8 +7,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class Client extends User {
-    @Serial
-    private static final long serialVersionUID = 5L;
 
     private Membership membershipType;
     private BigDecimal totalSpending;

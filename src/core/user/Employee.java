@@ -6,8 +6,6 @@ import java.io.Serial;
 import java.util.ArrayList;
 
 public abstract class Employee extends User {
-    @Serial
-    private static final long serialVersionUID = 6L;
 
     protected String username;
     protected String password;

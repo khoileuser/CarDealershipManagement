@@ -13,8 +13,6 @@ import core.items.Item;
 import utils.Statistics;
 
 public class Transaction implements Serializable, Entity {
-    @Serial
-    private static final long serialVersionUID = 10L;
 
     private String transactionID;
     private final Date transactionDate;

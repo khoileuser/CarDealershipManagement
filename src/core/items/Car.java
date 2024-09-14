@@ -9,8 +9,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 
 public class Car extends Item implements Entity {
-    @Serial
-    private static final long serialVersionUID = 3L;
 
     // Attributes
     private String carID;

@@ -6,8 +6,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class Activity implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 12L;
 
     private final Date activityDate;
     private String operation; // add, update or delete
