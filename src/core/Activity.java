@@ -9,7 +9,7 @@ public class Activity implements Serializable {
     @Serial
     private static final long serialVersionUID = 12L;
 
-    private Date activityDate;
+    private final Date activityDate;
     private String operation; // add, update or delete
     private Entity entity;
     private Entity updatedEntity;

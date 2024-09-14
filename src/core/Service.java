@@ -17,7 +17,7 @@ public class Service implements Serializable, Entity {
 
     // Attribute
     private String serviceID;
-    private Date serviceDate;
+    private final Date serviceDate;
     private String clientID;
     private String mechanicID;
     private String carID;
