@@ -55,7 +55,7 @@ public class Dealership {
                 "\nServices: " + serviceInterface.getAllServices().size() +
                 "\nUsers: " + userInterface.getAllUsers().size()
         );
-        
+
         System.out.println("\nPlease login");
         System.out.print("Username: ");
         String username = scanner.nextLine();
