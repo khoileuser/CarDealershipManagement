@@ -40,7 +40,22 @@ public class Dealership {
 
     // Main method to start the system
     public void start() {
-        welcomeScreen();
+        System.out.println("\nCOSC2081 GROUP ASSIGNMENT\n" +
+                name + " CAR DEALERSHIP MANAGEMENT SYSTEM\n" +
+                "Instructor: Mr. Minh Vu & Mr. Dung Nguyen\n" +
+                "Group: Confuse Group\n" +
+                "s3975162 Le Nguyen Khoi\n" +
+                "s39 Tran Tuan Anh\n" +
+                "s39 Nguyen Vu Duy\n" +
+                "s39 Le Minh Tri\n\n" +
+                name + " currently has" +
+                "\nCars: " + carInterface.getAllCars().size() +
+                "\nAuto Parts: " + autoPartInterface.getAllAutoParts().size() +
+                "\nSales Transactions: " + transactionInterface.getAllTransactions().size() +
+                "\nServices: " + serviceInterface.getAllServices().size() +
+                "\nUsers: " + userInterface.getAllUsers().size()
+        );
+        
         System.out.println("\nPlease login");
         System.out.print("Username: ");
         String username = scanner.nextLine();
@@ -2247,24 +2262,6 @@ public class Dealership {
             }
         }
         return costs[b.length()];
-    }
-
-    private void welcomeScreen() {
-        System.out.println("\nCOSC2081 GROUP ASSIGNMENT\n" +
-                name + " CAR DEALERSHIP MANAGEMENT SYSTEM\n" +
-                "Instructor: Mr. Minh Vu & Mr. Dung Nguyen\n" +
-                "Group: Confuse Group\n" +
-                "s3975162 Le Nguyen Khoi\n" +
-                "s39 Tran Tuan Anh\n" +
-                "s39 Nguyen Vu Duy\n" +
-                "s39 Le Minh Tri\n\n" +
-                name + " currently has" +
-                "\nCars: " + carInterface.getAllCars().size() +
-                "\nAuto Parts: " + autoPartInterface.getAllAutoParts().size() +
-                "\nSales Transactions: " + transactionInterface.getAllTransactions().size() +
-                "\nServices: " + serviceInterface.getAllServices().size() +
-                "\nUsers: " + userInterface.getAllUsers().size()
-        );
     }
 
     // Save data to files before exit
