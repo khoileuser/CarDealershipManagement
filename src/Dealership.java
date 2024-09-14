@@ -672,7 +672,7 @@ public class Dealership {
         }
     }
 
-    public ArrayList<Client> getClientsOwnCar(ArrayList<Client> clients) {
+    private ArrayList<Client> getClientsOwnCar(ArrayList<Client> clients) {
         ArrayList<String> clientIDs = new ArrayList<>();
         for (Transaction t : transactionInterface.getAllTransactions()) {
             for (Item i : t.getItems()) {
@@ -1485,7 +1485,7 @@ public class Dealership {
         return updatedUser;
     }
 
-    public void showManagerStatisticMenu() {
+    private void showManagerStatisticMenu() {
         int choice;
         ArrayList<Service> services;
         ArrayList<Transaction> transactions;
@@ -1561,21 +1561,21 @@ public class Dealership {
         }  while (choice != 0);
     }
 
-    public void revenueServiceByMechanicMenu(ArrayList<Service> services) {
+    private void revenueServiceByMechanicMenu(ArrayList<Service> services) {
         ArrayList<Mechanic> mechanics = userInterface.getAllMechanics();
         Mechanic mechanic = (Mechanic) selectChoiceOrSearch(mechanics, "Mechanic", false);
         BigDecimal revenue = Statistics.revenueServiceByMechanic(services, mechanic);
         System.out.println("\nMechanic " + mechanic.getFullName() + " has a services done revenue of " + Statistics.numParse(revenue) + " VND.");
     }
 
-    public void revenueCarSoldBySalespersonMenu(ArrayList<Transaction> transactions) {
+    private void revenueCarSoldBySalespersonMenu(ArrayList<Transaction> transactions) {
         ArrayList<Salesperson> salespersons = userInterface.getAllSalespersons();
         Salesperson salesperson = (Salesperson) selectChoiceOrSearch(salespersons, "Salesperson", false);
         BigDecimal revenue = Statistics.revenueCarsBySalesperson(transactions, salesperson);
         System.out.println("\nSalesperson " + salesperson.getFullName() + " has a cars sold revenue of " + Statistics.numParse(revenue) + " VND.");
     }
 
-    public void explainDateInput() {
+    private void explainDateInput() {
         System.out.println("1. Day (dd/MM/yyyy)");
         System.out.println("2. Week (Enter start date of the week in dd/MM/yyyy format)");
         System.out.println("3. Month (MM/yyyy)");
@@ -1584,11 +1584,11 @@ public class Dealership {
     }
 
     @FunctionalInterface
-    public interface BiConsumerWithExceptions<T, U, V, B, E extends Exception> {
+    private interface BiConsumerWithExceptions<T, U, V, B, E extends Exception> {
         void accept(T t, U u, V v, B b) throws E;
     }
 
-    public <T, U> void processMenu(String message, ArrayList<T> services, ArrayList<U> transactions, BiConsumerWithExceptions<ArrayList<T>, ArrayList<U>, String, String, ParseException> action) {
+    private <T, U> void processMenu(String message, ArrayList<T> services, ArrayList<U> transactions, BiConsumerWithExceptions<ArrayList<T>, ArrayList<U>, String, String, ParseException> action) {
         String input;
         String dateType = "";
         int choice;
@@ -1648,23 +1648,23 @@ public class Dealership {
         } while (choice != 0);
     }
 
-    public void listCarsMenu(ArrayList<Transaction> transactions) {
+    private void listCarsMenu(ArrayList<Transaction> transactions) {
         processMenu("List cars sold in a period of time:", null, transactions, (_, transactionsList, input, dateType) -> Statistics.listCarInAPeriod(transactionsList, input, dateType));
     }
 
-    public void listTransactionsMenu(ArrayList<Transaction> transactions) {
+    private void listTransactionsMenu(ArrayList<Transaction> transactions) {
         processMenu("List sales transactions created in a period of time:", null, transactions, (_, transactionsList, input, dateType) -> Statistics.listTransactionInAPeriod(transactionsList, input, dateType));
     }
 
-    public void listServicesMenu(ArrayList<Service> services) {
+    private void listServicesMenu(ArrayList<Service> services) {
         processMenu("List services done in a period of time:", services, null, (servicesList, _, input, dateType) -> Statistics.listServiceInAPeriod(servicesList, input, dateType));
     }
 
-    public void listPartsMenu(ArrayList<Service> services, ArrayList<Transaction> transactions) {
+    private void listPartsMenu(ArrayList<Service> services, ArrayList<Transaction> transactions) {
         processMenu("List auto parts sold in a period of time:", services, transactions, Statistics::listPartInAPeriod);
     }
 
-    public void showEmployeeStatisticMenu() {
+    private void showEmployeeStatisticMenu() {
         int choice;
         ArrayList<Transaction> transactions;
         ArrayList<Service> services;
@@ -1713,7 +1713,7 @@ public class Dealership {
         }  while (choice != 0);
     }
 
-    public String updateEntityOperations(Entity entity) {
+    private String updateEntityOperations(Entity entity) {
         if (entity instanceof AutoPart) {
             return updatePartOperations((AutoPart) entity);
         } else if (entity instanceof Car) {
@@ -1728,7 +1728,7 @@ public class Dealership {
         return "ok";
     }
 
-    public String viewOnlyEntityOperations(Entity entity) {
+    private String viewOnlyEntityOperations(Entity entity) {
          if (entity instanceof Transaction) {
             return updateTransactionOperations((Transaction) entity, true);
          } else if (entity instanceof Service) {
@@ -1796,7 +1796,7 @@ public class Dealership {
         }
     }
 
-    public void listAndSelect(ArrayList<? extends Entity> items, String message, Function<Entity, String> updateOperations) {
+    private void listAndSelect(ArrayList<? extends Entity> items, String message, Function<Entity, String> updateOperations) {
         int choice;
         do {
             System.out.println("\n" + message);
@@ -1831,7 +1831,7 @@ public class Dealership {
         }  while (choice != 0);
     }
 
-    public Entity selectChoiceOrSearch(ArrayList<? extends Entity> items, String entity, boolean back) {
+    private Entity selectChoiceOrSearch(ArrayList<? extends Entity> items, String entity, boolean back) {
         String choiceString;
         int choice;
         boolean searchName;
@@ -1907,7 +1907,7 @@ public class Dealership {
         }
     }
 
-    public Entity listAndSelectReturn(ArrayList<? extends Entity> items, String message) {
+    private Entity listAndSelectReturn(ArrayList<? extends Entity> items, String message) {
         int choice;
         do {
             System.out.println("\n" + message);
@@ -1939,7 +1939,7 @@ public class Dealership {
         return null;
     }
 
-    public ArrayList<Entity> addChoiceOrSearch(ArrayList<? extends Entity> entities, String entity, ArrayList<? extends Entity> initialEntities) {
+    private ArrayList<Entity> addChoiceOrSearch(ArrayList<? extends Entity> entities, String entity, ArrayList<? extends Entity> initialEntities) {
         String choiceString;
         int choice = -1;
         int count;
@@ -2228,7 +2228,7 @@ public class Dealership {
         }
     }
 
-    public int levenshteinDistance(String a, String b) {
+    private int levenshteinDistance(String a, String b) {
         a = a.toLowerCase();
         b = b.toLowerCase();
         // i == 0
