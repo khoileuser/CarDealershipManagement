@@ -7,18 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FileHandler {
-
-    public static void writeToFile(String filename, List<String> data) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) { // Append mode
-            for (String line : data) {
-                writer.write(line);
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     // Method for serializing an object to a file (using Java serialization)
     public static void writeObjectsToFile(ArrayList objList, String filePath) throws IOException {
         File checkFile = new File(filePath);
@@ -55,17 +43,5 @@ public class FileHandler {
             }
         }
         return objectList;
-    }
-
-    // Overwrite a file (delete old data and replace with new)
-    public static void overwriteFile(String filePath, List<String> data) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, false))) {
-            for (String line : data) {
-                writer.write(line);
-                writer.newLine();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
