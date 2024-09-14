@@ -1,10 +1,7 @@
 package utils;
 
-import core.items.AutoPart;
-
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class FileHandler {
     // Method for serializing an object to a file (using Java serialization)

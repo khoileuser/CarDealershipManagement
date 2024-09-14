@@ -2,7 +2,6 @@ package operations;
 
 import core.Service;
 import core.items.AutoPart;
-import core.items.Car;
 import interfaces.ServiceInterface;
 
 import java.util.ArrayList;
