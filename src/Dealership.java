@@ -106,15 +106,7 @@ public class Dealership {
             System.out.println("6. Perform Statistics");
             System.out.println("0. Logout");
             System.out.print("Enter choice: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
 
             switch (choice) {
                 case 1:
@@ -155,15 +147,7 @@ public class Dealership {
             System.out.println("4. Perform Statistics");
             System.out.println("0. Logout");
             System.out.print("Enter choice: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
 
             switch (choice) {
                 case 1:
@@ -198,15 +182,7 @@ public class Dealership {
             System.out.println("4. Perform Statistics");
             System.out.println("0. Logout");
             System.out.print("Enter choice: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
 
             switch (choice) {
                 case 1:
@@ -241,15 +217,7 @@ public class Dealership {
             System.out.println("3. Search for car");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
 
             switch (choice) {
                 case 1:
@@ -326,15 +294,7 @@ public class Dealership {
             System.out.println("2. Remove car");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
 
             switch (choice) {
                 case 1:
@@ -402,20 +362,10 @@ public class Dealership {
         System.out.print("Enter new notes (enter to leave the same): ");
         notes = getNextLineEmpty(notes);
 
-        if (!car.getServicesHistory().isEmpty()) {
-            System.out.println("\nCurrent services history: ");
-            int serviceCount = 1;
-            for (Service s : car.getServicesHistory()) {
-                System.out.println(serviceCount + ". " + s.getServiceType() + " | " + s.getNotes());
-                serviceCount += 1;
-            }
-        } else {
-            System.out.println("\nCurrent services history: Empty");
-        }
-
-
         Car updatedCar = new Car(make, model, year, mileage, color, price, notes);
         updatedCar.setCarID(car.getCarID());
+        updatedCar.setStatus(car.getStatus());
+        updatedCar.setServicesHistory(car.getServicesHistory());
         carInterface.updateCar(updatedCar);
 
         Activity activity = new Activity("update", car, updatedCar);
@@ -435,15 +385,7 @@ public class Dealership {
             System.out.println("3. Search for auto part");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
 
             switch (choice) {
                 case 1:
@@ -513,15 +455,7 @@ public class Dealership {
             System.out.println("2. Remove auto part");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
 
             switch (choice) {
                 case 1:
@@ -830,15 +764,7 @@ public class Dealership {
             System.out.println("2. Remove service");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
 
             switch (choice) {
                 case 1:
@@ -995,15 +921,7 @@ public class Dealership {
             }
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
 
             if (!isSalesperson) {
                 switch (choice) {
@@ -1142,15 +1060,7 @@ public class Dealership {
             System.out.println("2. Remove sales transaction");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
 
             switch (choice) {
                 case 1:
@@ -1266,15 +1176,7 @@ public class Dealership {
             System.out.println("2. Search for user");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
 
             switch (choice) {
                 case 1:
@@ -1353,15 +1255,7 @@ public class Dealership {
             }
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
 
             switch (choice) {
                 case 1:
@@ -1438,15 +1332,8 @@ public class Dealership {
             System.out.println("3. Client");
             System.out.println("0. Same as current");
             System.out.print("Choose new user type: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
+
             switch (choice) {
                 case 1:
                     userType = UserType.SALESPERSON;
@@ -1518,15 +1405,7 @@ public class Dealership {
             System.out.println("8. List auto parts sold in a period of time");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
 
             switch (choice) {
                 case 1:
@@ -1692,15 +1571,7 @@ public class Dealership {
             System.out.println("3. List services done in a period of time");
             System.out.println("0. Back");
             System.out.print("Enter choice: ");
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
 
             switch (choice) {
                 case 1:
@@ -1822,16 +1693,7 @@ public class Dealership {
             }
             System.out.println("0. Back");
             System.out.print("Select choice: ");
-
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
 
             if (choice > 0 && choice <= items.size()) {
                 String result = updateOperations.apply(items.get(choice - 1));
@@ -1922,6 +1784,18 @@ public class Dealership {
         }
     }
 
+    private int getChoice() {
+        int choice;
+        try {
+            choice = scanner.nextInt();
+            scanner.nextLine(); // consume left over
+            return choice;
+        } catch (InputMismatchException e) {
+            scanner.next(); // consume the invalid token
+            return -1; // default value that will not exit the loop
+        }
+    }
+
     private Entity listAndSelectReturn(ArrayList<? extends Entity> items, String message) {
         int choice;
         do {
@@ -1932,16 +1806,7 @@ public class Dealership {
                 count += 1;
             }
             System.out.print("Select choice: ");
-
-            try {
-                choice = scanner.nextInt();
-                scanner.nextLine(); // consume left over
-            } catch (InputMismatchException e) {
-                System.out.println("Invalid option. Please try again.");
-                scanner.next(); // consume the invalid token
-                choice = -1; // default value that will not exit the loop
-                continue;
-            }
+            choice = getChoice();
 
             if (choice > 0 && choice <= items.size()) {
                 return items.get(choice - 1);
@@ -1954,11 +1819,66 @@ public class Dealership {
         return null;
     }
 
+    private void printEntities(ArrayList<Entity> entities) {
+        int count = 1;
+        for (Entity e : entities) {
+            System.out.println(count + ". " + e.getSearchString());
+            count += 1;
+        }
+    }
+    
+    private int getChoiceNoEmpty() {
+        String choiceString = scanner.nextLine();
+        try {
+            return Integer.parseInt(choiceString);
+        } catch (NumberFormatException e) {
+            if (choiceString.isEmpty()) {
+                System.out.println("Cannot be empty. Please try again.");
+            }
+            return -1;
+        }
+    }
+    
+    private void addEntity(ArrayList<Entity> entities, ArrayList<Entity> addedEntities, String entity) {
+        int _choice;
+        do {
+            System.out.println("\nAdd " + entity + ":");
+            printEntities(entities);
+            System.out.println("0. Finish");
+            System.out.print("Enter " + entity + " (choice or search): ");
+            _choice = getChoiceNoEmpty();
+    
+            if (_choice > 0 && _choice <= entities.size()) {
+                addedEntities.add(entities.get(_choice - 1));
+            } else if (_choice == 0) {
+                assert true; // do nothing
+            } else {
+                System.out.println("Invalid option. Please try again.");
+            }
+        } while (_choice != 0);
+    }
+    
+    private void removeEntity(ArrayList<Entity> addedEntities, String entity) {
+        int _choice;
+        do {
+            System.out.println("\nRemove " + entity + ":");
+            printEntities(addedEntities);
+            System.out.println("0. Finish");
+            System.out.print("Enter " + entity + " (choice or search): ");
+            _choice = getChoiceNoEmpty();
+    
+            if (_choice > 0 && _choice <= addedEntities.size()) {
+                addedEntities.remove(addedEntities.get(_choice - 1));
+            } else if (_choice == 0) {
+                assert true; // do nothing
+            } else {
+                System.out.println("Invalid option. Please try again.");
+            }
+        } while (_choice != 0 && !addedEntities.isEmpty());
+    }
+    
     private ArrayList<Entity> addChoiceOrSearch(ArrayList<? extends Entity> entities, String entity, ArrayList<? extends Entity> initialEntities) {
-        String choiceString;
         int choice = -1;
-        int count;
-        boolean searchName;
         ArrayList<Entity> addedEntities = new ArrayList<>();
         if (initialEntities != null) {
             addedEntities = (ArrayList<Entity>) initialEntities;
@@ -1966,169 +1886,29 @@ public class Dealership {
         do {
             if (!addedEntities.isEmpty()) {
                 System.out.println("\n\nCurrent added " + entity + ":");
-                count = 1;
-                BigDecimal currentTotal = new BigDecimal(0);
-                for (Entity e : addedEntities) {
-                    System.out.println(count + ". " + e.getSearchString());
-                    if (e instanceof Car) {
-                        currentTotal = currentTotal.add(((Car) e).getPrice());
-                    } else if (e instanceof AutoPart) {
-                        currentTotal = currentTotal.add(((AutoPart) e).getPrice());
-                    }
-                    count += 1;
-                }
-                if (currentTotal.compareTo(BigDecimal.ZERO) > 0) {
-                    System.out.println("Current " + entity + " total: " + Statistics.numParse(currentTotal));
-                }
-
+                printEntities(addedEntities);
+        
                 System.out.println("\nUpdate " + entity + " list:");
                 System.out.println("1. Add " + entity.toLowerCase());
                 System.out.println("2. Remove " + entity.toLowerCase());
                 System.out.println("0. Finish");
                 System.out.print("Enter choice: ");
-                choiceString = scanner.nextLine();
-                try {
-                    choice = Integer.parseInt(choiceString);
-                } catch (NumberFormatException e) {
-                    if (choiceString.isEmpty()) {
-                        System.out.println("Cannot be empty. Please try again.");
-                        continue;
-                    }
-                    choice = -1;
-                }
-
-                int _choice = -1;
+                choice = getChoiceNoEmpty();
+        
                 switch (choice) {
                     case 1:
-                        do {
-                            System.out.println("\nAdd " + entity + ":");
-                            count = 1;
-                            for (Entity e : entities) {
-                                System.out.println(count + ". " + e.getSearchString());
-                                count += 1;
-                            }
-                            System.out.println("0. Finish");
-                            System.out.print("Enter " + entity + " (choice or search): ");
-                            choiceString = scanner.nextLine();
-                            try {
-                                _choice = Integer.parseInt(choiceString);
-                                searchName = false;
-                            } catch (NumberFormatException e) {
-                                if (choiceString.isEmpty()) {
-                                    System.out.println("Cannot be empty. Please try again.");
-                                    continue;
-                                }
-                                searchName = true;
-                                _choice = -1;
-                            }
-
-                            if (searchName) {
-                                Entity searchItem = searchMenuReturn(choiceString, entities);
-                                if (searchItem != null) {
-                                    addedEntities.add(searchItem);
-                                }
-                            } else {
-                                if (_choice > 0 && _choice <= entities.size()) {
-                                    addedEntities.add(entities.get(_choice - 1));
-                                } else if (_choice == 0) {
-                                    assert true; // do nothing
-                                } else {
-                                    System.out.println("Invalid option. Please try again.");
-                                }
-                            }
-                        } while (_choice != 0);
+                        addEntity((ArrayList<Entity>) entities, addedEntities, entity);
                         break;
                     case 2:
-                        do {
-                            System.out.println("\nRemove " + entity + ":");
-                            count = 1;
-                            for (Entity e : addedEntities) {
-                                System.out.println(count + ". " + e.getSearchString());
-                                count += 1;
-                            }
-                            System.out.println("0. Finish");
-                            System.out.print("Enter " + entity + " (choice or search): ");
-                            choiceString = scanner.nextLine();
-                            try {
-                                _choice = Integer.parseInt(choiceString);
-                                searchName = false;
-                            } catch (NumberFormatException e) {
-                                if (choiceString.isEmpty()) {
-                                    System.out.println("Cannot be empty. Please try again.");
-                                    continue;
-                                }
-                                searchName = true;
-                                _choice = -1;
-                            }
-
-                            if (searchName) {
-                                Entity searchItem = searchMenuReturn(choiceString, addedEntities);
-                                if (searchItem != null) {
-                                    addedEntities.remove(searchItem);
-                                }
-                            } else {
-                                if (_choice > 0 && _choice <= addedEntities.size()) {
-                                    addedEntities.remove(addedEntities.get(_choice - 1));
-                                } else if (_choice == 0) {
-                                    assert true; // do nothing
-                                } else {
-                                    System.out.println("Invalid option. Please try again.");
-                                }
-                            }
-
-                            if (addedEntities.isEmpty()) {
-                                break;
-                            }
-                        } while (_choice != 0);
+                        removeEntity(addedEntities, entity);
                         break;
                     case 0:
                         break;
                     default:
                         System.out.println("Invalid option. Please try again.");
                 }
-
             } else {
-                do {
-                    if (!addedEntities.isEmpty()){
-                        break;
-                    }
-
-                    System.out.println("\nAdd " + entity + ":");
-                    count = 1;
-                    for (Entity e : entities) {
-                        System.out.println(count + ". " + e.getSearchString());
-                        count += 1;
-                    }
-                    System.out.println("0. Finish");
-                    System.out.print("Enter " + entity + " (choice or search): ");
-                    choiceString = scanner.nextLine();
-                    try {
-                        choice = Integer.parseInt(choiceString);
-                        searchName = false;
-                    } catch (NumberFormatException e) {
-                        if (choiceString.isEmpty()) {
-                            System.out.println("Cannot be empty. Please try again.");
-                            continue;
-                        }
-                        searchName = true;
-                        choice = -1;
-                    }
-
-                    if (searchName) {
-                        Entity searchItem = searchMenuReturn(choiceString, entities);
-                        if (searchItem != null) {
-                            addedEntities.add(searchItem);
-                        }
-                    } else {
-                        if (choice > 0 && choice <= entities.size()) {
-                            addedEntities.add(entities.get(choice - 1));
-                        } else if (choice == 0) {
-                            assert true; // do nothing
-                        } else {
-                            System.out.println("Invalid option. Please try again.");
-                        }
-                    }
-                } while (choice != 0);
+                addEntity((ArrayList<Entity>) entities, addedEntities, entity);
             }
         } while (choice != 0);
         return addedEntities;
