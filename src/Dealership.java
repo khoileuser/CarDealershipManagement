@@ -753,7 +753,10 @@ public class Dealership {
             client = (Client) selectChoiceOrSearch(getClientsOwnCar(clients), "Client", false);
         } while (client == null);
 
-        Car car = selectCar(client, false);
+        Car car;
+        do {
+            car = selectCar(client, false);
+        } while (car == null);
 
         System.out.print("Enter service type: ");
         String serviceType = getNextLine();
