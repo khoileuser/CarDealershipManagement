@@ -738,15 +738,20 @@ public class Dealership {
     private void addService(boolean isMechanic) {
         Mechanic mechanic;
         // if the user is a mechanic, use the logged-in user as the mechanic
-        if (isMechanic) {
-            mechanic = (Mechanic) loggedInUser;
-        } else {
-            ArrayList<Mechanic> mechanics = userInterface.getAllMechanics();
-            mechanic = (Mechanic) selectChoiceOrSearch(mechanics, "Mechanic", false);
-        }
+        do {
+            if (isMechanic) {
+                mechanic = (Mechanic) loggedInUser;
+            } else {
+                ArrayList<Mechanic> mechanics = userInterface.getAllMechanics();
+                mechanic = (Mechanic) selectChoiceOrSearch(mechanics, "Mechanic", false);
+            }
+        } while (mechanic == null);
 
-        ArrayList<Client> clients = userInterface.getAllClients();
-        Client client = (Client) selectChoiceOrSearch(getClientsOwnCar(clients), "Client", false);
+        Client client;
+        do {
+            ArrayList<Client> clients = userInterface.getAllClients();
+            client = (Client) selectChoiceOrSearch(getClientsOwnCar(clients), "Client", false);
+        } while (client == null);
 
         Car car = selectCar(client, false);
 
@@ -1043,14 +1048,19 @@ public class Dealership {
     private void addTransaction(boolean isSalesperson) {
         // if the user is a salesperson, use the logged-in user as the salesperson
         Salesperson salesperson;
-        if (isSalesperson) {
-            salesperson = (Salesperson) loggedInUser;
-        } else {
-            ArrayList<Salesperson> salespersons = userInterface.getAllSalespersons();
-            salesperson = (Salesperson) selectChoiceOrSearch(salespersons, "Salesperson", false);
-        }
+        do {
+            if (isSalesperson) {
+                salesperson = (Salesperson) loggedInUser;
+            } else {
+                ArrayList<Salesperson> salespersons = userInterface.getAllSalespersons();
+                salesperson = (Salesperson) selectChoiceOrSearch(salespersons, "Salesperson", false);
+            }
+        } while (salesperson == null);
 
-        Client client = selectClient(false);
+        Client client;
+        do {
+            client = selectClient(false);
+        } while (client == null);
 
         ArrayList<AutoPart> parts = autoPartInterface.getAllAutoParts();
         ArrayList<Car> availableCars = carInterface.getAvailableCars();
@@ -1434,7 +1444,12 @@ public class Dealership {
         UserType currentUserType = user.getUserType();
         UserType userType = user.getUserType();
         int choice;
+        boolean done = false;
         do {
+            if (done) {
+                break;
+            }
+
             System.out.println("\nCurrent  user type: " + userType);
             System.out.println("1. Salesperson");
             System.out.println("2. Mechanic");
@@ -1446,12 +1461,15 @@ public class Dealership {
             switch (choice) {
                 case 1:
                     userType = UserType.SALESPERSON;
+                    done = true;
                     break;
                 case 2:
                     userType = UserType.MECHANIC;
+                    done = true;
                     break;
                 case 3:
                     userType = UserType.CLIENT;
+                    done = true;
                     break;
                 case 0:
                     break;
@@ -1940,9 +1958,56 @@ public class Dealership {
         }  while (choice != 0);
         return null;
     }
-    
+
+    // add choice or search for the entity
+    private ArrayList<Entity> addChoiceOrSearch(ArrayList<? extends Entity> entities, String entity, ArrayList<? extends Entity> initialEntities) {
+        int choice = -1;
+        boolean done = false;
+        ArrayList<Entity> addedEntities = new ArrayList<>();
+
+        // if there are initial entities, replace addedEntities with initialEntities
+        if (initialEntities != null) {
+            addedEntities = (ArrayList<Entity>) initialEntities;
+        }
+
+        do {
+            if (done) {
+                break;
+            }
+
+            if (!addedEntities.isEmpty()) { // if there are added entities, show the current added entities
+                System.out.println("\nCurrent added " + entity + ":");
+                printEntities(addedEntities);
+
+                System.out.println("\nUpdate " + entity + " list:");
+                System.out.println("1. Add " + entity.toLowerCase());
+                System.out.println("2. Remove " + entity.toLowerCase());
+                System.out.println("0. Finish");
+                System.out.print("Enter choice: ");
+                choice = getChoiceNoEmpty();
+
+                switch (choice) {
+                    case 1:
+                        addEntity((ArrayList<Entity>) entities, addedEntities, entity, false);
+                        break;
+                    case 2:
+                        removeEntity(addedEntities, entity);
+                        break;
+                    case 0:
+                        done = true;
+                        break;
+                    default:
+                        System.out.println("Invalid option. Please try again.");
+                }
+            } else { // if there are no added entities, show the add entity menu
+                addEntity((ArrayList<Entity>) entities, addedEntities, entity, true);
+            }
+        } while (choice != 0);
+        return addedEntities;
+    }
+
     // add entity to the list
-    private void addEntity(ArrayList<Entity> entities, ArrayList<Entity> addedEntities, String entity) {
+    private void addEntity(ArrayList<Entity> entities, ArrayList<Entity> addedEntities, String entity, boolean once) {
         int _choice;
         do {
             System.out.println("\nAdd " + entity + ":");
@@ -1957,6 +2022,10 @@ public class Dealership {
                 assert true; // do nothing
             } else {
                 System.out.println("Invalid option. Please try again.");
+            }
+
+            if (once) {
+                break;
             }
         } while (_choice != 0);
     }
@@ -1979,49 +2048,6 @@ public class Dealership {
                 System.out.println("Invalid option. Please try again.");
             }
         } while (_choice != 0 && !addedEntities.isEmpty());
-    }
-    
-    // add choice or search for the entity
-    private ArrayList<Entity> addChoiceOrSearch(ArrayList<? extends Entity> entities, String entity, ArrayList<? extends Entity> initialEntities) {
-        int choice = -1;
-        boolean done = false;
-        ArrayList<Entity> addedEntities = new ArrayList<>();
-
-        // if there are initial entities, replace addedEntities with initialEntities
-        if (initialEntities != null) {
-            addedEntities = (ArrayList<Entity>) initialEntities;
-        }
-
-        do {
-            if (!addedEntities.isEmpty()) { // if there are added entities, show the current added entities
-                System.out.println("\nCurrent added " + entity + ":");
-                printEntities(addedEntities);
-        
-                System.out.println("\nUpdate " + entity + " list:");
-                System.out.println("1. Add " + entity.toLowerCase());
-                System.out.println("2. Remove " + entity.toLowerCase());
-                System.out.println("0. Finish");
-                System.out.print("Enter choice: ");
-                choice = getChoiceNoEmpty();
-        
-                switch (choice) {
-                    case 1:
-                        addEntity((ArrayList<Entity>) entities, addedEntities, entity);
-                        break;
-                    case 2:
-                        removeEntity(addedEntities, entity);
-                        break;
-                    case 0:
-                        done = true;
-                        break;
-                    default:
-                        System.out.println("Invalid option. Please try again.");
-                }
-            } else { // if there are no added entities, show the add entity menu
-                addEntity((ArrayList<Entity>) entities, addedEntities, entity);
-            }
-        } while (done && choice != 0);
-        return addedEntities;
     }
 
     // print the entities
