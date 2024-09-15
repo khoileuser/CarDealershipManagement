@@ -23,6 +23,7 @@ public abstract class User implements Serializable, Entity {
     protected UserType userType;
     protected boolean status;
 
+    // Constructor
     public User(String fullName, String dateOfBirth, String address, String phoneNumber, String email, UserType userType) throws Exception {
         Date dob = null;
         try {
@@ -40,6 +41,7 @@ public abstract class User implements Serializable, Entity {
         this.status = false;
     }
 
+    // Getters and Setters
     public String getUserID() {
         return userID;
     }
@@ -60,11 +62,13 @@ public abstract class User implements Serializable, Entity {
         return dateOfBirth;
     }
 
+    // Get date of birth in string format
     public String getStringDateOfBirth() {
         SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
         return df.format(dateOfBirth);
     }
 
+    // Set date of birth based on string input
     public Date setDateOfBirth(String dateOfBirthInString) throws Exception {
         try {
             SimpleDateFormat df = new SimpleDateFormat("dd/MM/yyyy");
@@ -116,8 +120,7 @@ public abstract class User implements Serializable, Entity {
         this.status = status;
     }
 
-    public abstract void viewProfile();
-
+    // Abstract methods
     public abstract boolean authenticate(String username, String password);
 
     public abstract String getUsername();
@@ -130,6 +133,7 @@ public abstract class User implements Serializable, Entity {
 
     public abstract void addActivity(Activity activity);
 
+    // toString method
     @Override
     public String toString() {
         return "User{" +
@@ -144,6 +148,7 @@ public abstract class User implements Serializable, Entity {
                 '}';
     }
 
+    // Entity interface methods
     @Override
     public String getID() {
         return userID;

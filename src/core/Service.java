@@ -27,6 +27,7 @@ public class Service implements Serializable, Entity {
     private BigDecimal serviceCost;
     private String notes;
 
+    // Constructor
     public Service(String clientID, String mechanicID, String carID, String serviceType, BigDecimal serviceCost, String notes) {
         this.serviceDate = setServiceDate();
         this.clientID = clientID;
@@ -39,11 +40,14 @@ public class Service implements Serializable, Entity {
         this.replacedParts = new ArrayList<>();
     }
 
+    // Getters and Setters
     public String getServiceID() {
         return serviceID;
     }
 
-    public void setServiceID(String serviceID) { this.serviceID = serviceID; }
+    public void setServiceID(String serviceID) {
+        this.serviceID = serviceID;
+    }
 
     public Date getServiceDate() {
         return serviceDate;
@@ -110,6 +114,7 @@ public class Service implements Serializable, Entity {
         this.discountPercentage = discountPercentage;
     }
 
+    // Set discount percentage and new cost based on membership
     public void setDiscountPercentage(Membership membership) {
         this.discountPercentage = membership.getDiscountPercentage();
         if (membership != Membership.NONE) {
@@ -136,6 +141,7 @@ public class Service implements Serializable, Entity {
         this.notes = notes;
     }
 
+    // Entity Interface Methods
     public StringBuilder getStringParts() {
         StringBuilder parts = new StringBuilder();
         for (AutoPart p : replacedParts) {
@@ -150,6 +156,7 @@ public class Service implements Serializable, Entity {
         return re;
     }
 
+    // toString Method
     @Override
     public String toString() {
         return "Service{" +
@@ -165,6 +172,7 @@ public class Service implements Serializable, Entity {
                 '}';
     }
 
+    // Entity Interface Methods
     @Override
     public String getID() {
         return serviceID;

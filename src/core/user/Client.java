@@ -13,15 +13,11 @@ public class Client extends User {
     private Membership membershipType;
     private BigDecimal totalSpending;
 
+    // Constructor
     public Client(String fullName, String dateOfBirth, String address, String phoneNumber, String email) throws Exception {
         super(fullName, dateOfBirth, address, phoneNumber, email, UserType.CLIENT);
         this.membershipType = Membership.NONE;
         this.totalSpending = BigDecimal.valueOf(0);
-    }
-
-    @Override
-    public void viewProfile() {
-        System.out.println("Client Profile: " + fullName + " - Membership: " + membershipType);
     }
 
     @Override

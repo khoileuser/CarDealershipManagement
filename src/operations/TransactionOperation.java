@@ -14,6 +14,7 @@ public class TransactionOperation implements TransactionInterface {
         this.transactionList = new ArrayList<>();
     }
 
+    // set transactionList from reading objects from file
     public void setTransactionList(ArrayList<Object> transactionList) {
         for (Object o : transactionList) {
             if (o instanceof Transaction) {
@@ -22,6 +23,7 @@ public class TransactionOperation implements TransactionInterface {
         }
     }
 
+    // add transaction to transactionList
     @Override
     public void addTransaction(Transaction transaction) {
         int lastID = 0;
@@ -47,6 +49,7 @@ public class TransactionOperation implements TransactionInterface {
         return transactionList;
     }
 
+    // update a transaction in transactionList
     @Override
     public void updateTransaction(Transaction updatedTransaction) {
         for (int i = 0; i < transactionList.size(); i++) {
@@ -64,6 +67,7 @@ public class TransactionOperation implements TransactionInterface {
         System.out.println("Transaction not found: " + updatedTransaction.getSearchString());
     }
 
+    // remove a transaction from transactionList
     @Override
     public void removeTransaction(Transaction transaction) {
         for (int i = 0; i < transactionList.size(); i++) {

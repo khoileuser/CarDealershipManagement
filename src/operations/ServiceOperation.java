@@ -13,6 +13,7 @@ public class ServiceOperation implements ServiceInterface {
         this.serviceList = new ArrayList<>();
     }
 
+    // set serviceList from reading objects from file
     public void setServiceList(ArrayList<Object> serviceList) {
         for (Object o : serviceList) {
             if (o instanceof Service) {
@@ -21,6 +22,7 @@ public class ServiceOperation implements ServiceInterface {
         }
     }
 
+    // add service to serviceList
     @Override
     public void addService(Service service) {
         int lastID = 0;
@@ -36,11 +38,13 @@ public class ServiceOperation implements ServiceInterface {
         System.out.println("Service added: " + service.getSearchString());
     }
 
+    // get all services from serviceList
     @Override
     public ArrayList<Service> getAllServices() {
         return serviceList;
     }
 
+    // update a service in serviceList
     @Override
     public void updateService(Service updatedService) {
         for (int i = 0; i < serviceList.size(); i++) {
@@ -53,6 +57,7 @@ public class ServiceOperation implements ServiceInterface {
         System.out.println("Service not found: " + updatedService.getSearchString());
     }
 
+    // remove a service from serviceList
     @Override
     public void removeService(Service service) {
         for (int i = 0; i < serviceList.size(); i++) {
@@ -64,18 +69,4 @@ public class ServiceOperation implements ServiceInterface {
         }
         System.out.println("Service not found: " + service.getSearchString());
     }
-
-    @Override
-    public boolean addReplacedPart(Service service, String autoPartName, ArrayList<AutoPart> autoPartList) {
-        for (AutoPart a : autoPartList) {
-            if (a.getPartName().toLowerCase().contains(autoPartName.toLowerCase())) {
-                service.addReplacedPart(a);
-                System.out.println("Added " + autoPartName + " to " + service.getSearchString());
-                return true;
-            }
-        }
-        System.out.println("Unable to find " + autoPartName);
-        return false;
-    }
-
 }

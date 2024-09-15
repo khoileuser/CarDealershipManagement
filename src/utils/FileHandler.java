@@ -7,7 +7,7 @@ public class FileHandler {
     // Method for serializing an object to a file (using Java serialization)
     public static void writeObjectsToFile(ArrayList objList, String filePath) throws IOException {
         File checkFile = new File(filePath);
-        if (!checkFile.exists()) {
+        if (!checkFile.exists()) { // create file if not exists
             checkFile.getParentFile().mkdirs();
             checkFile.createNewFile();
         }
@@ -22,7 +22,7 @@ public class FileHandler {
     // Method for deserializing an object from a file
     public static ArrayList<Object> readObjectsFromFile(String filePath) throws IOException {
         File checkFile = new File(filePath);
-        if (!checkFile.exists()) {
+        if (!checkFile.exists()) { // return empty array if file not found
             System.out.println(filePath + " not found, return empty array");
             return new ArrayList<>();
         }

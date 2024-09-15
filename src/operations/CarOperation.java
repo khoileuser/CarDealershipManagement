@@ -12,6 +12,7 @@ public class CarOperation implements CarInterface {
         this.carList = new ArrayList<>();
     }
 
+    // set carList from reading objects from file
     public void setCarList(ArrayList<Object> carList) {
         for (Object o : carList) {
             if (o instanceof Car) {
@@ -20,6 +21,7 @@ public class CarOperation implements CarInterface {
         }
     }
 
+    // add car to carList
     @Override
     public void addCar(Car car) {
         int lastID = 0;
@@ -35,11 +37,13 @@ public class CarOperation implements CarInterface {
         System.out.println("Car added: " + car.getSearchString());
     }
 
+    // get all cars from carList
     @Override
     public ArrayList<Car> getAllCars() {
         return carList;
     }
 
+    // get all available cars from carList
     @Override
     public ArrayList<Car> getAvailableCars() {
         ArrayList<Car> availableCars = new ArrayList<>();
@@ -51,6 +55,7 @@ public class CarOperation implements CarInterface {
         return availableCars;
     }
 
+    // update a car in carList
     @Override
     public void updateCar(Car updatedCar) {
         for (int i = 0; i < carList.size(); i++) {
@@ -64,6 +69,7 @@ public class CarOperation implements CarInterface {
         System.out.println("Car not found: " + updatedCar.getSearchString());
     }
 
+    // remove a car from carList
     @Override
     public void removeCar(Car car) {
         for (int i = 0; i < carList.size(); i++) {
@@ -76,11 +82,7 @@ public class CarOperation implements CarInterface {
         System.out.println("Car not found: " + car.getSearchString());
     }
 
-    @Override
-    public void addService(Car car, Service service) {
-        car.addService(service);
-    }
-
+    // add service from associated car's service history
     @Override
     public void removeService(Service service) {
         for (Car c : carList) {

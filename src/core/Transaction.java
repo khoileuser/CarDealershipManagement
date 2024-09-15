@@ -25,6 +25,7 @@ public class Transaction implements Serializable, Entity {
     private BigDecimal totalAmount;
     private String notes;
 
+    // Constructor
     public Transaction(String clientID, String salespersonID, BigDecimal totalAmount, String notes) {
         this.transactionDate = setTransactionDate();
         this.clientID = clientID;
@@ -36,6 +37,7 @@ public class Transaction implements Serializable, Entity {
         this.totalAmount = totalAmount;
     }
 
+    // Getters and Setters
     public String getTransactionID() {
         return transactionID;
     }
@@ -93,6 +95,7 @@ public class Transaction implements Serializable, Entity {
         this.discountPercentage = discountPercentage;
     }
 
+    // Set discount percentage and new total amount based on client's membership
     public void setDiscountPercentage(Membership membership) {
         this.discountPercentage = membership.getDiscountPercentage();
         if (membership != Membership.NONE) {
@@ -125,6 +128,7 @@ public class Transaction implements Serializable, Entity {
         this.notes = notes;
     }
 
+    // Entity Interface Methods
     public StringBuilder getStringItems() {
         StringBuilder parts = new StringBuilder();
         for (Item i : items) {
@@ -139,6 +143,7 @@ public class Transaction implements Serializable, Entity {
         return re;
     }
 
+    // toString Method
     @Override
     public String toString() {
         return "Transaction{" +
@@ -153,6 +158,7 @@ public class Transaction implements Serializable, Entity {
                 '}';
     }
 
+    // Entity Interface Methods
     @Override
     public String getID() {
         return transactionID;

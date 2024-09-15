@@ -22,7 +22,5 @@ public interface CarInterface {
     // Remove a car (Soft delete)
     void removeCar(Car car);
 
-    void addService(Car car, Service service);
-
     void removeService(Service service);
 }

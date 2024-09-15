@@ -12,6 +12,7 @@ public class UserOperation implements UserInterface {
         this.userList = new ArrayList<>();
     }
 
+    // set userList from reading objects from file
     public void setUserList(ArrayList<Object> userList) {
         for (Object o : userList) {
             if (o instanceof User) {
@@ -20,6 +21,7 @@ public class UserOperation implements UserInterface {
         }
     }
 
+    // add user to userList
     @Override
     public void addUser(User user) {
         int lastID = 0;
@@ -35,16 +37,13 @@ public class UserOperation implements UserInterface {
         System.out.println("User added: " + user.getSearchString());
     }
 
-    @Override
-    public boolean loginUser(String username, String password) {
-        return false;
-    }
-
+    // get all users from userList
     @Override
     public ArrayList<User> getAllUsers() {
         return userList;
     }
 
+    // get all clients from userList
     @Override
     public ArrayList<Client> getAllClients() {
         ArrayList<Client> clientList = new ArrayList<>();
@@ -56,6 +55,7 @@ public class UserOperation implements UserInterface {
         return clientList;
     }
 
+    // get all employees from userList
     @Override
     public ArrayList<Employee> getAllEmployees() {
         ArrayList<Employee> employeeList = new ArrayList<>();
@@ -67,6 +67,7 @@ public class UserOperation implements UserInterface {
         return employeeList;
     }
 
+    // get all salespersons from userList
     @Override
     public ArrayList<Salesperson> getAllSalespersons() {
         ArrayList<Salesperson> salespersonList = new ArrayList<>();
@@ -78,6 +79,7 @@ public class UserOperation implements UserInterface {
         return salespersonList;
     }
 
+    // get all mechanics from userList
     @Override
     public ArrayList<Mechanic> getAllMechanics() {
         ArrayList<Mechanic> mechanicList = new ArrayList<>();
@@ -89,6 +91,7 @@ public class UserOperation implements UserInterface {
         return mechanicList;
     }
 
+    // get all managers from userList
     @Override
     public ArrayList<Manager> getAllMangers() {
         ArrayList<Manager> managerList = new ArrayList<>();
@@ -100,6 +103,7 @@ public class UserOperation implements UserInterface {
         return managerList;
     }
 
+    // update a user in userList
     @Override
     public void updateUser(User updatedUser) {
         for (int i = 0; i < userList.size(); i++) {
@@ -112,6 +116,7 @@ public class UserOperation implements UserInterface {
         System.out.println("User not found: " + updatedUser.getSearchString());
     }
 
+    // remove a user from userList
     @Override
     public void removeUser(User user) {
         for (int i = 0; i < userList.size(); i++) {

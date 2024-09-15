@@ -11,6 +11,7 @@ public class AutoPartOperation implements AutoPartInterface {
         this.autoPartList = new ArrayList<>();
     }
 
+    // set autoPartList from reading objects from file
     public void setAutoPartList(ArrayList<Object> autoPartList) {
         for (Object o : autoPartList) {
             if (o instanceof AutoPart){
@@ -19,6 +20,7 @@ public class AutoPartOperation implements AutoPartInterface {
         }
     }
 
+    // add auto part to autoPartList
     @Override
     public void addAutoPart(AutoPart autoPart) {
         int lastID = 0;
@@ -34,11 +36,13 @@ public class AutoPartOperation implements AutoPartInterface {
         System.out.println("Auto Part added: " + autoPart.getSearchString());
     }
 
+    // get all auto parts from autoPartList
     @Override
     public ArrayList<AutoPart> getAllAutoParts() {
         return autoPartList;
     }
 
+    // update an auto part in autoPartList
     @Override
     public void updateAutoPart(AutoPart updatedPart) {
         for (int i = 0; i < autoPartList.size(); i++) {
@@ -51,6 +55,7 @@ public class AutoPartOperation implements AutoPartInterface {
         System.out.println("Part not found: " + updatedPart.getSearchString());
     }
 
+    // remove an auto part from autoPartList
     @Override
     public void removeAutoPart(AutoPart part) {
         for (int i = 0; i < autoPartList.size(); i++) {

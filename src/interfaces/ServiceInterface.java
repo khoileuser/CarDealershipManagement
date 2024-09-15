@@ -16,6 +16,4 @@ public interface ServiceInterface {
     void updateService(Service updatedService);
 
     void removeService(Service service);
-
-    boolean addReplacedPart(Service service, String autoPartName, ArrayList<AutoPart> autoPartList);
 }

@@ -24,6 +24,7 @@ public class Car extends Item implements Entity {
     private ArrayList<Service> servicesHistory;
     private String notes;
 
+    // Constructor
     public Car(String make, String model, int year, double mileage, String color, BigDecimal price, String notes) {
         this.make = make;
         this.model = model;
@@ -36,7 +37,7 @@ public class Car extends Item implements Entity {
         this.servicesHistory = new ArrayList<>();
     }
 
-    //Getters and Setters'
+    //Getters and Setters
     public String getCarID() {
         return carID;
     }
@@ -121,7 +122,6 @@ public class Car extends Item implements Entity {
                 break;
             }
         }
-//        this.servicesHistory.remove(service);
     }
 
     public String getNotes() {
@@ -132,6 +132,7 @@ public class Car extends Item implements Entity {
         this.notes = notes;
     }
 
+    // toString
     @Override
     public String toString() {
         return "Car{" +
@@ -148,6 +149,7 @@ public class Car extends Item implements Entity {
                 '}';
     }
 
+    // Entity Interface Methods
     @Override
     public String getID() {
         return carID;

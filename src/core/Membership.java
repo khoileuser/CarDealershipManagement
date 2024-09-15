@@ -10,6 +10,7 @@ public enum Membership {
 
     private final int discountPercentage;
 
+    // Constructor
     Membership(int discountPercentage) {
         this.discountPercentage = discountPercentage;
     }
@@ -18,6 +19,7 @@ public enum Membership {
         return discountPercentage;
     }
 
+    // Determine membership based on total spending
     public static Membership determineMembership(BigDecimal totalSpending) {
         if (totalSpending.compareTo(new BigDecimal(250000000)) >= 0) {
             return PLATINUM;

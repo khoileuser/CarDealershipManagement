@@ -36,7 +36,9 @@ public class AutoPart extends Item implements Entity {
         return partID;
     }
 
-    public void setPartID(String partID) { this.partID = partID; }
+    public void setPartID(String partID) {
+        this.partID = partID;
+    }
 
     public String getPartName() {
         return partName;
@@ -97,7 +99,7 @@ public class AutoPart extends Item implements Entity {
         this.notes = notes;
     }
 
-    // toString method to display part information
+    // toString Method
     @Override
     public String toString() {
         return "AutoPart{" +
@@ -112,6 +114,7 @@ public class AutoPart extends Item implements Entity {
                 '}';
     }
 
+    // Entity Interface Methods
     @Override
     public String getID() {
         return partID;

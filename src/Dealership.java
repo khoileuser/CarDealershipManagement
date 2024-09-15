@@ -15,6 +15,7 @@ import operations.*;
 import utils.*;
 
 public class Dealership {
+    // Attributes
     private final String name;
     private final CarInterface carInterface;
     private final AutoPartInterface autoPartInterface;
@@ -23,11 +24,13 @@ public class Dealership {
     private final ServiceInterface serviceInterface;
     User loggedInUser;
 
+    // Scanner for user input
     Scanner scanner = new Scanner(System.in);
 
+    // Constructor
     public Dealership(String name) {
-        this.name = name;
         // Initialize the system
+        this.name = name;
         this.carInterface = new CarOperation();
         this.autoPartInterface = new AutoPartOperation();
         this.userInterface = new UserOperation();
@@ -40,6 +43,7 @@ public class Dealership {
 
     // Main method to start the system
     public void start() {
+        // Display welcome message
         System.out.println("\nCOSC2081 GROUP ASSIGNMENT\n" +
                 name + " CAR DEALERSHIP MANAGEMENT SYSTEM\n" +
                 "Instructor: Mr. Minh Vu & Mr. Dung Nguyen\n" +
@@ -56,6 +60,7 @@ public class Dealership {
                 "\nUsers: " + userInterface.getAllUsers().size()
         );
 
+        // Login
         System.out.println("\nPlease login");
         System.out.print("Username: ");
         String username = scanner.nextLine();
@@ -65,6 +70,7 @@ public class Dealership {
         Authentication authentication = new Authentication(username, password);
         loggedInUser = authentication.authenticate(userInterface.getAllUsers());
 
+        // Show menu based on user role
         if (loggedInUser != null) {
             System.out.println("\nLogin successful. Welcome, " + loggedInUser.getFullName());
             loggedInUser.setStatus(true);
@@ -86,6 +92,7 @@ public class Dealership {
             System.out.println("\nLogin failed. Exiting the system.");
         }
 
+        // Logout
         if (loggedInUser != null) {
             loggedInUser.setStatus(false);
             saveData();
@@ -206,6 +213,7 @@ public class Dealership {
         } while (choice != 0);
     }
 
+    // show car operations menu
     private void showCarMenu() {
         int choice;
         ArrayList<Car> cars;
@@ -238,6 +246,7 @@ public class Dealership {
         }  while (choice != 0);
     }
 
+    // add new car to the system
     private void addCar() {
         System.out.print("Enter make: ");
         String make = getNextLine();
@@ -260,18 +269,21 @@ public class Dealership {
         System.out.print("Enter notes: ");
         String notes = scanner.nextLine();
 
+        // Add car to the system
         Car car = new Car(make, model, year, mileage, color, price, notes);
         carInterface.addCar(car);
 
+        // Add activity to the user
         Activity activity = new Activity("add", car, null);
         loggedInUser.addActivity(activity);
         saveData();
     }
 
+    // list car details and show update car operations
     private String updateCarOperations(Car car) {
         int choice;
         do {
-            String carString = "Car: " + car.getMake() + " " + car.getModel() + " " + car.getYear();
+            String carString = "Car: " + car.getMake() + " " + car.getModel() + " " + car.getYear(); // car string for display
             System.out.println("\n" + carString + "'s information");
             System.out.println("Car ID: " + car.getCarID());
             System.out.println("Color: " + car.getColor());
@@ -279,6 +291,8 @@ public class Dealership {
             System.out.println("Price: " + Statistics.numParse(car.getPrice()));
             System.out.println("Status: " + car.getStatus());
             System.out.println("Notes: " + car.getNotes());
+
+            // Display services history, empty if no services
             ArrayList<Service> services = car.getServicesHistory();
             if (!services.isEmpty()) {
                 System.out.println("Services History: ");
@@ -301,12 +315,16 @@ public class Dealership {
                     car = updateCarMenu(car);
                     break;
                 case 2:
+                    // Confirm before removing the car
                     String choose;
                     do {
                         System.out.print("Are you sure you want to remove " + carString + " ? (Y/N) > ");
                         choose = scanner.next();
                         if (choose.toLowerCase().startsWith("y")) {
+                            // Remove the car from the system
                             carInterface.removeCar(car);
+
+                            // Add activity to the user
                             Activity activity = new Activity("delete", car, null);
                             loggedInUser.addActivity(activity);
                             saveData();
@@ -326,6 +344,7 @@ public class Dealership {
         return "ok";
     }
 
+    // update car details
     private Car updateCarMenu(Car car) {
         String make = car.getMake();
         System.out.println("\nCurrent make: " + make);
@@ -362,18 +381,21 @@ public class Dealership {
         System.out.print("Enter new notes (enter to leave the same): ");
         notes = getNextLineEmpty(notes);
 
+        // Update the car in the system
         Car updatedCar = new Car(make, model, year, mileage, color, price, notes);
         updatedCar.setCarID(car.getCarID());
         updatedCar.setStatus(car.getStatus());
         updatedCar.setServicesHistory(car.getServicesHistory());
         carInterface.updateCar(updatedCar);
 
+        // Add activity to the user
         Activity activity = new Activity("update", car, updatedCar);
         loggedInUser.addActivity(activity);
         saveData();
         return updatedCar;
     }
 
+    // show auto part operations menu
     private void showAutoPartMenu() {
         int choice;
         ArrayList<AutoPart> autoParts;
@@ -406,6 +428,7 @@ public class Dealership {
         }  while (choice != 0);
     }
 
+    // add new auto part to the system
     private void addPart() {
         System.out.print("Enter part name: ");
         String partName = getNextLine();
@@ -428,14 +451,17 @@ public class Dealership {
         System.out.print("Enter notes: ");
         String notes = scanner.nextLine();
 
+        // Add auto part to the system
         AutoPart autoPart = new AutoPart(partName, manufacturer, partNumber, condition, warranty, cost, notes);
         autoPartInterface.addAutoPart(autoPart);
 
+        // Add activity to the user
         Activity activity = new Activity("add", autoPart, null);
         loggedInUser.addActivity(activity);
         saveData();
     }
 
+    // list auto part details and show update auto part operations
     private String updatePartOperations(AutoPart part) {
         int choice;
         do {
@@ -462,16 +488,20 @@ public class Dealership {
                     part = updatePartMenu(part);
                     break;
                 case 2:
+                    // Confirm before removing the auto part
                     String choose;
                     do {
                         System.out.print("Are you sure you want to remove " + partString + " ? (Y/N) > ");
                         choose = scanner.next();
                         if (choose.toLowerCase().startsWith("y")) {
+                            // Remove the auto part from the system
                             autoPartInterface.removeAutoPart(part);
+
+                            // Add activity to the user
                             Activity activity = new Activity("delete", part, null);
                             loggedInUser.addActivity(activity);
                             saveData();
-                            break;
+                            break; // exit the loop after removing the auto part
                         } else if (!choose.toLowerCase().startsWith("n")) {
                             System.out.println("Invalid option. Please try again.");
                         }
@@ -487,6 +517,7 @@ public class Dealership {
         return "ok";
     }
 
+    // update auto part details
     private AutoPart updatePartMenu(AutoPart part) {
         String partName = part.getPartName();
         System.out.println("\nCurrent part name: " + partName);
@@ -523,16 +554,19 @@ public class Dealership {
         System.out.print("Enter new notes (enter to leave the same): ");
         notes = getNextLineEmpty(notes);
 
+        // Update the auto part in the system
         AutoPart updatedPart = new AutoPart(partName, manufacturer, partNumber, condition, warranty, cost, notes);
         updatedPart.setPartID(part.getPartID());
         autoPartInterface.updateAutoPart(updatedPart);
 
+        // Add activity to the user
         Activity activity = new Activity("update", part, updatedPart);
         loggedInUser.addActivity(activity);
         saveData();
         return updatedPart;
     }
 
+    // show service operations menu
     private void showServiceMenu(boolean isMechanic) {
         int choice;
         ArrayList<Service> services;
@@ -593,6 +627,7 @@ public class Dealership {
         }  while (choice != 0);
     }
 
+    // select client for transaction or service
     private Client selectClient(boolean back) {
         int choice;
         ArrayList<Client> clients;
@@ -628,12 +663,14 @@ public class Dealership {
         }
     }
 
+    // get clients who own car(s)
     private ArrayList<Client> getClientsOwnCar(ArrayList<Client> clients) {
+        // get all client IDs who own car(s)
         ArrayList<String> clientIDs = new ArrayList<>();
         for (Transaction t : transactionInterface.getAllTransactions()) {
             for (Item i : t.getItems()) {
-                if (i instanceof Car) {
-                    if (!clientIDs.contains(t.getClientID())) {
+                if (i instanceof Car) { // only add client ID if the item is a car
+                    if (!clientIDs.contains(t.getClientID())) { // avoid duplicate client IDs
                         clientIDs.add(t.getClientID());
                     }
                     break;
@@ -641,6 +678,7 @@ public class Dealership {
             }
         }
 
+        // get clients as objects who own car(s)
         ArrayList<Client> clientsOwnCar = new ArrayList<>();
         for (String clientID : clientIDs) {
             for (Client c : clients) {
@@ -652,11 +690,13 @@ public class Dealership {
         return clientsOwnCar;
     }
 
+    // add new client to the system
     private Client addClient() {
         System.out.print("\nEnter full name: ");
         String fullName = getNextLine();
 
         System.out.print("Enter date of birth: ");
+        // validate date of birth format
         String dateOfBirth;
         while (true) {
             try {
@@ -679,8 +719,11 @@ public class Dealership {
         String email = getNextLine();
 
         try {
+            // Add client to the system
             Client client = new Client(fullName, dateOfBirth, address, phoneNumber, email);
             userInterface.addUser(client);
+
+            // Add activity to the user
             Activity activity = new Activity("add", client, null);
             loggedInUser.addActivity(activity);
             saveData();
@@ -691,8 +734,10 @@ public class Dealership {
         }
     }
 
+    // add new service to the system
     private void addService(boolean isMechanic) {
         Mechanic mechanic;
+        // if the user is a mechanic, use the logged-in user as the mechanic
         if (isMechanic) {
             mechanic = (Mechanic) loggedInUser;
         } else {
@@ -709,10 +754,11 @@ public class Dealership {
         String serviceType = getNextLine();
 
         ArrayList<AutoPart> parts = autoPartInterface.getAllAutoParts();
-        ArrayList<Entity> entities = addChoiceOrSearch(parts, "Auto Parts", null);
+        ArrayList<Entity> entities = addChoiceOrSearch(parts, "Auto Parts", null); // get list of entities
+        // get replaced parts from the entities
         ArrayList<AutoPart> replacedParts = new ArrayList<>();
         for (Entity e : entities) {
-            if (e instanceof AutoPart) {
+            if (e instanceof AutoPart) { // only add auto part if it is an auto part
                 replacedParts.add((AutoPart) e);
             }
         }
@@ -723,23 +769,29 @@ public class Dealership {
         System.out.print("Enter notes: ");
         String notes = scanner.nextLine();
 
+        // declare service
         Service service = new Service(client.getUserID(), mechanic.getUserID(), car.getCarID(), serviceType, serviceCost, notes);
         service.setReplacedParts(replacedParts);
 
         // apply discount and set new service cost
         service.setDiscountPercentage(client.getMembershipType());
 
-        // add client total spending after apply discount (if exists)
-        client.addTotalSpending(serviceCost);
-
+        // add service to the system
         serviceInterface.addService(service);
+
+        // add client total spending after apply discount (if exists)
+        client.addTotalSpending(service.getServiceCost());
+
+        // add service to the car
         car.addService(service);
 
+        // add activity to the user
         Activity activity = new Activity("add", service, null);
         loggedInUser.addActivity(activity);
         saveData();
     }
 
+    // show service details and update service operations
     private String updateServiceOperations(Service service, boolean viewOnly) {
         int choice;
         do {
@@ -750,6 +802,8 @@ public class Dealership {
             System.out.println("Mechanic ID: " + service.getMechanicID());
             System.out.println("Car ID: " + service.getCarID());
             System.out.println("Service Type: " + service.getServiceType());
+
+            // Display replaced parts, empty if no replaced parts
             ArrayList<AutoPart> parts = service.getReplacedParts();
             if (!parts.isEmpty()) {
                 System.out.println("Replaced Parts: ");
@@ -759,9 +813,11 @@ public class Dealership {
             } else {
                 System.out.println("Replaced Parts: Empty");
             }
+
             System.out.println("Service Cost: " + Statistics.numParse(service.getServiceCost()));
             System.out.println("Notes: " + service.getNotes());
 
+            // if mechanic, skip the update and remove options
             if (viewOnly) {
                 break;
             }
@@ -778,17 +834,23 @@ public class Dealership {
                     service = updateServiceMenu(service);
                     break;
                 case 2:
+                    // Confirm before removing the service
                     String choose;
                     do {
                         System.out.print("Are you sure you want to remove " + serviceString + " ? (Y/N) > ");
                         choose = scanner.next();
                         if (choose.toLowerCase().startsWith("y")) {
+                            // Remove the service from the system
                             serviceInterface.removeService(service);
+
+                            // Remove the service from the car
                             carInterface.removeService(service);
+
+                            // Add activity to the user
                             Activity activity = new Activity("delete", service, null);
                             loggedInUser.addActivity(activity);
                             saveData();
-                            break;
+                            break; // exit the loop after removing the service
                         } else if (!choose.toLowerCase().startsWith("n")) {
                             System.out.println("Invalid option. Please try again.");
                         }
@@ -804,6 +866,7 @@ public class Dealership {
         return "ok";
     }
 
+    // update service details
     private Service updateServiceMenu(Service service) {
         String mechanicID = service.getMechanicID();
         ArrayList<Mechanic> mechanics = userInterface.getAllMechanics();
@@ -847,7 +910,9 @@ public class Dealership {
 
         System.out.println("\nUpdate replaced part(s):");
         ArrayList<AutoPart> parts = autoPartInterface.getAllAutoParts();
-        ArrayList<Entity> entities = addChoiceOrSearch(parts, "Auto Parts", service.getReplacedParts());
+        ArrayList<Entity> entities = addChoiceOrSearch(parts, "Auto Parts", service.getReplacedParts()); // get list of entities
+
+        // get replaced parts from the entities
         ArrayList<AutoPart> replacedParts = new ArrayList<>();
         if (!entities.isEmpty()) {
             for (Entity e : entities) {
@@ -864,14 +929,17 @@ public class Dealership {
         System.out.print("Enter new notes (enter to leave the same): ");
         notes = getNextLineEmpty(notes);
 
+        // update the service in the system
         Service updatedService = new Service(clientID, mechanicID, carID, serviceType, serviceCost, notes);
         updatedService.setServiceID(service.getServiceID());
         updatedService.setReplacedParts(replacedParts);
         serviceInterface.updateService(updatedService);
 
+        // update the service in the car if the car has changed
         if (changed) {
             for (Car c : carInterface.getAllCars()) {
                 if (c.getCarID().equals(ogCarID)) {
+                    // remove the service from the old car
                     ArrayList<Service> newServicesHistory = new ArrayList<>();
                     for (Service s : c.getServicesHistory()) {
                         if (!s.getServiceID().equals(service.getServiceID())) {
@@ -881,19 +949,24 @@ public class Dealership {
                     c.setServicesHistory(newServicesHistory);
                 }
             }
+            // add the service to the new car
             car.addService(service);
         }
 
+        // add activity to the user
         Activity activity = new Activity("update", service, updatedService);
         loggedInUser.addActivity(activity);
         saveData();
         return updatedService;
     }
 
+    // select car for transaction or service
     private Car selectCar(Client client, boolean back) {
         ArrayList<Car> cars = carInterface.getAllCars();
         ArrayList<Car> newCars = new ArrayList<>();
         ArrayList<Transaction> transactions = transactionInterface.getAllTransactions();
+
+        // get cars that belong to the client
         for (Transaction t : transactions) {
             if (t.getClientID().equals(client.getUserID())) {
                 ArrayList<Item> items = t.getItems();
@@ -913,6 +986,7 @@ public class Dealership {
         return (Car) selectChoiceOrSearch(cars, "Car", back);
     }
 
+    // show transaction operations menu
     private void showTransactionMenu(boolean isSalesperson) {
         int choice;
         ArrayList<Transaction> transactions;
@@ -965,7 +1039,9 @@ public class Dealership {
         }  while (choice != 0);
     }
 
+    // add new transaction to the system
     private void addTransaction(boolean isSalesperson) {
+        // if the user is a salesperson, use the logged-in user as the salesperson
         Salesperson salesperson;
         if (isSalesperson) {
             salesperson = (Salesperson) loggedInUser;
@@ -976,10 +1052,12 @@ public class Dealership {
 
         Client client = selectClient(false);
 
+        ArrayList<AutoPart> parts = autoPartInterface.getAllAutoParts();
+        ArrayList<Car> availableCars = carInterface.getAvailableCars();
         ArrayList<Item> items = new ArrayList<>();
         ArrayList<Entity> entities;
 
-        ArrayList<AutoPart> parts = autoPartInterface.getAllAutoParts();
+        // add auto parts to the items
         entities = addChoiceOrSearch(parts, "Auto Parts", null);
         for (Entity e : entities) {
             if (e instanceof AutoPart) {
@@ -987,7 +1065,7 @@ public class Dealership {
             }
         }
 
-        ArrayList<Car> availableCars = carInterface.getAvailableCars();
+        // add available cars to the items
         entities = addChoiceOrSearch(availableCars, "Cars", null);
         for (Entity e : entities) {
             if (e instanceof Car) {
@@ -1001,6 +1079,7 @@ public class Dealership {
         System.out.print("Enter notes: ");
         String notes = scanner.nextLine();
 
+        // declare transaction
         Transaction transaction = new Transaction(client.getUserID(), salesperson.getUserID(), totalAmount, notes);
         transaction.setItems(items);
 
@@ -1013,11 +1092,13 @@ public class Dealership {
         // add transaction and set all cars in items to sold
         transactionInterface.addTransaction(transaction);
 
+        // set all cars in items to sold
         Activity activity = new Activity("add", transaction, null);
         loggedInUser.addActivity(activity);
         saveData();
     }
 
+    // show transaction details and update transaction operations
     private String updateTransactionOperations(Transaction transaction, boolean viewOnly) {
         int choice;
         do {
@@ -1026,6 +1107,8 @@ public class Dealership {
             System.out.println("Transaction ID: " + transaction.getTransactionID());
             System.out.println("Client ID: " + transaction.getClientID());
             System.out.println("Mechanic ID: " + transaction.getSalespersonID());
+
+            // Display items, separate cars and auto parts, empty if no items
             ArrayList<Item> items = transaction.getItems();
             if (!items.isEmpty()) {
                 ArrayList<Car> cars = new ArrayList<>();
@@ -1058,6 +1141,7 @@ public class Dealership {
             System.out.println("Total Amount: " + Statistics.numParse(transaction.getTotalAmount()));
             System.out.println("Notes: " + transaction.getNotes());
 
+            // if salesperson, skip the update and remove options
             if (viewOnly) {
                 break;
             }
@@ -1074,11 +1158,13 @@ public class Dealership {
                     transaction = updateTransactionMenu(transaction);
                     break;
                 case 2:
+                    // Confirm before removing the transaction
                     String choose;
                     do {
                         System.out.print("Are you sure you want to remove " + transactionString + " ? (Y/N) > ");
                         choose = scanner.next();
                         if (choose.toLowerCase().startsWith("y")) {
+                            // if car(s) in the transaction, set the car(s)'s status to available
                             for (Item e : transaction.getItems()) {
                                 if (e instanceof Car) {
                                     for (Car c : carInterface.getAllCars()) {
@@ -1089,7 +1175,11 @@ public class Dealership {
                                     }
                                 }
                             }
+
+                            // Remove the transaction from the system
                             transactionInterface.removeTransaction(transaction);
+
+                            // Add activity to the user
                             Activity activity = new Activity("delete", transaction, null);
                             loggedInUser.addActivity(activity);
                             saveData();
@@ -1109,6 +1199,7 @@ public class Dealership {
         return "ok";
     }
 
+    // update transaction details
     private Transaction updateTransactionMenu(Transaction transaction) {
         String salespersonID = transaction.getSalespersonID();
         ArrayList<Salesperson> salespersons = userInterface.getAllSalespersons();
@@ -1140,6 +1231,7 @@ public class Dealership {
         System.out.print("Enter new notes (enter to leave the same): ");
         notes = getNextLineEmpty(notes);
 
+        // set all cars in items to sold
         ArrayList<Item> newItems = new ArrayList<>();
         if (!entities.isEmpty()) {
             for (Item i : transactionItems) {
@@ -1159,6 +1251,7 @@ public class Dealership {
             newItems = transaction.getItems();
         }
 
+        // update the transaction in the system
         Transaction updatedTransaction = new Transaction(clientID, salespersonID, totalAmount, notes);
         updatedTransaction.setTransactionID(transaction.getTransactionID());
         updatedTransaction.setItems(newItems);
@@ -1166,13 +1259,14 @@ public class Dealership {
         // update transaction and set all cars in items to sold
         transactionInterface.updateTransaction(updatedTransaction);
 
+        // set all cars in items to sold
         Activity activity = new Activity("update", transaction, updatedTransaction);
         loggedInUser.addActivity(activity);
         saveData();
-
         return updatedTransaction;
     }
 
+    // show user operations menu
     private void showUserMenu() {
         int choice;
         ArrayList<User> users;
@@ -1201,6 +1295,7 @@ public class Dealership {
         }  while (choice != 0);
     }
 
+    // show user details and update user operations
     private String updateUserOperations(User user) {
         int choice;
         do {
@@ -1214,11 +1309,13 @@ public class Dealership {
             System.out.println("Email: " + user.getEmail());
             System.out.println("User Type: " + user.getUserType());
             System.out.println("Status: " + user.isStatus());
-            if (user.getUserType() != UserType.CLIENT) {
+
+            if (user.getUserType() != UserType.CLIENT) { // if the user is not a client, show activity log
                 ArrayList<Activity> activityLog = user.getActivityLog();
                 if (!activityLog.isEmpty()) {
                     System.out.println("Activity Log: ");
                     for (Activity a : activityLog) {
+                        // display activity log based on the operation
                         String date = a.getStringActivityDate();
                         String operation = a.getOperation();
                         String name = a.getEntity().getClass().getSimpleName();
@@ -1250,7 +1347,7 @@ public class Dealership {
                 } else {
                     System.out.println("Activity Log: Empty");
                 }
-            } else {
+            } else { // if the user is a client, show total spending and membership type
                 System.out.println("Total spending: " + Statistics.numParse(((Client) user).getTotalSpending()));
                 System.out.println("Membership: " + ((Client) user).getMembershipType());
             }
@@ -1269,12 +1366,16 @@ public class Dealership {
                     user = updateUserMenu(user);
                     break;
                 case 2:
+                    // Confirm before removing the user
                     String choose;
                     do {
                         System.out.print("Are you sure you want to remove " + userString + " ? (Y/N) > ");
                         choose = scanner.next();
                         if (choose.toLowerCase().startsWith("y")) {
+                            // Remove the user from the system
                             userInterface.removeUser(user);
+
+                            // Add activity to the user
                             Activity activity = new Activity("delete", user, null);
                             loggedInUser.addActivity(activity);
                             saveData();
@@ -1294,6 +1395,7 @@ public class Dealership {
         return "ok";
     }
 
+    // update user details
     private User updateUserMenu(User user) {
         String fullName = user.getFullName();
         System.out.println("\nCurrent full name: " + fullName);
@@ -1361,6 +1463,7 @@ public class Dealership {
 
         String username = user.getUsername();
         String password = user.getPassword();
+        // if the previous user type is client and now changes to employee, ask for username and password
         if (currentUserType == UserType.CLIENT) {
             if (userType == UserType.SALESPERSON || userType == UserType.MECHANIC) {
                 System.out.println("You chose " + userType + ", please enter username and password");
@@ -1373,6 +1476,7 @@ public class Dealership {
             }
         }
 
+        // update user in the system
         User updatedUser = null;
         try {
             updatedUser = switch (userType) {
@@ -1387,13 +1491,14 @@ public class Dealership {
         updatedUser.setUserID(user.getUserID());
         userInterface.updateUser(updatedUser);
 
+        // add activity to the user
         Activity activity = new Activity("update", user, updatedUser);
         loggedInUser.addActivity(activity);
         saveData();
-
         return updatedUser;
     }
 
+    // show manager statistic menu
     private void showManagerStatisticMenu() {
         int choice;
         ArrayList<Service> services;
@@ -1416,6 +1521,7 @@ public class Dealership {
 
             switch (choice) {
                 case 1:
+                    // count sold cars in a period of time
                     processMenu("Count sold cars in a period of time:", null, transactions, (_, transactionsList, input, dateType) -> {
                         int soldCars = Statistics.countSoldCarsInPeriod(transactionsList, input, dateType);
                         if (dateType.equals("week")) {
@@ -1426,6 +1532,7 @@ public class Dealership {
                     });
                     break;
                 case 2:
+                    // calculate total revenue in a period of time
                     processMenu("Total revenue in a period of time:", services, transactions, (servicesList, transactionsList, input, dateType) -> {
                         BigDecimal revenue = Statistics.totalRevenueInPeriod(servicesList, transactionsList, input, dateType);
                         if (dateType.equals("week")) {
@@ -1462,6 +1569,7 @@ public class Dealership {
         }  while (choice != 0);
     }
 
+    // show mechanic statistic menu
     private void revenueServiceByMechanicMenu(ArrayList<Service> services) {
         ArrayList<Mechanic> mechanics = userInterface.getAllMechanics();
         Mechanic mechanic = (Mechanic) selectChoiceOrSearch(mechanics, "Mechanic", false);
@@ -1469,6 +1577,7 @@ public class Dealership {
         System.out.println("\nMechanic " + mechanic.getFullName() + " has a services done revenue of " + Statistics.numParse(revenue) + " VND.");
     }
 
+    // show salesperson statistic menu
     private void revenueCarSoldBySalespersonMenu(ArrayList<Transaction> transactions) {
         ArrayList<Salesperson> salespersons = userInterface.getAllSalespersons();
         Salesperson salesperson = (Salesperson) selectChoiceOrSearch(salespersons, "Salesperson", false);
@@ -1476,6 +1585,7 @@ public class Dealership {
         System.out.println("\nSalesperson " + salesperson.getFullName() + " has a cars sold revenue of " + Statistics.numParse(revenue) + " VND.");
     }
 
+    // explain date input
     private void explainDateInput() {
         System.out.println("1. Day (dd/MM/yyyy)");
         System.out.println("2. Week (Enter start date of the week in dd/MM/yyyy format)");
@@ -1484,11 +1594,13 @@ public class Dealership {
         System.out.print("Enter your choice: ");
     }
 
+    // process menu for statistic
     @FunctionalInterface
     private interface BiConsumerWithExceptions<T, U, V, B, E extends Exception> {
         void accept(T t, U u, V v, B b) throws E;
     }
 
+    // process menu to enter date input
     private <T, U> void processMenu(String message, ArrayList<T> services, ArrayList<U> transactions, BiConsumerWithExceptions<ArrayList<T>, ArrayList<U>, String, String, ParseException> action) {
         String input;
         String dateType = "";
@@ -1497,6 +1609,7 @@ public class Dealership {
             System.out.println("\n" + message);
             explainDateInput();
             try {
+                // get the date type
                 input = scanner.nextLine();
                 choice = Integer.parseInt(input);
                 switch (choice) {
@@ -1540,7 +1653,7 @@ public class Dealership {
             }
     
             try {
-                action.accept(services, transactions, input, dateType);
+                action.accept(services, transactions, input, dateType); // process the action
                 return;
             } catch (ParseException d) {
                 System.out.println("Invalid date. Please try again.");
@@ -1549,22 +1662,27 @@ public class Dealership {
         } while (choice != 0);
     }
 
+    // list cars sold in a period of time
     private void listCarsMenu(ArrayList<Transaction> transactions) {
         processMenu("List cars sold in a period of time:", null, transactions, (_, transactionsList, input, dateType) -> Statistics.listCarInAPeriod(transactionsList, input, dateType));
     }
 
+    // list transactions in a period of time
     private void listTransactionsMenu(ArrayList<Transaction> transactions) {
         processMenu("List sales transactions created in a period of time:", null, transactions, (_, transactionsList, input, dateType) -> Statistics.listTransactionInAPeriod(transactionsList, input, dateType));
     }
 
+    // list services done in a period of time
     private void listServicesMenu(ArrayList<Service> services) {
         processMenu("List services done in a period of time:", services, null, (servicesList, _, input, dateType) -> Statistics.listServiceInAPeriod(servicesList, input, dateType));
     }
 
+    // list auto parts sold in a period of time
     private void listPartsMenu(ArrayList<Service> services, ArrayList<Transaction> transactions) {
         processMenu("List auto parts sold in a period of time:", services, transactions, Statistics::listPartInAPeriod);
     }
 
+    // show employee statistic menu
     private void showEmployeeStatisticMenu() {
         int choice;
         ArrayList<Transaction> transactions;
@@ -1582,6 +1700,7 @@ public class Dealership {
 
             switch (choice) {
                 case 1:
+                // calculate total revenue in a period of time
                     processMenu("Total revenue in a period of time:", services, transactions, (servicesList, transactionsList, input, dateType) -> {
                         BigDecimal revenue = Statistics.totalRevenueInPeriod(servicesList, transactionsList, input, dateType);
                         if (dateType.equals("week")) {
@@ -1606,6 +1725,7 @@ public class Dealership {
         }  while (choice != 0);
     }
 
+    // controller for each entity's update operations
     private String updateEntityOperations(Entity entity) {
         if (entity instanceof AutoPart) {
             return updatePartOperations((AutoPart) entity);
@@ -1621,6 +1741,7 @@ public class Dealership {
         return "ok";
     }
 
+    // controller for each entity's view only operations
     private String viewOnlyEntityOperations(Entity entity) {
          if (entity instanceof Transaction) {
             return updateTransactionOperations((Transaction) entity, true);
@@ -1630,10 +1751,12 @@ public class Dealership {
         return "ok";
     }
 
+    // search menu
     private void searchMenu(ArrayList<? extends Entity> items, String message, Function<Entity, String> updateOperations) {
         System.out.print(message);
         String searchInput = scanner.nextLine();
 
+        // check if the search input is an ID or a string
         boolean searchWithID = false;
         try {
             Integer.parseInt(searchInput);
@@ -1646,27 +1769,31 @@ public class Dealership {
             }
         }
 
-        if (searchWithID) {
+        if (searchWithID) { // search with ID
+            // search for the entity with the ID by looping through list of items and compare the ID
             boolean found = false;
             for (Entity e : items) {
                 if (e.getID().contains(searchInput.toLowerCase())) {
                     found = true;
-                    updateOperations.apply(e);
+                    updateOperations.apply(e); // update the entity
                     break;
                 }
             }
             if (!found) {
                 System.out.println(searchInput + " is might not in the system.");
             }
-        } else {
+        } else { // search with string
             ArrayList<Entity> highSim = new ArrayList<>();
             ArrayList<Entity> partMatch = new ArrayList<>();
 
             for (Entity e : items) {
                 String itemString = e.getSearchString();
-                if (itemString.toLowerCase().contains(searchInput.toLowerCase())) {
+                // search for the entity with the string by looping through list of items and compare the string
+                if (itemString.toLowerCase().contains(searchInput.toLowerCase())) { 
                     partMatch.add(e);
                 }
+
+                // calculate the similarity between the search input and the item string
                 int distance = levenshteinDistance(searchInput, itemString);
                 if (distance <= 20) {
                     highSim.add(e);
@@ -1674,37 +1801,35 @@ public class Dealership {
             }
 
             if (!partMatch.isEmpty()) {
-                if (partMatch.size() == 1) {
+                if (partMatch.size() == 1) { // if there is only one match, update the entity
                     updateOperations.apply(partMatch.getFirst());
-                } else {
+                } else { // if there are multiple matches, list and select the match
                     listAndSelect(partMatch, "Matched search:", updateOperations);
                 }
             } else {
-                if (!highSim.isEmpty()) {
+                if (!highSim.isEmpty()) { // if there is no match, list the relevant search
                     listAndSelect(highSim, "Relevant search:", updateOperations);
-                } else {
+                } else { // if there is no relevant search, print the message
                     System.out.println(searchInput + " is might not in the system.");
                 }
             }
         }
     }
 
+    // list all items and select the item
     private void listAndSelect(ArrayList<? extends Entity> items, String message, Function<Entity, String> updateOperations) {
         int choice;
         do {
             System.out.println("\n" + message);
-            int count = 1;
-            for (Entity e : items) {
-                System.out.println(count + ". " + e.getSearchString());
-                count += 1;
-            }
+            printEntities((ArrayList<Entity>) items);
             System.out.println("0. Back");
             System.out.print("Select choice: ");
             choice = getChoice();
 
-            if (choice > 0 && choice <= items.size()) {
-                String result = updateOperations.apply(items.get(choice - 1));
-                if (result.equals("remove")) {
+            // select the item
+            if (choice > 0 && choice <= items.size()) { // if the choice is valid, update the entity
+                String result = updateOperations.apply(items.get(choice - 1)); // update the entity
+                if (result.equals("remove")) { // if the entity is removed by update operations, break the loop
                     return;
                 }
             } else if (choice == 0) {
@@ -1715,20 +1840,20 @@ public class Dealership {
         }  while (choice != 0);
     }
 
+    // select a choice or search for an entity
     private Entity selectChoiceOrSearch(ArrayList<? extends Entity> items, String entity, boolean back) {
         String choiceString;
         int choice;
         boolean searchName;
         while (true) {
             System.out.println("\nSelect " + entity + ":");
-            int count = 1;
-            for (Entity e : items) {
-                System.out.println(count + ". " + e.getSearchString());
-                count += 1;
-            }
+            printEntities((ArrayList<Entity>) items);
+            
+            // print the back option to leave the same if back is true
             if (back) {
                 System.out.println("0. Leave the same");
             }
+
             System.out.print("Enter " + entity + " (choice or search): ");
             choiceString = scanner.nextLine();
             try {
@@ -1743,13 +1868,13 @@ public class Dealership {
                 choice = -1;
             }
 
-            if (searchName) {
+            if (searchName) { // search for the entity with the string
                 return searchMenuReturn(choiceString, items);
-            } else {
-                if (choice > 0 && choice <= items.size()) {
+            } else { // select the entity with the choice
+                if (choice > 0 && choice <= items.size()) { // if the choice is valid, return the entity
                     return items.get(choice - 1);
                 } else if (choice == 0) {
-                    if (back) {
+                    if (back) { // if back is true, return null, else will not break the loop even user enter 0
                         break;
                     }
                 } else {
@@ -1760,15 +1885,20 @@ public class Dealership {
         return null;
     }
 
+    // search for the entity but return the entity instead of updating
     private Entity searchMenuReturn(String searchInput, ArrayList<? extends Entity> items) {
         ArrayList<Entity> highSim = new ArrayList<>();
         ArrayList<Entity> partMatch = new ArrayList<>();
 
+        // search for the entity with the string by looping through list of items and compare the string
         for (Entity e : items) {
+            // search for the entity with the string by looping through list of items and compare the string
             String itemString = e.getSearchString();
             if (itemString.toLowerCase().contains(searchInput.toLowerCase())) {
                 partMatch.add(e);
             }
+
+            // calculate the similarity between the search input and the item string
             int distance = levenshteinDistance(searchInput, itemString);
             if (distance <= 20) {
                 highSim.add(e);
@@ -1776,46 +1906,31 @@ public class Dealership {
         }
 
         if (!partMatch.isEmpty()) {
-            if (partMatch.size() == 1) {
+            if (partMatch.size() == 1) { // if there is only one match, return the entity
                 return partMatch.getFirst();
-            } else {
+            } else { // if there are multiple matches, return list and select the match return
                 return listAndSelectReturn(partMatch, "Matched search:");
             }
         } else {
-            if (!highSim.isEmpty()) {
+            if (!highSim.isEmpty()) { // if there is no match, return the relevant search return
                 return listAndSelectReturn(highSim, "Relevant search:");
-            } else {
+            } else { // if there is no relevant search, print the message and return null
                 System.out.println(searchInput + " is might not in the system.");
                 return null;
             }
         }
     }
 
-    private int getChoice() {
-        int choice;
-        try {
-            choice = scanner.nextInt();
-            scanner.nextLine(); // consume left over
-            return choice;
-        } catch (InputMismatchException e) {
-            scanner.next(); // consume the invalid token
-            return -1; // default value that will not exit the loop
-        }
-    }
-
+    // list all items and select the item but return the entity instead of updating
     private Entity listAndSelectReturn(ArrayList<? extends Entity> items, String message) {
         int choice;
         do {
             System.out.println("\n" + message);
-            int count = 1;
-            for (Entity e : items) {
-                System.out.println(count + ". " + e.getSearchString());
-                count += 1;
-            }
+            printEntities((ArrayList<Entity>) items);
             System.out.print("Select choice: ");
             choice = getChoice();
 
-            if (choice > 0 && choice <= items.size()) {
+            if (choice > 0 && choice <= items.size()) { // if the choice is valid, return the entity
                 return items.get(choice - 1);
             } else if (choice == 0) {
                 assert true; // do nothing
@@ -1825,27 +1940,8 @@ public class Dealership {
         }  while (choice != 0);
         return null;
     }
-
-    private void printEntities(ArrayList<Entity> entities) {
-        int count = 1;
-        for (Entity e : entities) {
-            System.out.println(count + ". " + e.getSearchString());
-            count += 1;
-        }
-    }
     
-    private int getChoiceNoEmpty() {
-        String choiceString = scanner.nextLine();
-        try {
-            return Integer.parseInt(choiceString);
-        } catch (NumberFormatException e) {
-            if (choiceString.isEmpty()) {
-                System.out.println("Cannot be empty. Please try again.");
-            }
-            return -1;
-        }
-    }
-    
+    // add entity to the list
     private void addEntity(ArrayList<Entity> entities, ArrayList<Entity> addedEntities, String entity) {
         int _choice;
         do {
@@ -1855,7 +1951,7 @@ public class Dealership {
             System.out.print("Enter " + entity + " (choice or search): ");
             _choice = getChoiceNoEmpty();
     
-            if (_choice > 0 && _choice <= entities.size()) {
+            if (_choice > 0 && _choice <= entities.size()) { // if the choice is valid, add the entity
                 addedEntities.add(entities.get(_choice - 1));
             } else if (_choice == 0) {
                 assert true; // do nothing
@@ -1865,6 +1961,7 @@ public class Dealership {
         } while (_choice != 0);
     }
     
+    // remove entity from the list
     private void removeEntity(ArrayList<Entity> addedEntities, String entity) {
         int _choice;
         do {
@@ -1874,7 +1971,7 @@ public class Dealership {
             System.out.print("Enter " + entity + " (choice or search): ");
             _choice = getChoiceNoEmpty();
     
-            if (_choice > 0 && _choice <= addedEntities.size()) {
+            if (_choice > 0 && _choice <= addedEntities.size()) { // if the choice is valid, remove the entity
                 addedEntities.remove(addedEntities.get(_choice - 1));
             } else if (_choice == 0) {
                 assert true; // do nothing
@@ -1884,15 +1981,19 @@ public class Dealership {
         } while (_choice != 0 && !addedEntities.isEmpty());
     }
     
+    // add choice or search for the entity
     private ArrayList<Entity> addChoiceOrSearch(ArrayList<? extends Entity> entities, String entity, ArrayList<? extends Entity> initialEntities) {
         int choice = -1;
         boolean done = false;
         ArrayList<Entity> addedEntities = new ArrayList<>();
+
+        // if there are initial entities, replace addedEntities with initialEntities
         if (initialEntities != null) {
             addedEntities = (ArrayList<Entity>) initialEntities;
         }
+
         do {
-            if (!addedEntities.isEmpty()) {
+            if (!addedEntities.isEmpty()) { // if there are added entities, show the current added entities
                 System.out.println("\nCurrent added " + entity + ":");
                 printEntities(addedEntities);
         
@@ -1916,13 +2017,49 @@ public class Dealership {
                     default:
                         System.out.println("Invalid option. Please try again.");
                 }
-            } else {
+            } else { // if there are no added entities, show the add entity menu
                 addEntity((ArrayList<Entity>) entities, addedEntities, entity);
             }
         } while (done && choice != 0);
         return addedEntities;
     }
 
+    // print the entities
+    private void printEntities(ArrayList<Entity> entities) {
+        int count = 1;
+        for (Entity e : entities) {
+            System.out.println(count + ". " + e.getSearchString());
+            count += 1;
+        }
+    }
+
+    // get the choice from the user
+    private int getChoice() {
+        int choice;
+        try {
+            choice = scanner.nextInt();
+            scanner.nextLine(); // consume left over
+            return choice;
+        } catch (InputMismatchException e) {
+            scanner.next(); // consume the invalid token
+            return -1; // default value that will not exit the loop
+        }
+    }
+
+    // get the choice from the user and make sure it is not empty
+    private int getChoiceNoEmpty() {
+        String choiceString = scanner.nextLine();
+        try {
+            return Integer.parseInt(choiceString);
+        } catch (NumberFormatException e) {
+            if (choiceString.isEmpty()) {
+                System.out.println("Cannot be empty. Please try again.");
+            }
+            return -1;
+        }
+    }
+
+    // get the string from the user and make sure it is not empty
     private String getNextLine() {
         while (true) {
             String input = scanner.nextLine();
@@ -1934,6 +2071,7 @@ public class Dealership {
         }
     }
 
+    // get the integer from the user, make sure it is not empty and is a valid integer
     private int getNextInt() {
         while (true) {
             String stringInput = scanner.nextLine();
@@ -1949,6 +2087,7 @@ public class Dealership {
         }
     }
 
+    // get the double from the user, make sure it is not empty and is a valid double
     private double getNextDouble() {
         while (true) {
             String stringInput = scanner.nextLine();
@@ -1964,6 +2103,7 @@ public class Dealership {
         }
     }
 
+    // get the decimal from the user, make sure it is not empty and is a valid decimal
     private BigDecimal getNextBigDecimal() {
         while (true) {
             String stringInput = scanner.nextLine();
@@ -1979,6 +2119,7 @@ public class Dealership {
         }
     }
 
+    // get the string from the user, make sure it is a valid string or empty
     private String getNextLineEmpty(String defaultValue) {
         String input = scanner.nextLine();
         if (input.isEmpty()) {
@@ -1987,6 +2128,7 @@ public class Dealership {
         return input;
     }
 
+    // get the integer from the user, make sure it is a valid integer or empty
     private int getNextIntEmpty(int defaultValue) {
         while (true) {
             String stringInput = scanner.nextLine();
@@ -2002,6 +2144,7 @@ public class Dealership {
         }
     }
 
+    // get the double from the user, make sure it is a valid double or empty
     private double getNextDoubleEmpty(double defaultValue) {
         while (true) {
             String stringInput = scanner.nextLine();
@@ -2017,6 +2160,7 @@ public class Dealership {
         }
     }
 
+    // get the decimal from the user, make sure it is a valid decimal or empty
     private BigDecimal getNextBigDecimalEmpty(BigDecimal defaultValue) {
         while (true) {
             String stringInput = scanner.nextLine();
@@ -2032,15 +2176,17 @@ public class Dealership {
         }
     }
 
+    // levenshtein distance algorithm to calculate the steps to change one string to another
     private int levenshteinDistance(String a, String b) {
         a = a.toLowerCase();
         b = b.toLowerCase();
-        // i == 0
+        // degenerate cases
         int [] costs = new int [b.length() + 1];
         for (int j = 0; j < costs.length; j++)
             costs[j] = j;
+
+        // calculate edit distance
         for (int i = 1; i <= a.length(); i++) {
-            // j == 0; nw = lev(i - 1, j)
             costs[0] = i;
             int nw = i - 1;
             for (int j = 1; j <= b.length(); j++) {
@@ -2053,7 +2199,7 @@ public class Dealership {
         return costs[b.length()];
     }
 
-    // Save data to files before exit
+    // Save data to files
     private void saveData() {
         try {
             FileHandler.writeObjectsToFile(carInterface.getAllCars(), "data/cars.obj");
@@ -2067,6 +2213,7 @@ public class Dealership {
         }
     }
 
+    // Load data from files
     private void loadData() {
         try {
             this.carInterface.setCarList(FileHandler.readObjectsFromFile("data/cars.obj"));

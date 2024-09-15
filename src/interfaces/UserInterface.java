@@ -7,9 +7,6 @@ import java.util.ArrayList;
 public interface UserInterface {
     void setUserList(ArrayList<Object> userList);
 
-    // Login user with username and password
-    boolean loginUser(String username, String password);
-
     // Retrieve all users
     ArrayList<User> getAllUsers();
 

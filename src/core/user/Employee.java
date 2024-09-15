@@ -13,16 +13,12 @@ public abstract class Employee extends User {
     protected String password;
     protected ArrayList<Activity> activityLog;
 
+    // Constructor
     public Employee(String fullName, String dateOfBirth, String address, String phoneNumber, String email, UserType userType, String username, String password) throws Exception {
         super(fullName, dateOfBirth, address, phoneNumber, email, userType);
         this.username = username;
         this.password = password;
         this.activityLog = new ArrayList<>();
-    }
-
-    @Override
-    public void viewProfile() {
-        System.out.println("Employee Profile: " + fullName + " - Position: " + userType);
     }
 
     @Override

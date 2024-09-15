@@ -13,16 +13,12 @@ public class Manager extends User {
     protected String password;
     protected ArrayList<Activity> activityLog;
 
+    // Constructor
     public Manager(String fullName, String dateOfBirth, String address, String phoneNumber, String email, String username, String password) throws Exception {
         super(fullName, dateOfBirth, address, phoneNumber, email, UserType.MANAGER);
         this.username = username;
         this.password = password;
         this.activityLog = new ArrayList<>();
-    }
-
-    @Override
-    public void viewProfile() {
-        System.out.println("Manager Profile: " + fullName);
     }
 
     @Override

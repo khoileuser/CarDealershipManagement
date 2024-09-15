@@ -14,6 +14,7 @@ public class Activity implements Serializable {
     private Entity entity;
     private Entity updatedEntity;
 
+    // Constructor
     public Activity(String operation, Entity entity, Entity updatedEntity) {
         this.activityDate = setActivityDate();
         this.operation = operation;
@@ -23,6 +24,7 @@ public class Activity implements Serializable {
         }
     }
 
+    // Getters and Setters
     public Date getActivityDate() {
         return activityDate;
     }
@@ -60,6 +62,7 @@ public class Activity implements Serializable {
         this.updatedEntity = updatedEntity;
     }
 
+    // toString
     @Override
     public String toString() {
         return "Activity{" +
