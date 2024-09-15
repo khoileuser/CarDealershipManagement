@@ -45,9 +45,9 @@ public class Dealership {
                 "Instructor: Mr. Minh Vu & Mr. Dung Nguyen\n" +
                 "Group: Confuse Group\n" +
                 "s3975162 Le Nguyen Khoi\n" +
-                "s39 Tran Tuan Anh\n" +
-                "s39 Nguyen Vu Duy\n" +
-                "s39 Le Minh Tri\n\n" +
+                "S3974799 Tran Tuan Anh\n" +
+                "s3986546 Nguyen Vu Duy\n" +
+                "s3924585 Le Chanh Tri\n\n" +
                 name + " currently has" +
                 "\nCars: " + carInterface.getAllCars().size() +
                 "\nAuto Parts: " + autoPartInterface.getAllAutoParts().size() +
@@ -600,6 +600,9 @@ public class Dealership {
             clients = userInterface.getAllClients();
             System.out.println("\n1. Add new client");
             System.out.println("2. Choose from existing client");
+            if (back) {
+                System.out.println("0. Leave the same");
+            }
             System.out.print("Enter choice: ");
             try {
                 choice = scanner.nextInt();
@@ -615,6 +618,10 @@ public class Dealership {
                     return addClient();
                 case 2:
                     return (Client) selectChoiceOrSearch(clients, "Client", back);
+                case 0:
+                    if (back) {
+                        return null;
+                    }
                 default:
                     System.out.println("Invalid option. Please try again.");
             }
@@ -838,7 +845,7 @@ public class Dealership {
         System.out.print("Enter new service cost (enter to leave the same): ");
         serviceCost = getNextBigDecimalEmpty(serviceCost);
 
-        System.out.println("Update replaced part(s):");
+        System.out.println("\nUpdate replaced part(s):");
         ArrayList<AutoPart> parts = autoPartInterface.getAllAutoParts();
         ArrayList<Entity> entities = addChoiceOrSearch(parts, "Auto Parts", service.getReplacedParts());
         ArrayList<AutoPart> replacedParts = new ArrayList<>();
@@ -1121,10 +1128,10 @@ public class Dealership {
         System.out.print("Enter new service cost (enter to leave the same): ");
         totalAmount = getNextBigDecimalEmpty(totalAmount);
 
-        System.out.println("Update item(s):");
+        System.out.println("\nUpdate item(s):");
         ArrayList<AutoPart> parts = autoPartInterface.getAllAutoParts();
         ArrayList<Car> availableCars = carInterface.getAvailableCars();
-        ArrayList<Item> items = (ArrayList<Item>) Stream.concat(parts.stream(), availableCars.stream()).toList();
+        ArrayList<Item> items = new ArrayList<>(Stream.concat(parts.stream(), availableCars.stream()).toList());
         ArrayList<Item> transactionItems = transaction.getItems();
         ArrayList<Entity> entities = addChoiceOrSearch(items, "Item", transactionItems);
 
@@ -1879,13 +1886,14 @@ public class Dealership {
     
     private ArrayList<Entity> addChoiceOrSearch(ArrayList<? extends Entity> entities, String entity, ArrayList<? extends Entity> initialEntities) {
         int choice = -1;
+        boolean done = false;
         ArrayList<Entity> addedEntities = new ArrayList<>();
         if (initialEntities != null) {
             addedEntities = (ArrayList<Entity>) initialEntities;
         }
         do {
             if (!addedEntities.isEmpty()) {
-                System.out.println("\n\nCurrent added " + entity + ":");
+                System.out.println("\nCurrent added " + entity + ":");
                 printEntities(addedEntities);
         
                 System.out.println("\nUpdate " + entity + " list:");
@@ -1903,6 +1911,7 @@ public class Dealership {
                         removeEntity(addedEntities, entity);
                         break;
                     case 0:
+                        done = true;
                         break;
                     default:
                         System.out.println("Invalid option. Please try again.");
@@ -1910,7 +1919,7 @@ public class Dealership {
             } else {
                 addEntity((ArrayList<Entity>) entities, addedEntities, entity);
             }
-        } while (choice != 0);
+        } while (done && choice != 0);
         return addedEntities;
     }
 
